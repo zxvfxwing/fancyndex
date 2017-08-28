@@ -158,6 +158,33 @@ run/fast:
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/build
 .PHONY : run/fast
 
+src/directory.o: src/directory.cpp.o
+
+.PHONY : src/directory.o
+
+# target to build an object file
+src/directory.cpp.o:
+	$(MAKE) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/directory.cpp.o
+.PHONY : src/directory.cpp.o
+
+src/directory.i: src/directory.cpp.i
+
+.PHONY : src/directory.i
+
+# target to preprocess a source file
+src/directory.cpp.i:
+	$(MAKE) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/directory.cpp.i
+.PHONY : src/directory.cpp.i
+
+src/directory.s: src/directory.cpp.s
+
+.PHONY : src/directory.s
+
+# target to generate assembly for a file
+src/directory.cpp.s:
+	$(MAKE) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/directory.cpp.s
+.PHONY : src/directory.cpp.s
+
 src/file.o: src/file.cpp.o
 
 .PHONY : src/file.o
@@ -278,6 +305,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... app"
 	@echo "... run"
+	@echo "... src/directory.o"
+	@echo "... src/directory.i"
+	@echo "... src/directory.s"
 	@echo "... src/file.o"
 	@echo "... src/file.i"
 	@echo "... src/file.s"

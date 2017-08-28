@@ -4,19 +4,20 @@
 #include <boost/filesystem.hpp>
 #include "file.hpp"
 
-fs = boost::filesystem;
+namespace fs = boost::filesystem;
 
-class Directory :
+class Directory
 {
 private:
+    fs::path directory;
     bool empty;
-    Directory* Directories;
-    Files* files;
+    Directory* directories;
+    File* files;
 
 public:
-    Directory();
+    Directory(fs::path);
     ~Directory();
-    const bool isEmpty() const;
+    bool isEmpty() const;
 };
 
 #endif //DIRECTORY_HPP

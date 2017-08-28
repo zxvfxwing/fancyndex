@@ -57,9 +57,33 @@ include CMakeFiles/app.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/app.dir/flags.make
 
+CMakeFiles/app.dir/src/directory.cpp.o: CMakeFiles/app.dir/flags.make
+CMakeFiles/app.dir/src/directory.cpp.o: ../src/directory.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/app.dir/src/directory.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/app.dir/src/directory.cpp.o -c /home/spoken/Git/fancyndex/src/directory.cpp
+
+CMakeFiles/app.dir/src/directory.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/app.dir/src/directory.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/spoken/Git/fancyndex/src/directory.cpp > CMakeFiles/app.dir/src/directory.cpp.i
+
+CMakeFiles/app.dir/src/directory.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/app.dir/src/directory.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/spoken/Git/fancyndex/src/directory.cpp -o CMakeFiles/app.dir/src/directory.cpp.s
+
+CMakeFiles/app.dir/src/directory.cpp.o.requires:
+
+.PHONY : CMakeFiles/app.dir/src/directory.cpp.o.requires
+
+CMakeFiles/app.dir/src/directory.cpp.o.provides: CMakeFiles/app.dir/src/directory.cpp.o.requires
+	$(MAKE) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/directory.cpp.o.provides.build
+.PHONY : CMakeFiles/app.dir/src/directory.cpp.o.provides
+
+CMakeFiles/app.dir/src/directory.cpp.o.provides.build: CMakeFiles/app.dir/src/directory.cpp.o
+
+
 CMakeFiles/app.dir/src/file.cpp.o: CMakeFiles/app.dir/flags.make
 CMakeFiles/app.dir/src/file.cpp.o: ../src/file.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/app.dir/src/file.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/app.dir/src/file.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/app.dir/src/file.cpp.o -c /home/spoken/Git/fancyndex/src/file.cpp
 
 CMakeFiles/app.dir/src/file.cpp.i: cmake_force
@@ -83,7 +107,7 @@ CMakeFiles/app.dir/src/file.cpp.o.provides.build: CMakeFiles/app.dir/src/file.cp
 
 CMakeFiles/app.dir/src/index.cpp.o: CMakeFiles/app.dir/flags.make
 CMakeFiles/app.dir/src/index.cpp.o: ../src/index.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/app.dir/src/index.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/app.dir/src/index.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/app.dir/src/index.cpp.o -c /home/spoken/Git/fancyndex/src/index.cpp
 
 CMakeFiles/app.dir/src/index.cpp.i: cmake_force
@@ -107,7 +131,7 @@ CMakeFiles/app.dir/src/index.cpp.o.provides.build: CMakeFiles/app.dir/src/index.
 
 CMakeFiles/app.dir/src/main.cpp.o: CMakeFiles/app.dir/flags.make
 CMakeFiles/app.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/app.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/app.dir/src/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/app.dir/src/main.cpp.o -c /home/spoken/Git/fancyndex/src/main.cpp
 
 CMakeFiles/app.dir/src/main.cpp.i: cmake_force
@@ -131,7 +155,7 @@ CMakeFiles/app.dir/src/main.cpp.o.provides.build: CMakeFiles/app.dir/src/main.cp
 
 CMakeFiles/app.dir/src/test.cpp.o: CMakeFiles/app.dir/flags.make
 CMakeFiles/app.dir/src/test.cpp.o: ../src/test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/app.dir/src/test.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/app.dir/src/test.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/app.dir/src/test.cpp.o -c /home/spoken/Git/fancyndex/src/test.cpp
 
 CMakeFiles/app.dir/src/test.cpp.i: cmake_force
@@ -155,6 +179,7 @@ CMakeFiles/app.dir/src/test.cpp.o.provides.build: CMakeFiles/app.dir/src/test.cp
 
 # Object files for target app
 app_OBJECTS = \
+"CMakeFiles/app.dir/src/directory.cpp.o" \
 "CMakeFiles/app.dir/src/file.cpp.o" \
 "CMakeFiles/app.dir/src/index.cpp.o" \
 "CMakeFiles/app.dir/src/main.cpp.o" \
@@ -163,13 +188,14 @@ app_OBJECTS = \
 # External object files for target app
 app_EXTERNAL_OBJECTS =
 
+app: CMakeFiles/app.dir/src/directory.cpp.o
 app: CMakeFiles/app.dir/src/file.cpp.o
 app: CMakeFiles/app.dir/src/index.cpp.o
 app: CMakeFiles/app.dir/src/main.cpp.o
 app: CMakeFiles/app.dir/src/test.cpp.o
 app: CMakeFiles/app.dir/build.make
 app: CMakeFiles/app.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/spoken/Git/fancyndex/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable app"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/app.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -177,6 +203,7 @@ CMakeFiles/app.dir/build: app
 
 .PHONY : CMakeFiles/app.dir/build
 
+CMakeFiles/app.dir/requires: CMakeFiles/app.dir/src/directory.cpp.o.requires
 CMakeFiles/app.dir/requires: CMakeFiles/app.dir/src/file.cpp.o.requires
 CMakeFiles/app.dir/requires: CMakeFiles/app.dir/src/index.cpp.o.requires
 CMakeFiles/app.dir/requires: CMakeFiles/app.dir/src/main.cpp.o.requires

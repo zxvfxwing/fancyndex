@@ -6,6 +6,16 @@
 
 #IncludeRegexTransform: 
 
+/home/spoken/Git/fancyndex/src/directory.cpp
+directory.hpp
+/home/spoken/Git/fancyndex/src/directory.hpp
+
+/home/spoken/Git/fancyndex/src/directory.hpp
+boost/filesystem.hpp
+-
+file.hpp
+/home/spoken/Git/fancyndex/src/file.hpp
+
 /home/spoken/Git/fancyndex/src/file.cpp
 file.hpp
 /home/spoken/Git/fancyndex/src/file.hpp

@@ -25,6 +25,11 @@ File::File(fs::path _file)
     }
 }
 
+File::~File()
+{
+    
+}
+
 
 std::string File::maketime_readable(std::time_t raw, bool use_localtime)
 {
@@ -39,7 +44,7 @@ std::string File::maketime_readable(std::time_t raw, bool use_localtime)
     }
     catch(std::exception& e)
     {
-        std::cout << "Something went wrong during maketime_readable(std::time_t raw) :" << e.what() << std::endl;
+        std::cerr << "Something went wrong during maketime_readable(std::time_t raw) :" << e.what() << std::endl;
     }
 
     return buffer;
