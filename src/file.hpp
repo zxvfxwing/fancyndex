@@ -20,6 +20,7 @@ private:
     unsigned long long int size;
 
 public:
+    File();
     File(fs::path);
     ~File();
     std::string get_name() const;

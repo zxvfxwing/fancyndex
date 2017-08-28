@@ -3,31 +3,45 @@
 File::File(fs::path _file)
     :file(_file)
 {
-    if(fs::is_regular_file(file))
+    try
     {
-        if(file.has_filename())
-            filename = file.filename().string();
-        else
-            throw std::runtime_error("ERROR: file doesn't even have a name !");
+        if(fs::exists(file))
+        {
+            if(fs::is_regular_file(file))
+            {
+                if(file.has_filename())
+                    filename = file.filename().string();
+                else
+                    throw std::runtime_error("ERROR: file doesn't even has a name !");
 
-        if(file.has_extension())
-            extension = file.extension().string();
-        else
-            extension = "";
+                if(file.has_extension())
+                    extension = file.extension().string();
+                else
+                    extension = "";
 
-        size = fs::file_size(file);
-        date_raw = fs::last_write_time(file);
-        date_human = this->maketime_readable(date_raw);
+                size = fs::file_size(file);
+                date_raw = fs::last_write_time(file);
+                date_human = maketime_readable(date_raw);
+            }
+            else
+            {
+                throw std::runtime_error("ERROR: " + file.filename().string() + " is either a directory or not a regular file.\nThis is an instance of the File class !");
+            }
+        }
+        else
+        {
+            throw std::runtime_error("ERROR: " + file.filename().string() + " doesn't even exists !");
+        }
     }
-    else
+    catch(const fs::filesystem_error& e)
     {
-        throw std::runtime_error("ERROR: " + file.filename().string() + " is a directory \n Runtime Error, this is an instance of the \"File\" class");
+        std::cerr << e.what() << std::endl;
     }
 }
 
 File::~File()
 {
-    
+
 }
 
 
@@ -41,6 +55,7 @@ std::string File::maketime_readable(std::time_t raw, bool use_localtime)
         if(use_localtime)   timeinfo = localtime(&raw);
         else                timeinfo = gmtime(&raw);
         strftime(buffer, 80, "%F %T", timeinfo);
+        delete timeinfo;
     }
     catch(std::exception& e)
     {
