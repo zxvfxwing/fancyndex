@@ -8,6 +8,8 @@ _You will need CMake (3.9) here._
 > mkdir build && cd build
 >
 > cmake ..
+>
+> make
 
 ### How to run ?
 > cd build
