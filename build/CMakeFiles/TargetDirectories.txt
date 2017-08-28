@@ -1,0 +1,6 @@
+/home/spoken/Git/fancyndex/build/CMakeFiles/rebuild_cache.dir
+/home/spoken/Git/fancyndex/build/CMakeFiles/package_source.dir
+/home/spoken/Git/fancyndex/build/CMakeFiles/package.dir
+/home/spoken/Git/fancyndex/build/CMakeFiles/edit_cache.dir
+/home/spoken/Git/fancyndex/build/CMakeFiles/app.dir
+/home/spoken/Git/fancyndex/build/CMakeFiles/run.dir
