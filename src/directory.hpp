@@ -2,6 +2,7 @@
 #define DIRECTORY_HPP
 
 #include <boost/filesystem.hpp>
+#include <stdexcept>
 #include <string>
 #include "file.hpp"
 
@@ -17,11 +18,15 @@ private:
     File** files;
     unsigned long long int nb_files;
     unsigned long long int nb_directories;
-    unsigned long long int total_size;
+    unsigned long long int size;
+    
+    std::time_t date_raw;
+    std::string dumate_human;
 
     void run_directory();
     void delete_directories();
     void delete_files();
+    void total_size();
 
 public:
     Directory(fs::path);

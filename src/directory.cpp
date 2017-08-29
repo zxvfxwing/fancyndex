@@ -21,7 +21,7 @@ Directory::Directory(fs::path _directory)
                 directories = new Directory* [nb_directories];
 
                 this->run_directory();
-                // TODO
+                this->total_size();
             }
             else
             {
@@ -65,8 +65,8 @@ void Directory::add_file(fs::path newFile)
     }
     delete [] tmp_tab;
 
-    File* file = new File(newFile);
-    files[nb_files] = file;
+    File* _file = new File(newFile);
+    files[nb_files] = _file;
 }
 
 void Directory::add_directory(fs::path newDir)
@@ -89,8 +89,8 @@ void Directory::add_directory(fs::path newDir)
     }
     delete [] tmp_tab;
 
-    Directory* directory = new Directory(newDir);
-    directories[nb_directories] = directory;
+    Directory* _directory = new Directory(newDir);
+    directories[nb_directories] = _directory;
 }
 
 void Directory::delete_files()
@@ -120,22 +120,51 @@ bool Directory::is_empty() const
 
 void Directory::run_directory()
 {
-    for(fs::directory_entry& entry: fs::directory_iterator(directory))
+    try
     {
-        if(fs::is_directory(entry))
+        for(fs::directory_entry& entry: fs::directory_iterator(directory))
         {
-            if(!fs::is_empty(entry))
+            if(fs::is_directory(entry))
             {
-                if(this->is_empty() == true)
+                if(!fs::is_empty(entry))
+                {
+                    if(this->is_empty())
+                    {
+                        this->empty = false;
+                    }
+                    this->add_directory(entry);
+                }
+            }
+            else if(fs::is_regular_file(entry))
+            {
+                if(this->is_empty())
+                {
                     this->empty = false;
-                this->add_directory(entry);
+                }
+                this->add_file(entry);
             }
         }
-        else if(fs::is_regular_file(entry))
-        {
-            if(this->is_empty() == true)
-                this->empty = false;
-            this->add_file(entry);
-        }
     }
+    catch(const fs::filesystem_error& e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+void Directory::total_size()
+{
+    unsigned long long int i;
+    for(i=0; i < nb_directories; ++i){
+        size += directories[i]->get_size();
+    }
+
+    for(i=0; i < nb_files; ++i)
+    {
+        size += files[i]->get_size();
+    }
+}
+
+unsigned long long int Directory::get_size() const
+{
+    return size;
 }
