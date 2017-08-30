@@ -1,6 +1,6 @@
 #include "directory.hpp"
 
-Directory::Directory(fs::path _directory)
+/* Directory::Directory(fs::path _directory)
     :directory(_directory)
 {
     try{
@@ -168,3 +168,5 @@ unsigned long long int Directory::get_size() const
 {
     return size;
 }
+
+*/

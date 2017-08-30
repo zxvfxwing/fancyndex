@@ -1,6 +1,6 @@
 #include "file.hpp"
 
-File::File(fs::path _file)
+/*File::File(fs::path _file)
     :file(_file)
 {
     try
@@ -89,3 +89,4 @@ unsigned long long int File::get_size() const
 {
     return size;
 }
+*/
