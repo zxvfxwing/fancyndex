@@ -8,10 +8,12 @@ Directory::Directory(fs::path directory)
     files(NULL),
     directories(NULL)
 {
-    try{
+    try
+    {
         if(fs::is_directory(directory))
         {
             run_directory(directory);
+            set_size(sum_size());
         }
         else
         {
@@ -61,18 +63,12 @@ void Directory::destructor_directories()
     }
 }
 
-// TODO:
-// Créer un nouveau tableau de la bonne taille
-// Copier l'actuel dans le nouveau
-// Ajouter le nouveau fichier dans le nouveau tableau
-// Remplacer le pointeur
-// détruire l'ancien tableau
-
 void Directory::add_a_file(fs::path path_file)
 {
     File** array = new File* [++nb_files];
 
-    if(nb_files > 1){
+    if(nb_files > 1)
+    {
         unsigned long long int i;
         for(i=0; i < nb_files-1; ++i)
             array[i] = files[i];
@@ -82,12 +78,28 @@ void Directory::add_a_file(fs::path path_file)
     files[nb_files-1] = new File(path_file);
 }
 
+void Directory::add_a_directory(fs::path path_dir)
+{
+    Directory** array = new Directory* [++nb_directories];
+
+    if(nb_directories > 1)
+    {
+        unsigned long long int i;
+        for(i=0; i < nb_directories-1; ++i)
+            array[i] = directories[i];
+    }
+
+    directories = array;
+    directories[nb_directories-1] = new Directory(path_dir);
+}
+
 void Directory::run_directory(fs::path dir)
 {
     try{
         for(fs::directory_entry& entry: fs::directory_iterator(dir))
         {
-            if(fs::is_directory(entry)){ }
+            if(fs::is_directory(entry))
+                add_a_directory(entry);
             else
                 add_a_file(entry);
         }
@@ -119,4 +131,33 @@ File* Directory::get_file(unsigned long long int index) const
         throw std::range_error("Wrong index value, check range.");
     }
     return files[index];
+}
+
+Directory** Directory::get_directories() const
+{
+    return directories;
+}
+
+Directory* Directory::get_directory(unsigned long long int index) const
+{
+    if( index < 0 || index > nb_directories){
+        throw std::range_error("Wrong index value, check range.");
+    }
+    return directories[index];
+}
+
+unsigned long long int Directory::sum_size()
+{
+    unsigned long long int sum = 0;
+
+    unsigned long long int i;
+    for(i=0; i < nb_files; ++i)
+        sum += files[i]->get_size();
+
+    for(i=0; i < nb_directories; ++i)
+        sum += directories[i]->get_size();
+
+    if(sum > 0) empty = false;
+
+    return sum;
 }

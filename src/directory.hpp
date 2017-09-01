@@ -29,6 +29,9 @@ public:
     unsigned long long int get_nb_directories() const;
     File** get_files() const;
     File* get_file(unsigned long long int) const;
+    Directory** get_directories() const;
+    Directory* get_directory(unsigned long long int) const;
+    unsigned long long int sum_size();
 };
 
 #endif //DIRECTORY_HPP
