@@ -3,7 +3,7 @@
 
 #include "filesystem.hpp"
 
-class File
+class File : public FileSystem
 {
 private:
     std::string extension;
@@ -11,6 +11,7 @@ private:
 public:
     File(fs::path);
     ~File();
+    std::string get_extension() const;
 };
 
 #endif //FILE_HPP

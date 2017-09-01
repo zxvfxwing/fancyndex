@@ -1,30 +1,23 @@
 #include "filesystem.hpp"
 
-FileSystem::FileSystem(std::string path_name)
+FileSystem::FileSystem(fs::path _path)
+    :path(_path)
 {
-    path = fs::path(path_name);
-
     try
     {
         if(fs::exists(path))
         {
-            name = path.filename().string();
+            if(path.has_filename())
+                name = path.filename().string();
+            else
+                throw std::runtime_error("No filename found for " + path.root_path().string());
+
             date_raw = fs::last_write_time(path);
             date_human = this->maketime_readable();
-
-            nb_entries = 0;
-            entries = new FileSystem* [nb_entries];
-
-            
-
-            //TODO
-            // - Calculate size :
-            // size = ?
-            // -
         }
         else
         {
-            throw std::runtime_error(path_name + " doesn't exists !");
+            throw std::runtime_error(path.root_path().string() + " doesn't exists !");
         }
     }
     catch(const fs::filesystem_error& ex)
@@ -35,12 +28,7 @@ FileSystem::FileSystem(std::string path_name)
 
 FileSystem::~FileSystem()
 {
-    unsigned long long int i;
-    for(i=0; i < nb_entries; ++i)
-    {
-        delete entries[i];
-    }
-    delete [] entries;
+
 }
 
 std::string FileSystem::get_name() const
@@ -63,9 +51,9 @@ unsigned long long int FileSystem::get_size() const
     return size;
 }
 
-unsigned long long int FileSystem::get_nb_entries() const
+void FileSystem::set_size(const unsigned long long int& _size)
 {
-    return nb_entries;
+    size = _size;
 }
 
 std::string FileSystem::maketime_readable(bool use_localtime)
