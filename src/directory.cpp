@@ -1,36 +1,21 @@
 #include "directory.hpp"
 
-/* Directory::Directory(fs::path _directory)
-    :directory(_directory)
+Directory::Directory(fs::path directory)
+    :FileSystem(directory),
+    empty(true),
+    nb_files(0),
+    nb_directories(0),
+    files(NULL),
+    directories(NULL)
 {
     try{
-        if(fs::exists(directory))
+        if(fs::is_directory(directory))
         {
-            if(fs::is_directory(directory))
-            {
-                if(directory.has_filename())
-                    name = directory.filename().string();
-                else
-                    throw std::runtime_error("ERROR: directory doesn't even has a name !");
-
-                nb_files = 0;
-                nb_directories = 0;
-                empty = true;
-
-                files = new File* [nb_files];
-                directories = new Directory* [nb_directories];
-
-                this->run_directory();
-                this->total_size();
-            }
-            else
-            {
-                throw std::runtime_error("ERROR: " + directory.filename().string() + " is not a directory !\nThis is an instance of the Directory class !");
-            }
+            run_directory(directory);
         }
         else
         {
-            throw std::runtime_error("ERROR: " + directory.filename().string() + " doesn't even exists !");
+            throw std::runtime_error("ERROR: " + directory.filename().string() + " is not a directory.\n");
         }
     }
     catch(const fs::filesystem_error& e)
@@ -41,76 +26,8 @@
 
 Directory::~Directory()
 {
-    this->delete_files();
-    this->delete_directories();
-}
-
-void Directory::add_file(fs::path newFile)
-{
-    File** tmp_tab = new File* [nb_files];
-
-    unsigned long long int i;
-    for(i=0; i < nb_files; ++i)
-    {
-        tmp_tab[i] = files[i];
-    }
-
-    ++nb_files;
-    files = new File* [nb_files];
-
-    for(i=0; i < nb_files-1; ++i)
-    {
-        files[i] = tmp_tab[i];
-        delete tmp_tab[i];
-    }
-    delete [] tmp_tab;
-
-    File* _file = new File(newFile);
-    files[nb_files] = _file;
-}
-
-void Directory::add_directory(fs::path newDir)
-{
-    Directory** tmp_tab = new Directory* [nb_directories];
-
-    unsigned long long int i;
-    for(i=0; i < nb_directories; ++i)
-    {
-        tmp_tab[i] = directories[i];
-    }
-
-    ++nb_directories;
-    directories = new Directory* [nb_directories];
-
-    for(i=0; i < nb_directories-1; ++i)
-    {
-        directories[i] = tmp_tab[i];
-        delete tmp_tab[i];
-    }
-    delete [] tmp_tab;
-
-    Directory* _directory = new Directory(newDir);
-    directories[nb_directories] = _directory;
-}
-
-void Directory::delete_files()
-{
-    unsigned long long int i;
-    for(i=0; i < nb_files; ++i)
-    {
-        delete files[i];
-    }
-    delete [] files;
-}
-
-void Directory::delete_directories()
-{
-    unsigned long long int i;
-    for(i=0; i < nb_directories; ++i)
-    {
-        delete directories[i];
-    }
-    delete [] directories;
+    destructor_files();
+    destructor_directories();
 }
 
 bool Directory::is_empty() const
@@ -118,31 +35,61 @@ bool Directory::is_empty() const
     return empty;
 }
 
-void Directory::run_directory()
+void Directory::destructor_files()
 {
-    try
-    {
-        for(fs::directory_entry& entry: fs::directory_iterator(directory))
+    if(files != NULL){
+        unsigned long long int i;
+        for(i=0; i < nb_files; ++i)
         {
-            if(fs::is_directory(entry))
-            {
-                if(!fs::is_empty(entry))
-                {
-                    if(this->is_empty())
-                    {
-                        this->empty = false;
-                    }
-                    this->add_directory(entry);
-                }
-            }
-            else if(fs::is_regular_file(entry))
-            {
-                if(this->is_empty())
-                {
-                    this->empty = false;
-                }
-                this->add_file(entry);
-            }
+            if(files[i] != NULL)
+                delete files[i];
+        }
+        delete [] files;
+    }
+}
+
+void Directory::destructor_directories()
+{
+    if(directories != NULL){
+        unsigned long long int i;
+        for(i=0; i < nb_directories; ++i)
+        {
+            if(directories[i] != NULL)
+                delete directories[i];
+        }
+        delete [] directories;
+    }
+}
+
+// TODO:
+// Créer un nouveau tableau de la bonne taille
+// Copier l'actuel dans le nouveau
+// Ajouter le nouveau fichier dans le nouveau tableau
+// Remplacer le pointeur
+// détruire l'ancien tableau
+
+void Directory::add_a_file(fs::path path_file)
+{
+    File** array = new File* [++nb_files];
+
+    if(nb_files > 1){
+        unsigned long long int i;
+        for(i=0; i < nb_files-1; ++i)
+            array[i] = files[i];
+    }
+
+    files = array;
+    files[nb_files-1] = new File(path_file);
+}
+
+void Directory::run_directory(fs::path dir)
+{
+    try{
+        for(fs::directory_entry& entry: fs::directory_iterator(dir))
+        {
+            if(fs::is_directory(entry)){ }
+            else
+                add_a_file(entry);
         }
     }
     catch(const fs::filesystem_error& e)
@@ -151,22 +98,25 @@ void Directory::run_directory()
     }
 }
 
-void Directory::total_size()
+unsigned long long int Directory::get_nb_files() const
 {
-    unsigned long long int i;
-    for(i=0; i < nb_directories; ++i){
-        size += directories[i]->get_size();
-    }
-
-    for(i=0; i < nb_files; ++i)
-    {
-        size += files[i]->get_size();
-    }
+    return nb_files;
 }
 
-unsigned long long int Directory::get_size() const
+unsigned long long int Directory::get_nb_directories() const
 {
-    return size;
+    return nb_directories;
 }
 
-*/
+File** Directory::get_files() const
+{
+    return files;
+}
+
+File* Directory::get_file(unsigned long long int index) const
+{
+    if( index < 0 || index > nb_files){
+        throw std::range_error("Wrong index value, check range.");
+    }
+    return files[index];
+}

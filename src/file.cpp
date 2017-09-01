@@ -1,22 +1,23 @@
 #include "file.hpp"
 
 File::File(fs::path file)
-    :FileSystem(file)
+    :FileSystem(file),
+    extension(""),
+    extension_ok(false)
 {
     try
     {
         if(fs::is_regular_file(file))
         {
-            if(file.has_extension())
+            if(file.has_extension()){
                 extension = file.extension().string();
-            else
-                extension = "";
-
-            FileSystem::set_size( fs::file_size(file) );
+                extension_ok = true;
+            }
+            set_size(fs::file_size(file));
         }
         else
         {
-            throw std::runtime_error("ERROR: " + file.filename().string() + " is either a directory or not a regular file.\nThis is an instance of the File class !");
+            throw std::runtime_error("ERROR: " + file.filename().string() + " is not a regular file.\n");
         }
     }
     catch(const fs::filesystem_error& e)
@@ -28,4 +29,14 @@ File::File(fs::path file)
 File::~File()
 {
 
+}
+
+std::string File::get_extension() const
+{
+    return extension;
+}
+
+bool File::is_extension_ok() const
+{
+    return extension_ok;
 }

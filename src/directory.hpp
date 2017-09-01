@@ -1,42 +1,34 @@
 #ifndef DIRECTORY_HPP
 #define DIRECTORY_HPP
 
-#include <boost/filesystem.hpp>
-#include <stdexcept>
-#include <string>
+#include "filesystem.hpp"
 #include "file.hpp"
 
 namespace fs = boost::filesystem;
 
-class Directory
+class Directory : public FileSystem
 {
 private:
-    fs::path directory;
-    std::string name;
     bool empty;
-    Directory** directories;
-    File** files;
     unsigned long long int nb_files;
     unsigned long long int nb_directories;
-    unsigned long long int size;
-    
-    std::time_t date_raw;
-    std::string dumate_human;
+    File** files;
+    Directory** directories;
 
-    void run_directory();
-    void delete_directories();
-    void delete_files();
-    void total_size();
+    void destructor_files();
+    void destructor_directories();
+    void add_a_file(fs::path);
+    void add_a_directory(fs::path);
+    void run_directory(fs::path);
 
 public:
     Directory(fs::path);
     ~Directory();
     bool is_empty() const;
-    void add_directory(fs::path);
-    void add_file(fs::path);
-    unsigned long long int get_size() const;
-
-    Directory* list_directory();
+    unsigned long long int get_nb_files() const;
+    unsigned long long int get_nb_directories() const;
+    File** get_files() const;
+    File* get_file(unsigned long long int) const;
 };
 
 #endif //DIRECTORY_HPP

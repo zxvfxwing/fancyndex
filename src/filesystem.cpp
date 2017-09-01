@@ -66,7 +66,6 @@ std::string FileSystem::maketime_readable(bool use_localtime)
         if(use_localtime)   timeinfo = localtime(&date_raw);
         else                timeinfo = gmtime(&date_raw);
         strftime(buffer, 80, "%F %T", timeinfo);
-        delete timeinfo;
     }
     catch(std::exception& e)
     {

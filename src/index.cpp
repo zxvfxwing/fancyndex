@@ -1,4 +1,5 @@
 #include "index.hpp"
+#include "directory.hpp"
 
 Index::Index(const Wt::WEnvironment& env)
     : Wt::WApplication(env)
