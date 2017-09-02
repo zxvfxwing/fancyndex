@@ -161,3 +161,13 @@ unsigned long long int Directory::sum_size()
 
     return sum;
 }
+
+void Directory::list_directory() const
+{
+    unsigned long long int i;
+    for(i=0; i < nb_files; ++i)
+        std::cout << files[i]->get_name() << " -- " << files[i]->get_date_human() << " -- " << files[i]->get_size() << " Bytes" << std::endl;
+
+    for(i=0; i < nb_directories; ++i)
+        std::cout << directories[i]->get_name() << " -- " << directories[i]->get_date_human() << " -- " << directories[i]->get_size() << " Bytes" << std::endl;
+}
