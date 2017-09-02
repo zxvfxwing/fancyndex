@@ -1,14 +1,14 @@
 # __Fancyndex__ #
 
 ## *A fancy web index to list your favorites directories & files.* ##
-__Built with [CppCMS](http://cppcms.com/wikipp/en/page/main) & [Boost/Filesystem library](http://www.boost.org/doc/libs/1_65_0/libs/filesystem/doc/index.htm).__
+__Built with [Wt, C++ Web Toolkit](https://www.webtoolkit.eu/wt/) & [Boost/Filesystem library](http://www.boost.org/doc/libs/1_65_0/libs/filesystem/doc/index.htm).__
 
 ### Dependencies :
 #### ArchLinux
 > AUR Packages, I suggest to use `pacaur` (do the job for Arch non-User Repositories like `pacman`).
 
 ```
-pacaur -S cppcms
+pacaur -S wt
 pacaur -S boost
 pacaur -S boost-libs
 ```
@@ -45,7 +45,7 @@ Done :
 
 > TODO :
 >- Web interface (0.2) ;
->- Boostrap (0.2.5) ;
+>- Bootstrap (0.2.5) ;
 >- Documentation ;
 >- Nginx reverse-proxy doc ;
 >- Create thumbnails for images & videos ;

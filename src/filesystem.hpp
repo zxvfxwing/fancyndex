@@ -16,19 +16,21 @@ private:
     std::string name;
     std::string date_human;
     std::time_t date_raw;
-    unsigned long long int size;
+    long double size;
     std::string maketime_readable(bool =true);
 
 protected:
-    void set_size(const unsigned long long int &);
+    void set_size(const long double &);
 
 public:
     FileSystem(fs::path);
     ~FileSystem();
+    std::string get_canonical() const;
     std::string get_name() const;
     std::string get_date_human() const;
     std::time_t get_date_raw() const;
-    unsigned long long int get_size() const;
+    long double get_size() const;
+    std::string get_size_str() const;
 };
 
 #endif //FILESYSTEM_HPP

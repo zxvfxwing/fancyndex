@@ -127,9 +127,7 @@ File** Directory::get_files() const
 
 File* Directory::get_file(unsigned long long int index) const
 {
-    if( index < 0 || index > nb_files){
-        throw std::range_error("Wrong index value, check range.");
-    }
+    assert(index < nb_files);
     return files[index];
 }
 
@@ -140,15 +138,13 @@ Directory** Directory::get_directories() const
 
 Directory* Directory::get_directory(unsigned long long int index) const
 {
-    if( index < 0 || index > nb_directories){
-        throw std::range_error("Wrong index value, check range.");
-    }
+    assert(index < nb_files);
     return directories[index];
 }
 
-unsigned long long int Directory::sum_size()
+long double Directory::sum_size()
 {
-    unsigned long long int sum = 0;
+    long double sum = 0;
 
     unsigned long long int i;
     for(i=0; i < nb_files; ++i)
@@ -160,14 +156,4 @@ unsigned long long int Directory::sum_size()
     if(sum > 0) empty = false;
 
     return sum;
-}
-
-void Directory::list_directory() const
-{
-    unsigned long long int i;
-    for(i=0; i < nb_files; ++i)
-        std::cout << files[i]->get_name() << " -- " << files[i]->get_date_human() << " -- " << files[i]->get_size() << " Bytes" << std::endl;
-
-    for(i=0; i < nb_directories; ++i)
-        std::cout << directories[i]->get_name() << " -- " << directories[i]->get_date_human() << " -- " << directories[i]->get_size() << " Bytes" << std::endl;
 }

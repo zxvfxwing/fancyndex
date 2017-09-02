@@ -25,10 +25,11 @@ target_link_libraries(
     app
     boost_system
     boost_filesystem
-    cppcms
+    wthttp
+    wt
 )
 
 add_custom_target(
     run
-    COMMAND app -c ../config.js
+    COMMAND app --docroot . --http-address 0.0.0.0 --http-port 9099
 )

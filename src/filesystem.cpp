@@ -14,7 +14,7 @@ FileSystem::FileSystem(fs::path _path)
                 * To get his real name, need to call `canonical` function.
                 */
                 if(name == ".")
-                    name = fs::canonical(path).filename().string();
+                    name = get_canonical();
             }
             else
                 throw std::runtime_error("This file or directory has no name !");
@@ -53,12 +53,23 @@ std::time_t FileSystem::get_date_raw() const
     return date_raw;
 }
 
-unsigned long long int FileSystem::get_size() const
+/*
+    return size
+*/
+long double FileSystem::get_size() const
 {
     return size;
 }
 
-void FileSystem::set_size(const unsigned long long int& _size)
+/*
+    return size
+*/
+std::string FileSystem::get_size_str() const
+{
+    return std::to_string(size);
+}
+
+void FileSystem::set_size(const long double& _size)
 {
     size = _size;
 }
@@ -80,4 +91,9 @@ std::string FileSystem::maketime_readable(bool use_localtime)
     }
 
     return buffer;
+}
+
+std::string FileSystem::get_canonical() const
+{
+    return fs::canonical(path).filename().string();
 }
