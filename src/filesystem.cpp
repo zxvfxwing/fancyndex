@@ -7,17 +7,24 @@ FileSystem::FileSystem(fs::path _path)
     {
         if(fs::exists(path))
         {
-            if(path.has_filename())
+            if(path.has_filename()){
                 name = path.filename().string();
+                /*
+                * if name == ".", means that we are on the source directory
+                * To get his real name, need to call `canonical` function.
+                */
+                if(name == ".")
+                    name = fs::canonical(path).filename().string();
+            }
             else
-                throw std::runtime_error("No filename found for " + path.root_path().string());
+                throw std::runtime_error("This file or directory has no name !");
 
             date_raw = fs::last_write_time(path);
             date_human = this->maketime_readable();
         }
         else
         {
-            throw std::runtime_error(path.root_path().string() + " doesn't exists !");
+            throw std::runtime_error("Path given doesn't exists ...");
         }
     }
     catch(const fs::filesystem_error& ex)

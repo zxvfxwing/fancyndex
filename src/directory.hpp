@@ -20,6 +20,7 @@ private:
     void add_a_file(fs::path);
     void add_a_directory(fs::path);
     void run_directory(fs::path);
+    unsigned long long int sum_size();
 
 public:
     Directory(fs::path);
@@ -31,7 +32,7 @@ public:
     File* get_file(unsigned long long int) const;
     Directory** get_directories() const;
     Directory* get_directory(unsigned long long int) const;
-    unsigned long long int sum_size();
+
 };
 
 #endif //DIRECTORY_HPP
