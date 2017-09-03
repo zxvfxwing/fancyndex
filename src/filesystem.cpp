@@ -56,7 +56,7 @@ std::time_t FileSystem::get_date_raw() const
 /*
     return size
 */
-long double FileSystem::get_size() const
+unsigned long long int FileSystem::get_size() const
 {
     return size;
 }
@@ -69,7 +69,7 @@ std::string FileSystem::get_size_str() const
     return std::to_string(size);
 }
 
-void FileSystem::set_size(const long double& _size)
+void FileSystem::set_size(const unsigned long long int& _size)
 {
     size = _size;
 }

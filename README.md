@@ -1,14 +1,15 @@
 # __Fancyndex__ #
 
 ## *A fancy web index to list your favorites directories & files.* ##
-__Built with [Wt, C++ Web Toolkit](https://www.webtoolkit.eu/wt/) & [Boost/Filesystem library](http://www.boost.org/doc/libs/1_65_0/libs/filesystem/doc/index.htm).__
+__Built with [Silicon C++ Web Framework](http://siliconframework.org/), [JSON for Modern C++](https://github.com/nlohmann/json) & [Boost/Filesystem library](http://www.boost.org/doc/libs/1_65_0/libs/filesystem/doc/index.htm).__
 
 ### Dependencies :
 #### ArchLinux
 > AUR Packages, I suggest to use `pacaur` (do the job for Arch non-User Repositories like `pacman`).
 
 ```
-pacaur -S wt
+pacaur -S iod-git (AUR)
+pacaur -S silicon-git (AUR)
 pacaur -S boost
 pacaur -S boost-libs
 ```
@@ -44,8 +45,9 @@ Done :
 
 
 > TODO :
->- Web interface (0.2) ;
->- Bootstrap (0.2.5) ;
+>- C++ API server (0.2) ;
+>- Bootstrap (1.0) ;
+>- Web interface - JQuery & AJAX (1.2) ;
 >- Documentation ;
 >- Nginx reverse-proxy doc ;
 >- Create thumbnails for images & videos ;

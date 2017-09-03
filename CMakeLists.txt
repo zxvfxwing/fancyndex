@@ -16,6 +16,7 @@ add_executable(
 target_compile_options(
     app
     PUBLIC
+    -std=c++14
     -Wall
     -Wextra
     -pedantic-errors
@@ -25,11 +26,15 @@ target_link_libraries(
     app
     boost_system
     boost_filesystem
-    wthttp
-    wt
+    microhttpd
 )
 
 add_custom_target(
     run
-    COMMAND app --docroot . --http-address 0.0.0.0 --http-port 9099
+    COMMAND app
+)
+
+add_custom_target(
+    symbol
+    COMMAND iod_generate_symbols ../src/*.cpp ../src/symbols.hh
 )

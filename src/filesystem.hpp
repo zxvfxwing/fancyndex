@@ -16,11 +16,11 @@ private:
     std::string name;
     std::string date_human;
     std::time_t date_raw;
-    long double size;
+    unsigned long long int size;
     std::string maketime_readable(bool =true);
 
 protected:
-    void set_size(const long double &);
+    void set_size(const unsigned long long int &);
 
 public:
     FileSystem(fs::path);
@@ -29,7 +29,7 @@ public:
     std::string get_name() const;
     std::string get_date_human() const;
     std::time_t get_date_raw() const;
-    long double get_size() const;
+    unsigned long long int get_size() const;
     std::string get_size_str() const;
 };
 
