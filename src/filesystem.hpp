@@ -14,9 +14,11 @@ class FileSystem
 private:
     fs::path path;
     std::string name;
-    std::string date_human;
     std::time_t date_raw;
+    std::string date_human;
     unsigned long long int size;
+    bool dotfile;
+
     void maketime_readable(bool =true);
 
 protected:
@@ -32,6 +34,7 @@ public:
     std::time_t get_date_raw() const;
     unsigned long long int get_size() const;
     std::string get_size_str() const;
+    bool is_dotfile() const;
 };
 
 #endif //FILESYSTEM_HPP

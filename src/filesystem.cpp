@@ -1,7 +1,12 @@
 #include "filesystem.hpp"
 
 FileSystem::FileSystem(fs::path _path)
-    :path(_path)
+    :path(_path),
+    name(""),
+    date_raw(0),
+    date_human(""),
+    size(0),
+    dotfile(false)
 {
     try
     {
@@ -15,6 +20,10 @@ FileSystem::FileSystem(fs::path _path)
                 */
                 if(name == ".")
                     name = get_canonical();
+
+                if( name[0] == '.' ){
+                    dotfile = true;
+                }
             }
             else
                 throw std::runtime_error("This file or directory has no name !");
@@ -101,4 +110,9 @@ std::string FileSystem::get_canonical() const
 std::string FileSystem::get_absolute() const
 {
     return fs::absolute(path).string();
+}
+
+bool FileSystem::is_dotfile() const
+{
+    return dotfile;
 }

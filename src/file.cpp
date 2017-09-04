@@ -3,8 +3,7 @@
 File::File(fs::path file)
     :FileSystem(file),
     extension(""),
-    extension_ok(false),
-    dotfile(false)
+    extension_ok(false)
 {
     try {
         if(fs::is_regular_file(file)){
@@ -15,8 +14,7 @@ File::File(fs::path file)
                 *   Indeed, path.extension().string() == path.filename().string() here.
                 *   It's part of our job to fix it :
                 */
-                if( name[0] == '.' ){
-                    dotfile = true;
+                if( is_dotfile() ){
                     /*
                     * Find last occurence of dot in the dotfile to get the actual extension
                     * Begin from string last character.
@@ -62,9 +60,4 @@ std::string File::get_extension() const
 bool File::is_extension_ok() const
 {
     return extension_ok;
-}
-
-bool File::is_dotfile() const
-{
-    return dotfile;
 }

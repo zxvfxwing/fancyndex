@@ -1,7 +1,6 @@
 # __Fancyndex__ #
 
 ## *A fancy web index to list your favorites directories & files.* ##
-__Built with [Silicon C++ Web Framework](http://siliconframework.org/), [JSON for Modern C++](https://github.com/nlohmann/json) & [Boost/Filesystem library](http://www.boost.org/doc/libs/1_65_0/libs/filesystem/doc/index.htm).__
 
 ### Dependencies :
 #### ArchLinux
@@ -31,6 +30,8 @@ make run
 ```
 
 Let's visit http://localhost:9099
+[ ... ]
+Documentation will come
 
 ## __version 0.1__ ##
 
