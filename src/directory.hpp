@@ -12,7 +12,7 @@ private:
     bool empty;
     unsigned long long int nb_files;
     unsigned long long int nb_directories;
-    unsigned long long int nb_elements; // Total files in this directory + all sub-directory
+    unsigned long long int nb_elements;
     File** files;
     Directory** directories;
 

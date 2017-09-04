@@ -8,10 +8,8 @@ FileSystem::FileSystem(fs::path _path)
     size(0),
     dotfile(false)
 {
-    try
-    {
-        if(fs::exists(path))
-        {
+    try {
+        if(fs::exists(path)){
             if(path.has_filename()){
                 name = path.filename().string();
                 /*
@@ -31,13 +29,11 @@ FileSystem::FileSystem(fs::path _path)
             date_raw = fs::last_write_time(path);
             maketime_readable();
         }
-        else
-        {
+        else{
             throw std::runtime_error("Path given doesn't exists ...");
         }
     }
-    catch(const fs::filesystem_error& ex)
-    {
+    catch(const fs::filesystem_error& ex){
         std::cerr << ex.what() << std::endl;
     }
 }
@@ -88,14 +84,12 @@ void FileSystem::maketime_readable(bool use_localtime)
     struct tm* timeinfo;
     char buffer[80];
 
-    try
-    {
+    try{
         if(use_localtime)   timeinfo = localtime(&date_raw);
         else                timeinfo = gmtime(&date_raw);
         strftime(buffer, 80, "%F %T", timeinfo);
     }
-    catch(std::exception& e)
-    {
+    catch(std::exception& e){
         std::cerr << "Something went wrong when making the timestamp readable for human : " << e.what() << std::endl;
     }
 

@@ -166,7 +166,7 @@ unsigned long long int Directory::sum_size()
 }
 
 /*
-* Calcul the total number of files (empty directory count as +1 element)
+* Calcul the total number of files
 * in this directory and all his sub-directory
 */
 void Directory::sum_elements()

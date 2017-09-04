@@ -14,6 +14,10 @@ using json = nlohmann::json;
 // Define the API:
 auto filesystem_api = http_api(
 
+    /*
+    *   GET:
+    *   https://your.domain.name?path=the/path/you/want/to/be/found
+    */
     GET / get_parameters(_path = std::string()) = [] (auto param) {
 
         std::string home = "/home/spoken/Git/";
