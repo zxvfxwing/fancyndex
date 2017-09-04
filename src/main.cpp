@@ -14,14 +14,10 @@ using json = nlohmann::json;
 // Define the API:
 auto filesystem_api = http_api(
 
-    GET / _directory * get_parameters(_path = std::string())   = [] (auto param) {
+    GET / get_parameters(_path = std::string()) = [] (auto param) {
 
-        if(param.path == "__home__")
-            param.path = ".";
-
-        std::cout << param.path << std::endl;
-
-        fs::path p(param.path);
+        std::string home = "/home/spoken/Git/";
+        fs::path p(home + param.path);
 
         if(!fs::exists(p))
             throw error::unauthorized("The path ", param.path, " doesn't exists");
@@ -31,17 +27,24 @@ auto filesystem_api = http_api(
 
         json j;
 
-        j["root_name"] = dir->get_name();
+        if( dir->get_absolute() == home+"." )
+            j["root_name"] = "Home";
+        else
+            j["root_name"] = dir->get_name();
+
         j["full_size"] = dir->get_size();
+        j["total_nb_elements"] = dir->get_nb_elements();
 
         for(i=0; i < dir->get_nb_files(); ++i){
             j["files"][i]["name"] = dir->get_file(i)->get_name();
             j["files"][i]["size"] = dir->get_file(i)->get_size();
+            j["files"][i]["extension"] = dir->get_file(i)->get_extension();
         }
 
         for(i=0; i < dir->get_nb_directories(); ++i){
             j["directories"][i]["name"] = dir->get_directory(i)->get_name();
             j["directories"][i]["size"] = dir->get_directory(i)->get_size();
+            j["directories"][i]["nb_elements"] = dir->get_directory(i)->get_nb_elements();
         }
 
         delete dir;

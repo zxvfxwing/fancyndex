@@ -12,6 +12,7 @@ private:
     bool empty;
     unsigned long long int nb_files;
     unsigned long long int nb_directories;
+    unsigned long long int nb_elements; // Total files in this directory + all sub-directory
     File** files;
     Directory** directories;
 
@@ -20,7 +21,8 @@ private:
     void add_a_file(fs::path);
     void add_a_directory(fs::path);
     void run_directory(fs::path);
-    long double sum_size();
+    unsigned long long int sum_size();
+    void sum_elements();
 
 public:
     Directory(fs::path);
@@ -28,6 +30,7 @@ public:
     bool is_empty() const;
     unsigned long long int get_nb_files() const;
     unsigned long long int get_nb_directories() const;
+    unsigned long long int get_nb_elements() const;
     File** get_files() const;
     File* get_file(unsigned long long int) const;
     Directory** get_directories() const;

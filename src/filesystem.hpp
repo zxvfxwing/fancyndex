@@ -17,7 +17,7 @@ private:
     std::string date_human;
     std::time_t date_raw;
     unsigned long long int size;
-    std::string maketime_readable(bool =true);
+    void maketime_readable(bool =true);
 
 protected:
     void set_size(const unsigned long long int &);
@@ -26,6 +26,7 @@ public:
     FileSystem(fs::path);
     ~FileSystem();
     std::string get_canonical() const;
+    std::string get_absolute() const;
     std::string get_name() const;
     std::string get_date_human() const;
     std::time_t get_date_raw() const;

@@ -20,7 +20,7 @@ FileSystem::FileSystem(fs::path _path)
                 throw std::runtime_error("This file or directory has no name !");
 
             date_raw = fs::last_write_time(path);
-            date_human = this->maketime_readable();
+            maketime_readable();
         }
         else
         {
@@ -62,7 +62,7 @@ unsigned long long int FileSystem::get_size() const
 }
 
 /*
-    return size
+    return size as str
 */
 std::string FileSystem::get_size_str() const
 {
@@ -74,7 +74,7 @@ void FileSystem::set_size(const unsigned long long int& _size)
     size = _size;
 }
 
-std::string FileSystem::maketime_readable(bool use_localtime)
+void FileSystem::maketime_readable(bool use_localtime)
 {
     struct tm* timeinfo;
     char buffer[80];
@@ -90,10 +90,15 @@ std::string FileSystem::maketime_readable(bool use_localtime)
         std::cerr << "Something went wrong when making the timestamp readable for human : " << e.what() << std::endl;
     }
 
-    return buffer;
+    date_human = buffer;
 }
 
 std::string FileSystem::get_canonical() const
 {
     return fs::canonical(path).filename().string();
+}
+
+std::string FileSystem::get_absolute() const
+{
+    return fs::absolute(path).string();
 }

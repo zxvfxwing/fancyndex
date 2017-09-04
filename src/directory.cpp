@@ -5,6 +5,7 @@ Directory::Directory(fs::path directory)
     empty(true),
     nb_files(0),
     nb_directories(0),
+    nb_elements(0),
     files(NULL),
     directories(NULL)
 {
@@ -14,6 +15,7 @@ Directory::Directory(fs::path directory)
         {
             run_directory(directory);
             set_size(sum_size());
+            sum_elements();
         }
         else
         {
@@ -120,6 +122,11 @@ unsigned long long int Directory::get_nb_directories() const
     return nb_directories;
 }
 
+unsigned long long int Directory::get_nb_elements() const
+{
+    return nb_elements;
+}
+
 File** Directory::get_files() const
 {
     return files;
@@ -138,13 +145,13 @@ Directory** Directory::get_directories() const
 
 Directory* Directory::get_directory(unsigned long long int index) const
 {
-    assert(index < nb_files);
+    assert(index < nb_directories);
     return directories[index];
 }
 
-long double Directory::sum_size()
+unsigned long long int Directory::sum_size()
 {
-    long double sum = 0;
+    unsigned long long int sum = 0;
 
     unsigned long long int i;
     for(i=0; i < nb_files; ++i)
@@ -156,4 +163,19 @@ long double Directory::sum_size()
     if(sum > 0) empty = false;
 
     return sum;
+}
+
+/*
+* Calcul the total number of files (empty directory count as +1 element)
+* in this directory and all his sub-directory
+*/
+void Directory::sum_elements()
+{
+    unsigned long long int i;
+    for(i=0; i < nb_directories; ++i){
+        nb_elements += directories[i]->get_nb_elements();
+    }
+
+    nb_elements += nb_files; // each files of a directory == one element.
+    ++nb_elements; // the directory himself count as one element (works with recursion)
 }

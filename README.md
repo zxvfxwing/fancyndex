@@ -8,6 +8,7 @@ __Built with [Silicon C++ Web Framework](http://siliconframework.org/), [JSON fo
 > AUR Packages, I suggest to use `pacaur` (do the job for Arch non-User Repositories like `pacman`).
 
 ```
+pacaur -S libmicrohttpd
 pacaur -S iod-git (AUR)
 pacaur -S silicon-git (AUR)
 pacaur -S boost
