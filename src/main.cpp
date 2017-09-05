@@ -11,16 +11,27 @@ using namespace s; // Symbols namespace
 // for convenience
 using json = nlohmann::json;
 
+/*
+* Make an API classt to serve only json.dump() here
+* API :
+*   - calcul All without dotfile ;
+*   - get human size ;
+*   - sort by Name ;
+*   - sort by Size ;
+*   - 
+*
+*/
+
 // Define the API:
 auto filesystem_api = http_api(
 
     /*
     *   GET:
-    *   https://your.domain.name?path=the/path/you/want/to/be/found
+    *   https://your.domain.name/directory?path=the/path/you/want/to/be/found
     */
-    GET / get_parameters(_path = std::string()) = [] (auto param) {
+    GET / _directory * get_parameters(_path = std::string()) = [] (auto param) {
 
-        std::string home = "/home/spoken/Git/";
+        std::string home = "/var/www/";
         fs::path p(home + param.path);
 
         if(!fs::exists(p))
@@ -36,18 +47,23 @@ auto filesystem_api = http_api(
         else
             j["root_name"] = dir->get_name();
 
+
         j["full_size"] = dir->get_size();
         j["total_nb_elements"] = dir->get_nb_elements();
+        j["nb_files"] = dir->get_nb_files();
+        j["nb_directories"] = dir->get_nb_directories();
 
         for(i=0; i < dir->get_nb_files(); ++i){
             j["files"][i]["name"] = dir->get_file(i)->get_name();
             j["files"][i]["size"] = dir->get_file(i)->get_size();
+            j["files"][i]["date"] = dir->get_file(i)->get_date_human();
             j["files"][i]["extension"] = dir->get_file(i)->get_extension();
         }
 
         for(i=0; i < dir->get_nb_directories(); ++i){
             j["directories"][i]["name"] = dir->get_directory(i)->get_name();
             j["directories"][i]["size"] = dir->get_directory(i)->get_size();
+            j["directories"][i]["date"] = dir->get_directory(i)->get_date_human();
             j["directories"][i]["nb_elements"] = dir->get_directory(i)->get_nb_elements();
         }
 

@@ -1,0 +1,10 @@
+location / {
+	add_header "Access-Control-Allow-Origin" *;
+}
+
+location /api/ {
+	proxy_pass http://127.0.0.1:9099/;
+}
+
+// Redirect http://127.0.0.1/api/<something>
+//          -> http://127.0.0.1:9099/<something>
