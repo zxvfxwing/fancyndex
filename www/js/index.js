@@ -11,7 +11,7 @@ $(document).ready(function(){
     * GET parameters
     * regex rule
     */
-    var path = document.URL.match(/path=([A-Za-z0-9_./]+)/)
+    var path = document.URL.match(/path=([A-Za-z0-9_./]+)/);
 
     if(path === undefined || path === null)
         path = home;

@@ -5,11 +5,6 @@
     iod_define_symbol(directory)
 #endif
 
-#ifndef IOD_SYMBOL_file
-#define IOD_SYMBOL_file
-    iod_define_symbol(file)
-#endif
-
 #ifndef IOD_SYMBOL_path
 #define IOD_SYMBOL_path
     iod_define_symbol(path)

@@ -9,7 +9,20 @@ FileSystem::FileSystem(fs::path _path)
     dotfile(false)
 {
     try {
-        if(fs::exists(path)){
+
+        /*
+        *   Need to work with sym_link
+        *
+        *
+        *
+        *
+        */
+        if(fs::is_symlink(path)){
+            std::cout << path.filename().string() << std::endl;
+            std::cout << fs::read_symlink(path).filename().string() << std::endl;
+        }
+
+        else if(fs::exists(path)){
             if(path.has_filename()){
                 name = path.filename().string();
                 /*

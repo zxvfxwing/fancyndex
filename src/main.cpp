@@ -18,7 +18,7 @@ using json = nlohmann::json;
 *   - get human size ;
 *   - sort by Name ;
 *   - sort by Size ;
-*   - 
+*   -
 *
 */
 
@@ -31,14 +31,28 @@ auto filesystem_api = http_api(
     */
     GET / _directory * get_parameters(_path = std::string()) = [] (auto param) {
 
-        std::string home = "/var/www/";
-        fs::path p(home + param.path);
+        std::string home = "/home/spoken/Git/";
+        std::string r_path = home + param.path;
 
-        if(!fs::exists(p))
+        std::cout << r_path << std::endl;
+
+        fs::path p(r_path);
+
+        std::cout << fs::exists(p) << std::endl;
+        std::cout << p.filename().string() << std::endl;
+
+        if(!fs::exists(p)){
+            std::cout << "FAIL" << std::endl;
             throw error::unauthorized("The path ", param.path, " doesn't exists");
+        }
+
 
         Directory* dir = new Directory(p);
         unsigned long long int i;
+
+
+        std::cout << dir->get_absolute() << std::endl;
+
 
         json j;
 
