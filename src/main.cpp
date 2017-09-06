@@ -34,54 +34,58 @@ auto filesystem_api = http_api(
         std::string home = "/home/spoken/Git/";
         std::string r_path = home + param.path;
 
-        std::cout << r_path << std::endl;
-
         fs::path p(r_path);
-
-        std::cout << fs::exists(p) << std::endl;
-        std::cout << p.filename().string() << std::endl;
-
+        
         if(!fs::exists(p)){
             std::cout << "FAIL" << std::endl;
             throw error::unauthorized("The path ", param.path, " doesn't exists");
         }
 
-
         Directory* dir = new Directory(p);
         unsigned long long int i;
 
-
-        std::cout << dir->get_absolute() << std::endl;
-
-
+        // std::cout << dir->get_absolute() << std::endl;
         json j;
+
+        /*
+        * JSON in alphabetic order :
+        */
+
+        // DIRECTORY HIMSELF
+        j["full_size"] = dir->get_size();
+        j["nb_directories"] = dir->get_nb_directories();
+        j["nb_files"] = dir->get_nb_files();
 
         if( dir->get_absolute() == home+"." )
             j["root_name"] = "Home";
         else
             j["root_name"] = dir->get_name();
 
-
-        j["full_size"] = dir->get_size();
         j["total_nb_elements"] = dir->get_nb_elements();
-        j["nb_files"] = dir->get_nb_files();
-        j["nb_directories"] = dir->get_nb_directories();
+        // END DIRECTORY HIMSELF
 
+        // FILES
         for(i=0; i < dir->get_nb_files(); ++i){
+            j["files"][i]["extension"] = dir->get_file(i)->get_extension();
+            j["files"][i]["date"] = dir->get_file(i)->get_date_human();
             j["files"][i]["name"] = dir->get_file(i)->get_name();
             j["files"][i]["size"] = dir->get_file(i)->get_size();
-            j["files"][i]["date"] = dir->get_file(i)->get_date_human();
-            j["files"][i]["extension"] = dir->get_file(i)->get_extension();
         }
+        // END FILES
 
+        // DIRECTORIES
         for(i=0; i < dir->get_nb_directories(); ++i){
-            j["directories"][i]["name"] = dir->get_directory(i)->get_name();
-            j["directories"][i]["size"] = dir->get_directory(i)->get_size();
             j["directories"][i]["date"] = dir->get_directory(i)->get_date_human();
+            j["directories"][i]["name"] = dir->get_directory(i)->get_name();
             j["directories"][i]["nb_elements"] = dir->get_directory(i)->get_nb_elements();
+            j["directories"][i]["size"] = dir->get_directory(i)->get_size();
         }
+        // END DIRECTORIES
 
+        // delete Directory instance :
         delete dir;
+
+        // Parse JSON into std::string and return it
         return j.dump();
     }
 );

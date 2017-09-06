@@ -6,23 +6,11 @@ FileSystem::FileSystem(fs::path _path)
     date_raw(0),
     date_human(""),
     size(0),
-    dotfile(false)
+    dotfile(false),
+    type(true)
 {
     try {
-
-        /*
-        *   Need to work with sym_link
-        *
-        *
-        *
-        *
-        */
-        if(fs::is_symlink(path)){
-            std::cout << path.filename().string() << std::endl;
-            std::cout << fs::read_symlink(path).filename().string() << std::endl;
-        }
-
-        else if(fs::exists(path)){
+        if(fs::exists(path)){
             if(path.has_filename()){
                 name = path.filename().string();
                 /*
@@ -30,11 +18,14 @@ FileSystem::FileSystem(fs::path _path)
                 * To get his real name, need to call `canonical` function.
                 */
                 if(name == ".")
-                    name = get_canonical();
+                    name = get_canonical_name();
 
                 if( name[0] == '.' ){
                     dotfile = true;
                 }
+
+                if(fs::is_directory(path))
+                    type = false;
             }
             else
                 throw std::runtime_error("This file or directory has no name !");
@@ -43,7 +34,11 @@ FileSystem::FileSystem(fs::path _path)
             maketime_readable();
         }
         else{
-            throw std::runtime_error("Path given doesn't exists ...");
+            if(fs::is_symlink(path)){
+                throw std::runtime_error("Wrong symbolic link, check Documentation (git).");
+            }
+            else
+                throw std::runtime_error("Path given doesn't exists ...");
         }
     }
     catch(const fs::filesystem_error& ex){
@@ -111,6 +106,11 @@ void FileSystem::maketime_readable(bool use_localtime)
 
 std::string FileSystem::get_canonical() const
 {
+    return fs::canonical(path).string();
+}
+
+std::string FileSystem::get_canonical_name() const
+{
     return fs::canonical(path).filename().string();
 }
 
@@ -122,4 +122,14 @@ std::string FileSystem::get_absolute() const
 bool FileSystem::is_dotfile() const
 {
     return dotfile;
+}
+
+/*
+*   Get the type (File or Directory) of an entry.
+*   `true` == file
+*   `false` == directory
+*/
+bool FileSystem::get_type() const
+{
+    return type;
 }

@@ -1,10 +1,11 @@
+#include "symlink.hpp"
+
 #ifndef DIRECTORY_HPP
 #define DIRECTORY_HPP
 
 #include "filesystem.hpp"
 #include "file.hpp"
 
-namespace fs = boost::filesystem;
 
 class Directory : public FileSystem
 {

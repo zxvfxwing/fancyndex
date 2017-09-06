@@ -69,8 +69,7 @@ void Directory::add_a_file(fs::path path_file)
 {
     File** array = new File* [++nb_files];
 
-    if(nb_files > 1)
-    {
+    if(nb_files > 1){
         unsigned long long int i;
         for(i=0; i < nb_files-1; ++i)
             array[i] = files[i];
@@ -100,10 +99,24 @@ void Directory::run_directory(fs::path dir)
     try{
         for(fs::directory_entry& entry: fs::directory_iterator(dir))
         {
-            if(fs::is_directory(entry))
-                add_a_directory(entry);
-            else
-                add_a_file(entry);
+            if(fs::is_symlink(entry)){
+
+                Symlink* sk = new Symlink(entry);
+                if(sk->get_type()){
+                    add_a_file(sk->get_path());
+                }
+                else{
+                    add_a_directory(sk->get_path());
+                }
+
+                delete sk;
+            }
+            else{
+                if(fs::is_directory(entry))
+                    add_a_directory(entry);
+                else
+                    add_a_file(entry);
+            }
         }
     }
     catch(const fs::filesystem_error& e)

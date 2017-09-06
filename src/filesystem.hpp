@@ -18,6 +18,7 @@ private:
     std::string date_human;
     unsigned long long int size;
     bool dotfile;
+    bool type;
 
     void maketime_readable(bool =true);
 
@@ -27,6 +28,7 @@ protected:
 public:
     FileSystem(fs::path);
     ~FileSystem();
+    std::string get_canonical_name() const;
     std::string get_canonical() const;
     std::string get_absolute() const;
     std::string get_name() const;
@@ -35,6 +37,7 @@ public:
     unsigned long long int get_size() const;
     std::string get_size_str() const;
     bool is_dotfile() const;
+    bool get_type() const;
 };
 
 #endif //FILESYSTEM_HPP

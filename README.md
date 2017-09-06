@@ -55,3 +55,17 @@ Done :
 >- Create thumbnails for images & videos ;
 >- Create zip archive on the fly ;
 >- Database to count the number of downloads.
+
+
+
+symbolic link works only with real construction path
+i.e. :
+
+ln -s /home/user/directory /home/user/example/
+symlink of /home/user/example/directory --> /home/user/directory
+
+
+cd /home/user/example
+ln -s ../directory /home/user/example/
+symlink of /home/user/example/directory --> ../directory/
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^------ NOT WORKING
