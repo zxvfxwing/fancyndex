@@ -31,7 +31,7 @@ auto filesystem_api = http_api(
     */
     GET / _directory * get_parameters(_path = std::string()) = [] (auto param) {
 
-        std::string home = "/home/spoken/Git/fancyndex/www/";
+        std::string home = "/var/www/fancyndex/www";
         std::string r_path = home + param.path;
 
         fs::path p(r_path);
