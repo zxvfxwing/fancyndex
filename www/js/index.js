@@ -5,7 +5,18 @@ const url = "http://localhost/?path=";
 var root;
 var actual_dir;
 
+
 $(document).ready(function(){
+
+    /*
+    $.ajaxSetup({
+        Headers: {
+            "Access-Control-Allow-Origin": "*"
+        }
+    });
+    */
+
+
     /*
     * GET parameters
     * regex rule
@@ -141,15 +152,10 @@ function update_nav(path){
             arr[0] = home_index_name;
 
         $(".nav").append("<li class=\"nav-item active\"><button type=\"button\" class=\"btn btn-outline-primary\">"+ arr[i] +"</button></li>");
-        //$(".nav").append("<li class=\"nav-item\">/</li>");
-
-        //$(".breadcrumb").append("<li class=\"breadcrumb-item inactive\">" + arr[i] + "</li>");
 
         if(i == (arr.length-1)){
             $("li:last-child").toggleClass("active disable");
             $(".disable > .btn").toggleClass("btn-outline-primary btn-outline-secondary");
-            //$(".breadcrumb .breadcrumb-item:last-child").toggleClass("inactive active");
-            //$(".breadcrumb .breadcrumb-item:last-child").removeClass("inactive");
         }
     }
 }
