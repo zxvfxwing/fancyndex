@@ -10,6 +10,11 @@
     iod_define_symbol(path)
 #endif
 
+#ifndef IOD_SYMBOL_root
+#define IOD_SYMBOL_root
+    iod_define_symbol(root)
+#endif
+
 #ifndef IOD_SYMBOL_size
 #define IOD_SYMBOL_size
     iod_define_symbol(size)

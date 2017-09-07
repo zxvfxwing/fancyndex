@@ -31,11 +31,11 @@ auto filesystem_api = http_api(
     */
     GET / _directory * get_parameters(_path = std::string()) = [] (auto param) {
 
-        std::string home = "/home/spoken/Git/";
+        std::string home = "/home/spoken/Git/fancyndex/www/";
         std::string r_path = home + param.path;
 
         fs::path p(r_path);
-        
+
         if(!fs::exists(p)){
             std::cout << "FAIL" << std::endl;
             throw error::unauthorized("The path ", param.path, " doesn't exists");
@@ -86,6 +86,12 @@ auto filesystem_api = http_api(
         delete dir;
 
         // Parse JSON into std::string and return it
+        return j.dump();
+    },
+
+    GET / _root = [] () {
+        json j;
+        j["root"] = "/home/spoken/Git/fancyndex/www";
         return j.dump();
     }
 );

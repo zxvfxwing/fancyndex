@@ -6,8 +6,7 @@ FileSystem::FileSystem(fs::path _path)
     date_raw(0),
     date_human(""),
     size(0),
-    dotfile(false),
-    type(true)
+    dotfile(false)
 {
     try {
         if(fs::exists(path)){
@@ -23,9 +22,6 @@ FileSystem::FileSystem(fs::path _path)
                 if( name[0] == '.' ){
                     dotfile = true;
                 }
-
-                if(fs::is_directory(path))
-                    type = false;
             }
             else
                 throw std::runtime_error("This file or directory has no name !");
@@ -122,14 +118,4 @@ std::string FileSystem::get_absolute() const
 bool FileSystem::is_dotfile() const
 {
     return dotfile;
-}
-
-/*
-*   Get the type (File or Directory) of an entry.
-*   `true` == file
-*   `false` == directory
-*/
-bool FileSystem::get_type() const
-{
-    return type;
 }

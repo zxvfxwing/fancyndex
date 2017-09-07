@@ -18,7 +18,6 @@ private:
     std::string date_human;
     unsigned long long int size;
     bool dotfile;
-    bool type;
 
     void maketime_readable(bool =true);
 
@@ -37,7 +36,6 @@ public:
     unsigned long long int get_size() const;
     std::string get_size_str() const;
     bool is_dotfile() const;
-    bool get_type() const;
 };
 
 #endif //FILESYSTEM_HPP

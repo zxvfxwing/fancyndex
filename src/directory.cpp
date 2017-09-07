@@ -100,16 +100,10 @@ void Directory::run_directory(fs::path dir)
         for(fs::directory_entry& entry: fs::directory_iterator(dir))
         {
             if(fs::is_symlink(entry)){
-
-                Symlink* sk = new Symlink(entry);
-                if(sk->get_type()){
-                    add_a_file(sk->get_path());
-                }
-                else{
-                    add_a_directory(sk->get_path());
-                }
-
-                delete sk;
+                if(fs::is_directory(entry))
+                    add_a_directory(fs::read_symlink(entry));
+                else
+                    add_a_file(fs::read_symlink(entry));
             }
             else{
                 if(fs::is_directory(entry))
