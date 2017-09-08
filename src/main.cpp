@@ -84,7 +84,7 @@ auto filesystem_api = http_api(
         delete dir;
 
         // Parse JSON into std::string and return it
-        return j.dump();
+        return j.dump(4);
     }
 );
 
