@@ -19,7 +19,6 @@ using json = nlohmann::json;
 *   - sort by Name ;
 *   - sort by Size ;
 *   -
-*
 */
 
 // Define the API:
@@ -31,20 +30,19 @@ auto filesystem_api = http_api(
     */
     GET / _directory * get_parameters(_path = std::string()) = [] (auto param) {
 
-        std::string home = "/var/www/fancyndex/www";
+        std::string home = "../../";
         std::string r_path = home + param.path;
 
         fs::path p(r_path);
 
         if(!fs::exists(p)){
-            std::cout << "FAIL" << std::endl;
+            std::cout << "Path given doesn't exists !" << std::endl;
             throw error::unauthorized("The path ", param.path, " doesn't exists");
         }
 
         Directory* dir = new Directory(p);
         unsigned long long int i;
 
-        // std::cout << dir->get_absolute() << std::endl;
         json j;
 
         /*
@@ -56,7 +54,7 @@ auto filesystem_api = http_api(
         j["nb_directories"] = dir->get_nb_directories();
         j["nb_files"] = dir->get_nb_files();
 
-        if( dir->get_absolute() == home+"." )
+        if(  param.path == "." )
             j["root_name"] = "Home";
         else
             j["root_name"] = dir->get_name();
@@ -86,12 +84,6 @@ auto filesystem_api = http_api(
         delete dir;
 
         // Parse JSON into std::string and return it
-        return j.dump();
-    },
-
-    GET / _root = [] () {
-        json j;
-        j["root"] = "/home/spoken/Git/fancyndex/www";
         return j.dump();
     }
 );

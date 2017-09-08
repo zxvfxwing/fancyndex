@@ -3,37 +3,47 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="css/bootstrap-4.0/bootstrap.css">
-        <link rel="stylesheet" href="css/animate.css">
-        <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="./fancyndex/www/css/bootstrap-4.0/bootstrap.css">
+        <link rel="stylesheet" href="./fancyndex/www/css/animate.css">
+        <link rel="stylesheet" href="./fancyndex/www/css/index.css"/>
     </head>
     <body>
-        <div class="container">
+        <div class="container-fluid">
 
             <h1></h1>
-            <p id="p_path"></p>
 
             <ul class="nav justify-content-center">
             </ul>
 
-            <table class="table table-hover" id="dir_elements">
+            <br>
+
+            <button type="button" class="btn btn-warning btn-sm back-button">
+                <img src="./fancyndex/www/icon/open-iconic/svg/arrow-thick-left.svg" width="15">
+                <span class="btn-back-text"></span>
+            </button>
+
+            <br>
+            <br>
+
+            <table class="table table-sm table-hover" id="dir_elements">
                 <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Name</th>
-                        <th>Size</th>
-                        <th>Last Update</th>
+                        <th id="type">Type</th>
+                        <th id="name">Name</th>
+                        <th id="date">Last Update</th>
+                        <th id="size">Size</th>
                     </tr>
                 </thead>
                 <tbody>
-
                 </tbody>
             </table>
         </div>
 
-        <script src="js/popper-1.12.5.js"></script>
-        <script src="js/jquery-3.2.1.js"></script>
-        <script src="js/index.js"></script>
-        <script src="js/bootstrap-4.0/bootstrap.js" ></script>
+        <p id="p_path"></p>
+
+        <script src="./fancyndex/www/js/popper-1.12.5.js"></script>
+        <script src="./fancyndex/www/js/jquery-3.2.1.js"></script>
+        <script src="./fancyndex/www/js/bootstrap-4.0/bootstrap.js" ></script>
+        <script src="./fancyndex/www/js/index.js"></script>
     </body>
 </html>

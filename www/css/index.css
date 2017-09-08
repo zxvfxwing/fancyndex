@@ -1,14 +1,24 @@
-// Extra small devices (portrait phones, less than 576px)
-// No media query since this is the default in Bootstrap
+.tabe #name { width:auto; }
+.table #date { visibility:hidden; }
+.table #size { visibility:hidden; }
 
-// Small devices (landscape phones, 576px and up)
-@media (min-width: 576px) { ... }
+ul {
+    margin-top: 2%;
+}
 
-// Medium devices (tablets, 768px and up)
-@media (min-width: 768px) { ... }
+@media (min-width: 576px) {
+    .table #date { visibility:hidden; }
+}
 
-// Large devices (desktops, 992px and up)
-@media (min-width: 992px) { ... }
+@media (min-width: 768px) {
+    .table #size { visibility:visible; }
+}
 
-// Extra large devices (large desktops, 1200px and up)
-@media (min-width: 1200px) { ... }
+@media (min-width: 992px) {
+    .table #date { visibility:visible; }
+    .table #name { width:60%; }
+}
+
+@media (min-width: 1200px) {
+    .table #name { width:75%; }
+}
