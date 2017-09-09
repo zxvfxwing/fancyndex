@@ -1,5 +1,8 @@
+.table #name    { width:100%; }
 .table #date    { visibility:hidden; }
 .table #size    { visibility:hidden; }
+
+.alert          { text-align:center; }
 
 .main-body      { margin-top: 6%; }
 

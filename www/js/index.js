@@ -1,9 +1,11 @@
 const home = ".";
 const home_index_name = "Home";
-const api_index = "http://192.168.1.61/api";
-const url = "http://192.168.1.61/?path=";
+const api_index = "http://127.0.0.1/api";
+const url = "http://127.0.0.1/?path=";
+
 var root;
 var actual_dir;
+var config_fail = false;
 
 $(document).ready(function(){
     var fixed_url = decode_utf8(window.location.href);
@@ -71,10 +73,27 @@ function api_list_directory(path){
         update_url(path);
         update_nav(path);
         update_back_button(path);
+        config_fail = false;
     });
 
     jqxhr.fail(function(){
-        api_list_directory(home);
+        if( config_fail === false ){
+            api_list_directory(home);
+            config_fail = true;
+        }
+        else {
+            /*
+                If Ajax fails two time in a row, means that there is a mistake somewhere.
+                Display error / information messages :
+            */
+            $("table").hide();
+
+            $("body").append("<div class=\"alert alert-danger\" role=\"alert\"><strong>Wrong API configuration !</strong></div>");
+
+            $("body").append("<div class=\"alert alert-warning\" role=\"alert\"><strong>You may check if the Json API C++ server is running</strong> (fancyndex executable)</div>");
+
+            $("body").append("<div class=\"alert alert-info\" role=\"alert\">Error might comes from <strong> url API configuration </strong>(actual one : <a href=\""+ api_index +"\">"+ api_index +"</a>)</div>");
+        }
     });
 }
 
@@ -151,18 +170,11 @@ function on_click(){
 }
 
 function update_back_button(path){
-    if(path == "."){
-        //$(".back-button").hide();
-    }
-    else {
+    if( path != home ){
         var back_name = "";
         var arr = path.split("/");
-        if( arr.length > 2 ){
-            back_name = arr[arr.length-2];
-        }
-        else{
-            back_name = home_index_name;
-        }
+        if( arr.length > 2 ){ back_name = arr[arr.length-2]; }
+        else                { back_name = home_index_name; }
 
         $(".main-body").prepend("<button type=\"button\" class=\"btn btn-warning btn-sm back-button\"><img src=\"./fancyndex/www/icon/open-iconic/svg/arrow-thick-left.svg\" width=\"15\"> "+ back_name +" </button>");
         $(".back-button").animateCss("slideInLeft");

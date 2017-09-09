@@ -9,12 +9,12 @@ file(
 )
 
 add_executable(
-    app
+    fancyndex
     ${sources}
 )
 
 target_compile_options(
-    app
+    fancyndex
     PUBLIC
     -std=c++14
     -Wall
@@ -23,7 +23,7 @@ target_compile_options(
 )
 
 target_link_libraries(
-    app
+    fancyndex
     boost_system
     boost_filesystem
     microhttpd
@@ -31,7 +31,7 @@ target_link_libraries(
 
 add_custom_target(
     run
-    COMMAND app
+    COMMAND fancyndex
 )
 
 add_custom_target(
