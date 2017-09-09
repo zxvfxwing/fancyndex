@@ -19,7 +19,7 @@ Directory::Directory(fs::path directory)
         }
         else
         {
-            throw std::runtime_error("ERROR: " + directory.filename().string() + " is not a directory.\n");
+            throw std::runtime_error("ERROR: " + get_name() + " is not a directory.\n");
         }
     }
     catch(const fs::filesystem_error& e)
@@ -69,10 +69,11 @@ void Directory::add_a_file(fs::path path_file)
 {
     File** array = new File* [++nb_files];
 
-    if(nb_files > 1){
+    if( nb_files > 1 ){
         unsigned long long int i;
         for(i=0; i < nb_files-1; ++i)
             array[i] = files[i];
+        delete [] files;
     }
 
     files = array;
@@ -88,6 +89,7 @@ void Directory::add_a_directory(fs::path path_dir)
         unsigned long long int i;
         for(i=0; i < nb_directories-1; ++i)
             array[i] = directories[i];
+        delete [] directories;
     }
 
     directories = array;

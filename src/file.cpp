@@ -49,7 +49,7 @@ File::File(fs::path file)
 
 File::~File()
 {
-
+    
 }
 
 std::string File::get_extension() const

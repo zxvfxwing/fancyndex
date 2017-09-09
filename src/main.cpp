@@ -28,7 +28,11 @@ auto filesystem_api = http_api(
     *   GET:
     *   https://your.domain.name/directory?path=the/path/you/want/to/be/found
     */
-    GET / _directory * get_parameters(_path = std::string()) = [] (auto param) {
+    GET / _directory * get_parameters(_path = std::string()) = [] (auto param, mhd_response* r) {
+
+        // Needed HTTP header :
+        r->set_header("Access-Control-Allow-Origin", "*");
+        r->set_header("Content-Type", "application/json; charset=UTF-8");
 
         std::string home = "../../";
         std::string r_path = home + param.path;
@@ -84,7 +88,7 @@ auto filesystem_api = http_api(
         delete dir;
 
         // Parse JSON into std::string and return it
-        return j.dump(4);
+        return j.dump();
     }
 );
 
