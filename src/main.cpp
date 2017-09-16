@@ -1,3 +1,6 @@
+#include <cstdlib>
+#include <ctime>
+
 #include <silicon/api.hh>
 #include <silicon/backends/mhd.hh>
 #include "symbols.hh"
@@ -10,6 +13,9 @@ using namespace s; // Symbols namespace
 
 // for convenience
 using json = nlohmann::json;
+
+time_t timer = time(NULL);
+time_t next_timer = timer + 30;
 
 /*
 * Make an API classt to serve only json.dump() here
@@ -29,12 +35,19 @@ auto filesystem_api = http_api(
     *   https://your.domain.name/directory?path=the/path/you/want/to/be/found
     */
     GET / _directory * get_parameters(_path = std::string()) = [] (auto param, mhd_response* r) {
+        if( time(NULL) == next_timer ){
+            next_timer += 30;
+            std::cerr << timer << " -- " << next_timer << std::endl;
+            //std::string str = system("speedtest-cli --server 5022 --share --json > ./speedtest.js");
+        }
+
+        system("speedtest-cli --server 5022 --share --json > ./speedtest.js");
 
         // Needed HTTP header :
         r->set_header("Access-Control-Allow-Origin", "*");
         r->set_header("Content-Type", "application/json; charset=UTF-8");
 
-        std::string home = "../../";
+        std::string home = "/var/www/";
         std::string r_path = home + param.path;
 
         fs::path p(r_path);
