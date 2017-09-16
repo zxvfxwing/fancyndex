@@ -1,5 +1,8 @@
 #include <cstdlib>
 #include <ctime>
+#include <thread>
+#include <string>
+#include <fstream>
 
 #include <silicon/api.hh>
 #include <silicon/backends/mhd.hh>
@@ -14,8 +17,37 @@ using namespace s; // Symbols namespace
 // for convenience
 using json = nlohmann::json;
 
+unsigned int delay = 180;
 time_t timer = time(NULL);
-time_t next_timer = timer + 30;
+time_t next_timer = timer;
+
+void make_speedtest(){
+    timer = time(NULL);
+
+    if( timer >= next_timer ){
+        next_timer = timer + delay;
+
+        unsigned int i;
+        for(i=0; i < 10; ++i){
+            // count how many iperf3 command are running, 1 is default (one line counted with `wc -l`, the title one) -> 0 running.
+            system("ps -C iperf3 | wc -l > /home/spoken/Git/fancyndex/conf/iperf3_running.txt");
+
+            int is_running;
+            std::ifstream iperf3_file;
+            iperf3_file.open("/home/spoken/Git/fancyndex/conf/iperf3_running.txt");
+            iperf3_file >> is_running;
+            iperf3_file.close();
+
+            // upload to ping.online.net (ipv4) during 20 seconds, get output in json format :
+            if( is_running == 1 ){
+                std::string command = "iperf3 --client ping.online.net --port 520"+std::to_string(i)+" --time 20 --json > /home/spoken/Git/fancyndex/conf/speedtest.js &";
+                system(command.c_str());
+                break;
+            }
+        }
+    }
+}
+
 
 /*
 * Make an API classt to serve only json.dump() here
@@ -35,17 +67,6 @@ auto filesystem_api = http_api(
     *   https://your.domain.name/directory?path=the/path/you/want/to/be/found
     */
     GET / _directory * get_parameters(_path = std::string()) = [] (auto param, mhd_response* r) {
-        if( time(NULL) == next_timer ){
-            next_timer += 30;
-            std::cerr << timer << " -- " << next_timer << std::endl;
-            //std::string str = system("speedtest-cli --server 5022 --share --json > ./speedtest.js");
-        }
-
-        system("speedtest-cli --server 5022 --share --json > ./speedtest.js");
-
-        // Needed HTTP header :
-        r->set_header("Access-Control-Allow-Origin", "*");
-        r->set_header("Content-Type", "application/json; charset=UTF-8");
 
         std::string home = "/var/www/";
         std::string r_path = home + param.path;
@@ -57,9 +78,11 @@ auto filesystem_api = http_api(
             throw error::unauthorized("The path ", param.path, " doesn't exists");
         }
 
+        std::thread t_one(make_speedtest);
         Directory* dir = new Directory(p);
-        unsigned long long int i;
+        t_one.join();
 
+        unsigned long long int i;
         json j;
 
         /*
@@ -99,6 +122,10 @@ auto filesystem_api = http_api(
 
         // delete Directory instance :
         delete dir;
+
+        // Needed HTTP header :
+        r->set_header("Access-Control-Allow-Origin", "*");
+        r->set_header("Content-Type", "application/json; charset=UTF-8");
 
         // Parse JSON into std::string and return it
         return j.dump();
