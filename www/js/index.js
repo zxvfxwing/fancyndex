@@ -6,6 +6,7 @@ const url = "http://127.0.0.1/?path=";
 var root;
 var actual_dir;
 var config_fail = false;
+var nb_downloads = 0;
 
 $(document).ready(function(){
     var fixed_url = decode_utf8(window.location.href);
@@ -21,6 +22,7 @@ $(document).ready(function(){
 
     api_list_directory(path);
     on_click();
+    on_hover();
 });
 
 function api_list_directory(path){
@@ -32,14 +34,14 @@ function api_list_directory(path){
 
         for(i in index.directories){
             $("tbody").append("<tr id=\"tr_"+ i +"\" class=\"directory\"></tr>");
-            $("#tr_"+i).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"15\"></td>");
+            $("#tr_"+i).append("<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>");
+            $("#tr_"+i).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"12\"></td>");
             $("#tr_"+i).append("<td id=\"name\">" + index.directories[i].name + "</td>");
             $("#tr_"+i).append("<td id=\"date\">" + index.directories[i].date + "</td>");
             $("#tr_"+i).append("<td id=\"size\">" + index.directories[i].size + "</td>");
 
-
             var content = "";
-            if( index.directories[i].size > 0 ) { content = "nb elements (" + (index.directories[i].nb_elements-1) + ")"; }
+            if( index.directories[i].size > 0 ) { content = "nb elements (" + (index.directories[i].nb_elements) + ")"; }
             else                                { content = "empty directory"; }
 
             $("#tr_"+i).tooltip(
@@ -60,14 +62,15 @@ function api_list_directory(path){
         for(i in index.files){
             var y = nbd+parseInt(i);
             $("tbody").append("<tr id=\"tr_"+ y +"\" class=\"file\"></tr>");
-            $("#tr_"+y).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"15\"></td>");
+            $("#tr_"+y).append("<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>");
+            $("#tr_"+y).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"12\"></td>");
             $("#tr_"+y).append("<td id=\"name\">" + index.files[i].name + "</td>");
             $("#tr_"+y).append("<td id=\"date\">" + index.files[i].date + "</td>");
             $("#tr_"+y).append("<td id=\"size\">" + index.files[i].size + "</td>");
         }
 
-        $("table").animateCss("fadeIn");
-    })
+        $(".selection").animateCss("fadeIn");
+    });
 
     jqxhr.done(function(){
         update_url(path);
@@ -87,11 +90,8 @@ function api_list_directory(path){
                 Display error / information messages :
             */
             $("table").hide();
-
             $("body").append("<div class=\"alert alert-danger\" role=\"alert\"><strong>Wrong API configuration !</strong></div>");
-
             $("body").append("<div class=\"alert alert-warning\" role=\"alert\"><strong>You may check if the Json API C++ server is running</strong> (fancyndex executable)</div>");
-
             $("body").append("<div class=\"alert alert-info\" role=\"alert\">Error might comes from <strong> url API configuration </strong>(actual one : <a href=\""+ api_index +"\">"+ api_index +"</a>)</div>");
         }
     });
@@ -100,21 +100,21 @@ function api_list_directory(path){
 function on_click(){
 
     // Directory
-    $(document).on("click", ".directory", function(){
-        var size = $(this).find("#size").text();
-        var dir_name = $(this).find("#name").text();
+    $(document).on("click", ".directory #type, .directory #name, .directory #date, .directory #size", function(){
+        var size = $(this).parent().find("#size").text();
+        var dir_name = $(this).parent().find("#name").text();
 
         if( size > 0 ){
-            $(this).tooltip("hide");
+            $(this).parent().tooltip("hide");
             var clicked_dir = actual_dir + "/" + dir_name;
             api_list_directory(clicked_dir);
         }
         else{
-            $(this).addClass("table-danger");
-            $(this).animateCss("shake");
+            $(this).parent().addClass("table-danger");
+            $(this).parent().animateCss("shake");
 
-            var tr_row = $(this);
-            setTimeout(function(){ tr_row.removeClass("table-danger"); }, 1200);
+            var tr_row = $(this).parent();
+            setTimeout(function(){ tr_row.removeClass("table-danger"); }, 1000);
         }
     });
 
@@ -143,21 +143,18 @@ function on_click(){
     });
 
     // Download file :
-    $(document).on("click", ".file", function(){
-        var file_name = $(this).find("#name").text();
+    $(document).on("click", ".file #type, .file #name, .file #date, .file #size", function(){
+        var file_name = $(this).parent().find("#name").text();
         var clicked_file = actual_dir + "/" + file_name;
 
-        $.ajax({
-            url: clicked_file,
-            type: 'GET',
-            success: function() {
-                window.location = clicked_file;
-            }
+        var jqxhr = $.get(clicked_file, function(){
+            window.location = clicked_file;
         });
 
-        /*$.get(clicked_file, function(data){
-            window.location = clicked_file;
-        });*/
+        // If GET file fails :
+        jqxhr.fail(function(){
+            // MODAL POP UP
+        });
     });
 
     // Back button :
@@ -167,6 +164,33 @@ function on_click(){
 
         api_list_directory(back_path);
     });
+
+    $(document).on("click", ".selection", function(){
+        if( ! $(this).closest("tr").hasClass("selected") ){
+            $(this).closest("tr").addClass("selected");
+            ++nb_downloads;
+        }
+        else{
+            $(this).closest("tr").removeClass("selected");
+            --nb_downloads;
+        }
+    });
+}
+
+/*
+* Function hover on attribute populate by JS
+*/
+function on_hover(){
+
+    // mouseenter on directory
+    $(document).on("mouseenter", ".directory, .file", function(){
+        //$(this).addClass("table-primary");
+    });
+
+    $(document).on("mouseleave", ".directory, .file", function(){
+        //$(this).removeClass("table-primary");
+    });
+
 }
 
 function update_back_button(path){
@@ -210,6 +234,7 @@ function clean_all(){
     $("li").remove();
     $(".nav-img").remove();
     $(".back-button").remove();
+    nb_downloads=0;
 }
 
 /* Function for animate CSS */

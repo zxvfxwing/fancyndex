@@ -1,3 +1,26 @@
+.selection  {
+    margin-top: 5px;
+}
+
+/*
+green: #C3E6CB
+blue : #B8DAFF
+white : #FFFFFF
+
+*/
+
+.selected {
+    background-color: #B8DAFF;
+    box-shadow: 0px 0px 2px black;
+}
+
+.thumbnails     { }
+
+tbody > tr:hover {
+    background-color: #DDDFE2;
+    box-shadow: 0px 0px 2px black;
+}
+
 .table #name    { width:100%; }
 .table #date    { visibility:hidden; }
 .table #size    { visibility:hidden; }

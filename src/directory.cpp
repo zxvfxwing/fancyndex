@@ -84,8 +84,7 @@ void Directory::add_a_directory(fs::path path_dir)
 {
     Directory** array = new Directory* [++nb_directories];
 
-    if(nb_directories > 1)
-    {
+    if(nb_directories > 1){
         unsigned long long int i;
         for(i=0; i < nb_directories-1; ++i)
             array[i] = directories[i];
@@ -182,9 +181,8 @@ void Directory::sum_elements()
 {
     unsigned long long int i;
     for(i=0; i < nb_directories; ++i){
-        nb_elements += directories[i]->get_nb_elements();
+        nb_elements += directories[i]->get_nb_elements(); // get all elements of child directories
     }
-
     nb_elements += nb_files; // each files of a directory == one element.
-    ++nb_elements; // the directory himself count as one element (works with recursion)
+    nb_elements += nb_directories; // each directory of a directory == one element.
 }

@@ -4,14 +4,15 @@
 
 ### Dependencies :
 #### ArchLinux
-> AUR Packages, I suggest to use `pacaur` (do the job for Arch non-User Repositories like `pacman`).
+> AUR Packages, I suggest to use `pacaur` (do the job for Officials Repositories like `pacman`).
 
 ```
-pacaur -S libmicrohttpd
+pacaur -S libmicrohttpd (community)
 pacaur -S iod-git (AUR)
 pacaur -S silicon-git (AUR)
-pacaur -S boost
-pacaur -S boost-libs
+pacaur -S boost (extra)
+pacaur -S boost-libs (extra)
+pacaur -S iperf3 (community)
 ```
 
 ### How to build ?
@@ -47,9 +48,9 @@ Done :
 
 
 > TODO :
->- C++ API server (0.2) ;
->- Bootstrap (1.0) ;
->- Web interface - JQuery & AJAX (1.2) ;
+>- C++ API server (0.1.2) ;
+>- Bootstrap (0.1.1) ;
+>- Web interface - JQuery & AJAX (0.1.3) ;
 >- Documentation ;
 >- Nginx reverse-proxy doc ;
 >- Create thumbnails for images & videos ;
