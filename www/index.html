@@ -9,16 +9,32 @@
     </head>
     <body>
         <div class="container-fluid">
-
             <ul class="nav justify-content-center">
             </ul>
 
             <div class="main-body">
+
+                <div class="info">
+                    <button type="button" class="btn btn-secondary btn-sm download-button">
+                        <img src="./fancyndex/www/icon/open-iconic/svg/data-transfer-download.svg" width="15">
+                        <span class="badge badge-light badge-nb-dl"></span>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-info btn-sm information-button" data-toggle="collapse" data-target="#indexInfo" aria-controls="indexInfo" aria-expanded="false">
+                        <img src="./fancyndex/www/icon/open-iconic/svg/info.svg">
+                    </button>
+
+                    <div class="collapse" id="indexInfo">
+                        <div class="card card-body card-indexInfo">
+                        </div>
+                    </div>
+                </div>
+
                 <table class="table table-responsive table-sm" id="dir_elements">
                     <thead>
                         <tr>
                             <th id="select">
-                                <img src="./fancyndex/www/icon/open-iconic/svg/data-transfer-download.svg" width="15">
+                                <img src="./fancyndex/www/icon/open-iconic/svg/pin.svg" width="15">
                             </th>
                             <th id="type"></th>
                             <th id="name">Name</th>

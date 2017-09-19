@@ -1,15 +1,20 @@
-.selection  {
-    margin-top: 5px;
+.card {
+    margin-top: 8px;
 }
 
-/*
-green: #C3E6CB
-blue : #B8DAFF
-white : #FFFFFF
-
-*/
+.selection  {
+    margin-top: 5px;
+    margin-left: -1px;
+}
 
 .selected {
+
+    /*
+    green: #C3E6CB
+    blue : #B8DAFF
+    white : #FFFFFF
+    */
+
     background-color: #B8DAFF;
     box-shadow: 0px 0px 2px black;
 }
@@ -31,6 +36,7 @@ tbody > tr:hover {
 
 ul              { margin-top: 6%; }
 table           { margin-top: 2%; }
+
 
 @media (min-width: 576px) {
     .main-body      { margin-top: 5%; }

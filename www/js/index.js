@@ -8,6 +8,13 @@ var actual_dir;
 var config_fail = false;
 var nb_downloads = 0;
 
+var index_json;
+var full_size;
+var nb_directories;
+var nb_files;
+var root_name;
+var total_nb_elements;
+
 $(document).ready(function(){
     var fixed_url = decode_utf8(window.location.href);
     var pos = fixed_url.indexOf("=");
@@ -26,11 +33,16 @@ $(document).ready(function(){
 });
 
 function api_list_directory(path){
+    // First delete all
     clean_all();
+
     actual_dir = path;
     var api_directory = api_index + "/directory?path=" + path;
 
     var jqxhr = $.getJSON(api_directory, function(index){
+
+        // save json
+        index_json = index;
 
         for(i in index.directories){
             $("tbody").append("<tr id=\"tr_"+ i +"\" class=\"directory\"></tr>");
@@ -76,6 +88,8 @@ function api_list_directory(path){
         update_url(path);
         update_nav(path);
         update_back_button(path);
+        update_information(index_json);
+        update_download_button();
         config_fail = false;
     });
 
@@ -169,10 +183,12 @@ function on_click(){
         if( ! $(this).closest("tr").hasClass("selected") ){
             $(this).closest("tr").addClass("selected");
             ++nb_downloads;
+            update_download_button();
         }
         else{
             $(this).closest("tr").removeClass("selected");
             --nb_downloads;
+            update_download_button();
         }
     });
 }
@@ -193,6 +209,21 @@ function on_hover(){
 
 }
 
+function update_download_button(){
+    $(".badge-nb-dl").text(nb_downloads);
+}
+
+function update_information(index){
+
+    full_size = index.full_size;
+    nb_directories = index.nb_directories;
+    nb_files = index.nb_files;
+    root_name = index.root_name;
+    total_nb_elements = index.total_nb_elements;
+
+    $(".card-indexInfo").append("<p>" + full_size + " -- " + nb_directories + " -- " + nb_files + " -- " + root_name + " -- " + total_nb_elements +" </p>");
+}
+
 function update_back_button(path){
     if( path != home ){
         var back_name = "";
@@ -200,7 +231,7 @@ function update_back_button(path){
         if( arr.length > 2 ){ back_name = arr[arr.length-2]; }
         else                { back_name = home_index_name; }
 
-        $(".main-body").prepend("<button type=\"button\" class=\"btn btn-warning btn-sm back-button\"><img src=\"./fancyndex/www/icon/open-iconic/svg/arrow-thick-left.svg\" width=\"15\"> "+ back_name +" </button>");
+        $(".info").prepend("<button type=\"button\" class=\"btn btn-warning btn-sm back-button\"><img src=\"./fancyndex/www/icon/open-iconic/svg/arrow-thick-left.svg\" width=\"15\"> "+ back_name +" </button>");
         $(".back-button").animateCss("slideInLeft");
     }
 }
@@ -234,6 +265,7 @@ function clean_all(){
     $("li").remove();
     $(".nav-img").remove();
     $(".back-button").remove();
+    $(".card-indexInfo").children().remove();
     nb_downloads=0;
 }
 
