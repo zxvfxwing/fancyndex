@@ -1,5 +1,12 @@
+p {margin-top:0; margin-bottom:0; }
+dl {  margin-top:0; margin-bottom:0; padding-bottom: 7px; }
+dd {  margin-top:0; margin-bottom:0;  }
+
 .card {
-    margin-top: 8px;
+    margin-top: 9px;
+    padding-top: 8px;
+    padding-left: 10px;
+    padding-bottom: 0px;
 }
 
 .selection  {

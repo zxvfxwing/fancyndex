@@ -151,7 +151,7 @@ function on_click(){
         api_list_directory(path);
     });
 
-
+    // When clicking on Home button
     $(document).on("click", ".disable button", function(){
         $(this).animateCss("hinge");
     });
@@ -191,6 +191,23 @@ function on_click(){
             update_download_button();
         }
     });
+
+
+    $(document).on("click", ".download-button", function(){
+        if( nb_downloads == 0 ){
+            $('input[type="checkbox"]').prop("checked", true);
+            $("#dl_modal").modal('show');
+            nb_downloads = (index_json.nb_files + index_json.nb_directories);
+            update_download_button();
+        }
+    });
+
+
+    $(document).on("click", ".back-modal-button", function(){
+        nb_downloads = 0;
+        update_download_button();
+        $('input[type="checkbox"]').prop("checked", false);
+    });
 }
 
 /*
@@ -214,14 +231,11 @@ function update_download_button(){
 }
 
 function update_information(index){
-
-    full_size = index.full_size;
-    nb_directories = index.nb_directories;
-    nb_files = index.nb_files;
-    root_name = index.root_name;
-    total_nb_elements = index.total_nb_elements;
-
-    $(".card-indexInfo").append("<p>" + full_size + " -- " + nb_directories + " -- " + nb_files + " -- " + root_name + " -- " + total_nb_elements +" </p>");
+    $(".info_name").append(index.root_name);
+    $(".info_size").append(index.full_size);
+    $(".info_files").append(index.nb_files);
+    $(".info_dirs").append(index.nb_directories);
+    $(".info_el").append(index.nb_elements);
 }
 
 function update_back_button(path){
@@ -265,7 +279,8 @@ function clean_all(){
     $("li").remove();
     $(".nav-img").remove();
     $(".back-button").remove();
-    $(".card-indexInfo").children().remove();
+    $("dd").text("");
+
     nb_downloads=0;
 }
 
