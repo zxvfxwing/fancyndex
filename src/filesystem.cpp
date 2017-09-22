@@ -119,3 +119,42 @@ bool FileSystem::is_dotfile() const
 {
     return dotfile;
 }
+
+void FileSystem::shell_sort_by_name(FileSystem** fs, unsigned long long int size, bool direction)
+{
+    unsigned long long int* gaps = new unsigned long long int [size];
+    unsigned long long int i, y, k;
+    unsigned long long int gaps_size = 0;
+    unsigned long long int gap = 1;
+    FileSystem* tmp;
+
+    do{
+        gaps[gaps_size++] = gap;
+        gap = gap*3 + 1;
+    } while( gap < size );
+
+    while( gaps_size > 0 ){
+        gap = gaps[gaps_size-1];
+        for(i=0; i < gap; ++i){
+            for(y=i; y < size ; y+=gap){
+                for(k=y; k > i; k-=gap){
+                    if( direction && boost::to_lower_copy(fs[k]->get_name()) < boost::to_lower_copy(fs[k-gap]->get_name()) ){
+                        tmp = fs[k];
+                        fs[k] = fs[k-gap];
+                        fs[k-gap] = tmp;
+                    }
+                    else if( !direction && boost::to_lower_copy(fs[k]->get_name()) > boost::to_lower_copy(fs[k-gap]->get_name()) )
+                    {
+                        tmp = fs[k];
+                        fs[k] = fs[k-gap];
+                        fs[k-gap] = tmp;
+                    }
+                    else break;
+                }
+            }
+        }
+        --gaps_size;
+    }
+
+    delete [] gaps;
+}

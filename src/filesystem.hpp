@@ -6,6 +6,7 @@
 #include <ctime>
 #include <stdexcept>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -19,10 +20,10 @@ private:
     unsigned long long int size;
     bool dotfile;
 
-    void maketime_readable(bool =true);
+    void maketime_readable(bool readable = true);
 
 protected:
-    void set_size(const unsigned long long int &);
+    void set_size(const unsigned long long int & size);
 
 public:
     FileSystem(fs::path);
@@ -36,6 +37,7 @@ public:
     unsigned long long int get_size() const;
     std::string get_size_str() const;
     bool is_dotfile() const;
+    void shell_sort_by_name(FileSystem** fs, unsigned long long int size, bool direction = true);
 };
 
 #endif //FILESYSTEM_HPP

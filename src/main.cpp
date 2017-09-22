@@ -99,9 +99,9 @@ auto filesystem_api = http_api(
             throw error::unauthorized("The path ", param.path, " doesn't exists");
         }
 
-        std::thread t_one(make_speedtest);
+        //std::thread t_one(make_speedtest);
         Directory* dir = new Directory(p);
-        t_one.join();
+        //t_one.join();
 
         unsigned long long int i;
         json j;
@@ -111,6 +111,7 @@ auto filesystem_api = http_api(
         */
 
         dir->sort_directories();
+        dir->sort_files();
 
         // DIRECTORY HIMSELF
         j["full_size"] = dir->get_size();

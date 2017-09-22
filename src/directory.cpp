@@ -189,23 +189,10 @@ void Directory::sum_elements()
 
 void Directory::sort_directories()
 {
-    unsigned long long int i, y;
-    if( nb_directories > 1 ){
+    shell_sort_by_name((FileSystem**)directories, nb_directories);
+}
 
-        Directory* tmp;
-        for(i=0; i < nb_directories-1; ++i){
-            for(y=i; y < nb_directories; ++y){
-
-                if( directories[i]->get_name().compare( directories[y]->get_name() ) > 0 ){
-                    tmp = directories[i];
-                    directories[i] = directories[y];
-                    directories[y] = tmp;
-                }
-
-            }
-        }
-    }
-
-    for(i=0; i < this->nb_directories; ++i)
-        std::cout << directories[i]->get_name();
+void Directory::sort_files()
+{
+    shell_sort_by_name((FileSystem**)files, nb_files);
 }

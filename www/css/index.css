@@ -2,6 +2,13 @@ p {margin-top:0; margin-bottom:0; }
 dl {  margin-top:0; margin-bottom:0; padding-bottom: 7px; }
 dd {  margin-top:0; margin-bottom:0;  }
 
+
+#loading {
+    position:fixed;
+    top:20px;
+    right:20px;
+}
+
 .card {
     margin-top: 9px;
     padding-top: 8px;

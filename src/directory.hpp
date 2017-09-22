@@ -34,6 +34,7 @@ public:
     Directory** get_directories() const;
     Directory* get_directory(unsigned long long int) const;
     void sort_directories();
+    void sort_files();
 };
 
 #endif //DIRECTORY_HPP

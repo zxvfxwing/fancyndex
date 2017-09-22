@@ -9,11 +9,6 @@ var config_fail = false;
 var nb_downloads = 0;
 
 var index_json;
-var full_size;
-var nb_directories;
-var nb_files;
-var root_name;
-var total_nb_elements;
 
 $(document).ready(function(){
     var fixed_url = decode_utf8(window.location.href);
@@ -27,6 +22,7 @@ $(document).ready(function(){
             path = home;
     }
 
+    loading();
     api_list_directory(path);
     on_click();
     on_hover();
@@ -124,11 +120,11 @@ function on_click(){
             api_list_directory(clicked_dir);
         }
         else{
-            $(this).parent().addClass("table-danger");
-            $(this).parent().animateCss("shake");
+            //$(this).parent().addClass("table-danger");
+            //$(this).parent().animateCss("shake");
 
-            var tr_row = $(this).parent();
-            setTimeout(function(){ tr_row.removeClass("table-danger"); }, 1000);
+            /*var tr_row = $(this).parent();
+            setTimeout(function(){ tr_row.removeClass("table-danger"); }, 1000);*/
         }
     });
 
@@ -274,12 +270,23 @@ function update_url(path){
     history.pushState(null, null, "?path="+path);
 }
 
+function loading(){
+    var loading = $("#loading");
+    $(document).ajaxStart(function () {
+        //loading.show();
+    });
+
+    $(document).ajaxStop(function () {
+        //loading.hide();
+    });
+}
+
 function clean_all(){
     $("tbody > tr").remove();
     $("li").remove();
     $(".nav-img").remove();
     $(".back-button").remove();
-    $("dd").text("");
+    $("dd").text(""); // remove folder information
 
     nb_downloads=0;
 }
