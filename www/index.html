@@ -9,16 +9,62 @@
     </head>
     <body>
         <div class="container-fluid">
-
             <ul class="nav justify-content-center">
             </ul>
 
             <div class="main-body">
+
+                <!-- Download Modal -->
+                <div class="modal fade" id="dl_modal" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Download</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                You are going to download the entire folder.<br>
+                                Do you really want to do this ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger back-modal-button" data-dismiss="modal">lol nope</button>
+                                <button type="button" class="btn btn-success">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <button type="button" class="btn btn-outline-secondary btn-sm download-button">
+                        <img src="./fancyndex/www/icon/open-iconic/svg/data-transfer-download.svg" width="15">
+                        <span class="badge badge-primary badge-nb-dl"></span>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-info btn-sm information-button" data-toggle="collapse" data-target="#indexInfo" aria-controls="indexInfo" aria-expanded="false">
+                        <img src="./fancyndex/www/icon/open-iconic/svg/info.svg">
+                    </button>
+
+                    <div class="collapse" id="indexInfo">
+                        <div class="card card-body card-indexInfo">
+                            <h4><em><strong> About this folder </strong></em></h4>
+                            <dl class="row">
+                                <dt class="col-sm-2">name :</dt><dd class="col-sm-10 info_name"></dd>
+                                <dt class="col-sm-2">size (bytes) :</dt><dd class="col-sm-10 info_size"></dd>
+                                <dt class="col-sm-2">files :</dt><dd class="col-sm-10 info_files"></dd>
+                                <dt class="col-sm-2">directories :</dt><dd class="col-sm-10 info_dirs"></dd>
+                                <dt class="col-sm-2">total elements :</dt><dd class="col-sm-10 info_el"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
                 <table class="table table-responsive table-sm" id="dir_elements">
                     <thead>
                         <tr>
                             <th id="select">
-                                <img src="./fancyndex/www/icon/open-iconic/svg/data-transfer-download.svg" width="15">
+                                <img src="./fancyndex/www/icon/open-iconic/svg/pin.svg" width="15">
                             </th>
                             <th id="type"></th>
                             <th id="name">Name</th>

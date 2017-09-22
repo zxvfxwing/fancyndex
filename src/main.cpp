@@ -114,13 +114,12 @@ auto filesystem_api = http_api(
         j["full_size"] = dir->get_size();
         j["nb_directories"] = dir->get_nb_directories();
         j["nb_files"] = dir->get_nb_files();
+        j["nb_elements"] = dir->get_nb_elements();
 
         if(  param.path == "." )
             j["root_name"] = "Home";
         else
             j["root_name"] = dir->get_name();
-
-        j["total_nb_elements"] = dir->get_nb_elements();
         // END DIRECTORY HIMSELF
 
         // FILES
