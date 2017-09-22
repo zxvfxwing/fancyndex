@@ -186,3 +186,26 @@ void Directory::sum_elements()
     nb_elements += nb_files; // each files of a directory == one element.
     nb_elements += nb_directories; // each directory of a directory == one element.
 }
+
+void Directory::sort_directories()
+{
+    unsigned long long int i, y;
+    if( nb_directories > 1 ){
+
+        Directory* tmp;
+        for(i=0; i < nb_directories-1; ++i){
+            for(y=i; y < nb_directories; ++y){
+
+                if( directories[i]->get_name().compare( directories[y]->get_name() ) > 0 ){
+                    tmp = directories[i];
+                    directories[i] = directories[y];
+                    directories[y] = tmp;
+                }
+
+            }
+        }
+    }
+
+    for(i=0; i < this->nb_directories; ++i)
+        std::cout << directories[i]->get_name();
+}

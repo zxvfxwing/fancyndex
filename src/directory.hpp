@@ -33,6 +33,7 @@ public:
     File* get_file(unsigned long long int) const;
     Directory** get_directories() const;
     Directory* get_directory(unsigned long long int) const;
+    void sort_directories();
 };
 
 #endif //DIRECTORY_HPP

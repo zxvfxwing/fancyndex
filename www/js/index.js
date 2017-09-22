@@ -194,7 +194,7 @@ function on_click(){
 
 
     $(document).on("click", ".download-button", function(){
-        if( nb_downloads == 0 ){
+        if( nb_downloads == 0 || nb_downloads == (index_json.nb_files + index_json.nb_directories) ){
             $('input[type="checkbox"]').prop("checked", true);
             $("#dl_modal").modal('show');
             nb_downloads = (index_json.nb_files + index_json.nb_directories);
