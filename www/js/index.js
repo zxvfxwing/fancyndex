@@ -46,10 +46,18 @@ function api_list_directory(path){
             $("#tr_"+i).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"12\"></td>");
             $("#tr_"+i).append("<td id=\"name\">" + index.directories[i].name + "</td>");
             $("#tr_"+i).append("<td id=\"date\">" + index.directories[i].date + "</td>");
-            $("#tr_"+i).append("<td id=\"size\">" + index.directories[i].size + "</td>");
+
+            var size;
+            if( index.directories[i].size === parseInt(index.directories[i].size) )
+                size = parseInt( index.directories[i].size );
+            else
+                size = index.directories[i].size.toFixed(2);
+
+            $("#tr_"+i).append("<td id=\"size\">" + size + "</td>");
+            $("#tr_"+i).append("<td id=\"unit\">" + index.directories[i].unit + "</td>");
 
             var content = "";
-            if( index.directories[i].size > 0 ) { content = "nb elements (" + (index.directories[i].nb_elements) + ")"; }
+            if( index.directories[i].size > 0 ) { content = "Number of elements (" + (index.directories[i].nb_elements) + ")"; }
             else                                { content = "empty directory"; }
 
             $("#tr_"+i).tooltip(
@@ -74,7 +82,15 @@ function api_list_directory(path){
             $("#tr_"+y).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"12\"></td>");
             $("#tr_"+y).append("<td id=\"name\">" + index.files[i].name + "</td>");
             $("#tr_"+y).append("<td id=\"date\">" + index.files[i].date + "</td>");
-            $("#tr_"+y).append("<td id=\"size\">" + index.files[i].size + "</td>");
+
+            var size;
+            if( index.files[i].size === parseInt(index.files[i].size) )
+                size = parseInt( index.files[i].size );
+            else
+                size = index.files[i].size.toFixed(2);
+
+            $("#tr_"+y).append("<td id=\"size\">" + size + "</td>");
+            $("#tr_"+y).append("<td id=\"unit\">" + index.files[i].unit + "</td>");
         }
 
         $(".selection").animateCss("fadeIn");
@@ -227,11 +243,11 @@ function update_download_button(){
 }
 
 function update_information(index){
-    $(".info_name").append(index.root_name);
-    $(".info_size").append(index.full_size);
-    $(".info_files").append(index.nb_files);
-    $(".info_dirs").append(index.nb_directories);
-    $(".info_el").append(index.nb_elements);
+    $(".info_name").text(index.root_name);
+    $(".info_size").text(index.full_size);
+    $(".info_files").text(index.nb_files);
+    $(".info_dirs").text(index.nb_directories);
+    $(".info_el").text(index.nb_elements);
 }
 
 function update_back_button(path){
@@ -286,7 +302,6 @@ function clean_all(){
     $("li").remove();
     $(".nav-img").remove();
     $(".back-button").remove();
-    $("dd").text(""); // remove folder information
 
     nb_downloads=0;
 }

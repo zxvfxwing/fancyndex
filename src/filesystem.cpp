@@ -1,11 +1,34 @@
 #include "filesystem.hpp"
 
+std::string ibytes [] = {
+    "Byte(s)",
+    "KibiByte(s)",
+    "MebiByte(s)",
+    "GigiByte(s)",
+    "TebiByte(s)",
+    "ExiByte(s)",
+    "ZebiByte(s)",
+    "YobiByte(s)"
+};
+
+std::string peasant_bytes [] = {
+    "Byte(s)",
+    "KiloByte(s)",
+    "MegaByte(s)",
+    "GigaBytes(s)",
+    "TebaByte(s)",
+    "ExaByte(s)",
+    "ZettaByte(s)",
+    "YottaByte(s)"
+};
+
 FileSystem::FileSystem(fs::path _path)
     :path(_path),
     name(""),
     date_raw(0),
     date_human(""),
     size(0),
+    size_unit(ibytes[0]),
     dotfile(false)
 {
     try {
@@ -78,9 +101,47 @@ std::string FileSystem::get_size_str() const
     return std::to_string(size);
 }
 
+long double FileSystem::get_size_human()
+{
+    long double size_human = size;
+    unsigned int power = 1;
+
+    while ( size_human > 1024.0 )
+    {
+        size_human /= 1024.0;
+        size_unit = ibytes[power++];
+    }
+
+    return size_human;
+}
+
+long double FileSystem::get_size_peasant()
+{
+    long double size_human = size;
+    unsigned int power = 1;
+
+    while ( size_human > 1000.0 )
+    {
+        size_human /= 1000.0;
+        size_unit = peasant_bytes[power++];
+    }
+
+    return size_human;
+}
+
 void FileSystem::set_size(const unsigned long long int& _size)
 {
     size = _size;
+}
+
+void FileSystem::set_size_unit(const std::string & _size_unit)
+{
+    size_unit = _size_unit;
+}
+
+std::string FileSystem::get_size_unit() const
+{
+    return size_unit;
 }
 
 void FileSystem::maketime_readable(bool use_localtime)

@@ -43,6 +43,7 @@ tbody > tr:hover {
 .table #name    { width:100%; }
 .table #date    { visibility:hidden; }
 .table #size    { visibility:hidden; }
+.table #unit    { visibility:hidden; /*text-align:center;*/ }
 
 .alert          { text-align:center; }
 
@@ -58,6 +59,7 @@ table           { margin-top: 2%; }
 
 @media (min-width: 768px) {
     .table #size    { visibility:visible; }
+    .table #unit    { visibility:visible; }
     ul              { margin-top: 2%; }
     table           { margin-top: 1%; }
 }

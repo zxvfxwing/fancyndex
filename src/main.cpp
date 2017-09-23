@@ -130,7 +130,8 @@ auto filesystem_api = http_api(
             j["files"][i]["extension"] = dir->get_file(i)->get_extension();
             j["files"][i]["date"] = dir->get_file(i)->get_date_human();
             j["files"][i]["name"] = dir->get_file(i)->get_name();
-            j["files"][i]["size"] = dir->get_file(i)->get_size();
+            j["files"][i]["size"] = dir->get_file(i)->get_size_human();
+            j["files"][i]["unit"] = dir->get_file(i)->get_size_unit();
         }
         // END FILES
 
@@ -139,7 +140,8 @@ auto filesystem_api = http_api(
             j["directories"][i]["date"] = dir->get_directory(i)->get_date_human();
             j["directories"][i]["name"] = dir->get_directory(i)->get_name();
             j["directories"][i]["nb_elements"] = dir->get_directory(i)->get_nb_elements();
-            j["directories"][i]["size"] = dir->get_directory(i)->get_size();
+            j["directories"][i]["size"] = dir->get_directory(i)->get_size_human();
+            j["directories"][i]["unit"] = dir->get_directory(i)->get_size_unit();
         }
         // END DIRECTORIES
 
