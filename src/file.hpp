@@ -22,9 +22,12 @@ private:
 
 public:
     File(fs::path);
-    ~File();
+    virtual ~File();
     std::string get_extension() const;
     bool is_extension_ok() const;
+
+    virtual void sort_by_name(bool growing=true);
+    virtual void sort_by_size(bool growing=true);
 };
 
 #endif //FILE_HPP

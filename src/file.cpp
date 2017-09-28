@@ -49,7 +49,7 @@ File::File(fs::path file)
 
 File::~File()
 {
-    
+
 }
 
 std::string File::get_extension() const
@@ -60,4 +60,12 @@ std::string File::get_extension() const
 bool File::is_extension_ok() const
 {
     return extension_ok;
+}
+
+void File::sort_by_name(bool growing){
+    
+}
+
+void File::sort_by_size(bool growing){
+
 }

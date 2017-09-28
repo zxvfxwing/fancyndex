@@ -1,35 +1,16 @@
 #include "filesystem.hpp"
 
-std::string ibytes [] = {
-    "Byte(s)",
-    "KibiByte(s)",
-    "MebiByte(s)",
-    "GigiByte(s)",
-    "TebiByte(s)",
-    "ExiByte(s)",
-    "ZebiByte(s)",
-    "YobiByte(s)"
-};
-
-std::string peasant_bytes [] = {
-    "Byte(s)",
-    "KiloByte(s)",
-    "MegaByte(s)",
-    "GigaBytes(s)",
-    "TebaByte(s)",
-    "ExaByte(s)",
-    "ZettaByte(s)",
-    "YottaByte(s)"
-};
-
 FileSystem::FileSystem(fs::path _path)
     :path(_path),
     name(""),
     date_raw(0),
     date_human(""),
     size(0),
-    size_unit(ibytes[0]),
-    dotfile(false)
+    dotfile(false),
+    ibytes(NULL),
+    bytes(NULL),
+    ibytes_acro(NULL),
+    bytes_acro(NULL)
 {
     try {
         if(fs::exists(path)){
@@ -53,9 +34,8 @@ FileSystem::FileSystem(fs::path _path)
             maketime_readable();
         }
         else{
-            if(fs::is_symlink(path)){
+            if(fs::is_symlink(path))
                 throw std::runtime_error("Wrong symbolic link, check Documentation (git).");
-            }
             else
                 throw std::runtime_error("Path given doesn't exists ...");
         }
@@ -67,7 +47,8 @@ FileSystem::FileSystem(fs::path _path)
 
 FileSystem::~FileSystem()
 {
-
+    delete [] ibytes;   delete [] ibytes_acro;
+    delete [] bytes;    delete [] bytes_acro;
 }
 
 std::string FileSystem::get_name() const
@@ -93,15 +74,7 @@ unsigned long long int FileSystem::get_size() const
     return size;
 }
 
-/*
-    return size as str
-*/
-std::string FileSystem::get_size_str() const
-{
-    return std::to_string(size);
-}
-
-long double FileSystem::get_size_human()
+long double FileSystem::get_size_human() const
 {
     long double size_human = size;
     unsigned int power = 1;
@@ -109,13 +82,13 @@ long double FileSystem::get_size_human()
     while ( size_human > 1024.0 )
     {
         size_human /= 1024.0;
-        size_unit = ibytes[power++];
+        //size_unit = ibytes[power++];
     }
 
     return size_human;
 }
 
-long double FileSystem::get_size_peasant()
+long double FileSystem::get_size_peasant() const
 {
     long double size_human = size;
     unsigned int power = 1;
@@ -123,7 +96,7 @@ long double FileSystem::get_size_peasant()
     while ( size_human > 1000.0 )
     {
         size_human /= 1000.0;
-        size_unit = peasant_bytes[power++];
+        //size_unit = peasant_bytes[power++];
     }
 
     return size_human;
@@ -132,16 +105,6 @@ long double FileSystem::get_size_peasant()
 void FileSystem::set_size(const unsigned long long int& _size)
 {
     size = _size;
-}
-
-void FileSystem::set_size_unit(const std::string & _size_unit)
-{
-    size_unit = _size_unit;
-}
-
-std::string FileSystem::get_size_unit() const
-{
-    return size_unit;
 }
 
 void FileSystem::maketime_readable(bool use_localtime)
@@ -181,6 +144,30 @@ bool FileSystem::is_dotfile() const
     return dotfile;
 }
 
+void FileSystem::init_size_units_str()
+{
+    ibytes = new const std::string[NB_UNITS]
+    {
+        "Byte(s)",      "KibiByte(s)", "MebiByte(s)",
+        "GibiByte(s)",  "TebiByte(s)", "PebiBytes(s)",
+        "ExbiByte(s)",  "ZebiByte(s)", "YobiByte(s)"
+    };
+
+    bytes = new const std::string[NB_UNITS]
+    {
+        "Byte(s)",      "KiloByte(s)",  "MegaByte(s)",
+        "GigaBytes(s)", "TeraByte(s)",  "PetaByte(s)",
+        "ExaByte(s)",   "ZettaByte(s)", "YottaByte(s)"
+    };
+
+    ibytes_acro = new const std::string[NB_UNITS]
+    { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB" };
+
+    bytes_acro = new const std::string[NB_UNITS]
+    { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+}
+
+/*
 void FileSystem::shell_sort_by_name(FileSystem** fs, unsigned long long int size, bool direction)
 {
     unsigned long long int* gaps = new unsigned long long int [size];
@@ -219,3 +206,4 @@ void FileSystem::shell_sort_by_name(FileSystem** fs, unsigned long long int size
 
     delete [] gaps;
 }
+*/

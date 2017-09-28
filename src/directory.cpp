@@ -32,6 +32,7 @@ Directory::~Directory()
 {
     destructor_files();
     destructor_directories();
+    //~FileSystem();
 }
 
 bool Directory::is_empty() const
@@ -187,7 +188,7 @@ void Directory::sum_elements()
     nb_elements += nb_directories; // each directory of a directory == one element.
 }
 
-void Directory::sort_directories()
+/*void Directory::sort_directories()
 {
     shell_sort_by_name((FileSystem**)directories, nb_directories);
 }
@@ -195,4 +196,40 @@ void Directory::sort_directories()
 void Directory::sort_files()
 {
     shell_sort_by_name((FileSystem**)files, nb_files);
+}
+*/
+
+int partition(Directory** arr, int start, int end)
+{
+    std::string pivot = arr[(start+end)/2]->get_name();
+    int i = start - 1;
+    int j = end + 1;
+    Directory* tmp;
+
+    for(;;){
+        do ++i; while ( boost::to_lower_copy(arr[i]->get_name()) < boost::to_lower_copy(pivot) );
+        do --j; while ( boost::to_lower_copy(arr[j]->get_name()) > boost::to_lower_copy(pivot) );
+
+        if ( i >= j ) return j;
+
+        tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+
+void quick_sort(Directory** arr, int start, int end)
+{
+    if( start >= end ) return;
+    int pivot = partition(arr, start, end);
+    quick_sort(arr, start, pivot);
+    quick_sort(arr, pivot+1, end);
+}
+
+void Directory::sort_by_name(bool growing){
+    quick_sort(directories, 0, nb_directories-1);
+}
+
+void Directory::sort_by_size(bool growing){
+
 }

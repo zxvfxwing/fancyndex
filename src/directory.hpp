@@ -24,7 +24,7 @@ private:
 
 public:
     Directory(fs::path);
-    ~Directory();
+    virtual ~Directory();
     bool is_empty() const;
     unsigned long long int get_nb_files() const;
     unsigned long long int get_nb_directories() const;
@@ -35,6 +35,9 @@ public:
     Directory* get_directory(unsigned long long int) const;
     void sort_directories();
     void sort_files();
+
+    virtual void sort_by_name(bool growing =true);
+    virtual void sort_by_size(bool growing =true);
 };
 
 #endif //DIRECTORY_HPP
