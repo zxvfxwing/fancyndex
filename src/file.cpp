@@ -62,10 +62,14 @@ bool File::is_extension_ok() const
     return extension_ok;
 }
 
-void File::sort_by_name(bool growing){
-    
+
+/*bool File::_ascending_name(File* f1, File* f2)
+{
+    return ( boost::to_lower_copy(f1->get_name()) < boost::to_lower_copy(f2->get_name()) );
 }
 
-void File::sort_by_size(bool growing){
-
+bool File::_decreasing_name(File* f1, File* f2)
+{
+    return ( boost::to_lower_copy(f1->get_name()) > boost::to_lower_copy(f2->get_name()) );
 }
+*/

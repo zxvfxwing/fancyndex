@@ -22,9 +22,12 @@ private:
     unsigned long long int sum_size();
     void sum_elements();
 
+    static bool _ascending_name(Directory* d1, Directory* d2);
+    static bool _decreasing_name(Directory* d1, Directory* d2);
+
 public:
     Directory(fs::path);
-    virtual ~Directory();
+    ~Directory();
     bool is_empty() const;
     unsigned long long int get_nb_files() const;
     unsigned long long int get_nb_directories() const;
@@ -33,11 +36,10 @@ public:
     File* get_file(unsigned long long int) const;
     Directory** get_directories() const;
     Directory* get_directory(unsigned long long int) const;
-    void sort_directories();
-    void sort_files();
+    void sort_directories(unsigned int mode);
+    void sort_files(unsigned int mode);
 
-    virtual void sort_by_name(bool growing =true);
-    virtual void sort_by_size(bool growing =true);
+    void sort_dir_by_name(bool ascending=true);
 };
 
 #endif //DIRECTORY_HPP

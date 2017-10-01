@@ -5,6 +5,8 @@
 #include <string>
 #include <ctime>
 #include <stdexcept>
+#include <algorithm>
+#include <vector>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -48,9 +50,9 @@ public:
     long double get_size_peasant() const;
     bool is_dotfile() const;
 
-    virtual void sort_by_name(bool growing=true) =0;
-    virtual void sort_by_size(bool growing=true) =0;
-    //void shell_sort_by_name(FileSystem** fs, unsigned long long int size, bool direction = true);
+    static bool _by_name(FileSystem* f1, FileSystem* f2);
+    static bool _by_size(FileSystem* f1, FileSystem* f2);
+    void sort_by_name(FileSystem** fs, unsigned long long int size);
 };
 
 #endif //FILESYSTEM_HPP

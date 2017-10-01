@@ -23,9 +23,8 @@ FileSystem::FileSystem(fs::path _path)
                 if(name == ".")
                     name = get_canonical_name();
 
-                if( name[0] == '.' ){
+                if( name[0] == '.' )
                     dotfile = true;
-                }
             }
             else
                 throw std::runtime_error("This file or directory has no name !");
@@ -167,43 +166,19 @@ void FileSystem::init_size_units_str()
     { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 }
 
-/*
-void FileSystem::shell_sort_by_name(FileSystem** fs, unsigned long long int size, bool direction)
+
+bool FileSystem::_by_name(FileSystem* f1, FileSystem* f2)
 {
-    unsigned long long int* gaps = new unsigned long long int [size];
-    unsigned long long int i, y, k;
-    unsigned long long int gaps_size = 0;
-    unsigned long long int gap = 1;
-    FileSystem* tmp;
-
-    do{
-        gaps[gaps_size++] = gap;
-        gap = gap*3 + 1;
-    } while( gap < size );
-
-    while( gaps_size > 0 ){
-        gap = gaps[gaps_size-1];
-        for(i=0; i < gap; ++i){
-            for(y=i; y < size ; y+=gap){
-                for(k=y; k > i; k-=gap){
-                    if( direction && boost::to_lower_copy(fs[k]->get_name()) < boost::to_lower_copy(fs[k-gap]->get_name()) ){
-                        tmp = fs[k];
-                        fs[k] = fs[k-gap];
-                        fs[k-gap] = tmp;
-                    }
-                    else if( !direction && boost::to_lower_copy(fs[k]->get_name()) > boost::to_lower_copy(fs[k-gap]->get_name()) )
-                    {
-                        tmp = fs[k];
-                        fs[k] = fs[k-gap];
-                        fs[k-gap] = tmp;
-                    }
-                    else break;
-                }
-            }
-        }
-        --gaps_size;
-    }
-
-    delete [] gaps;
+    return ( boost::to_lower_copy(f1->get_name()) < boost::to_lower_copy(f2->get_name()) );
 }
-*/
+
+bool FileSystem::_by_size(FileSystem* f1, FileSystem* f2)
+{
+    return ( f1->get_size() < f2->get_size() );
+}
+
+void FileSystem::sort_by_name(FileSystem** fs_array, unsigned long long int size)
+{
+    //std::sort(fs_array, fs_array + size, test_by_size);
+    std::sort(fs_array, fs_array + size, _by_name);
+}
