@@ -167,18 +167,32 @@ void FileSystem::init_size_units_str()
 }
 
 
-bool FileSystem::_by_name(FileSystem* f1, FileSystem* f2)
+bool FileSystem::by_name_ascending(FileSystem* f1, FileSystem* f2)
 {
     return ( boost::to_lower_copy(f1->get_name()) < boost::to_lower_copy(f2->get_name()) );
 }
 
-bool FileSystem::_by_size(FileSystem* f1, FileSystem* f2)
+bool FileSystem::by_name_decreasing(FileSystem* f1, FileSystem* f2)
+{
+    return ( boost::to_lower_copy(f1->get_name()) > boost::to_lower_copy(f2->get_name()) );
+}
+
+bool FileSystem::by_size_ascending(FileSystem* f1, FileSystem* f2)
 {
     return ( f1->get_size() < f2->get_size() );
 }
 
-void FileSystem::sort_by_name(FileSystem** fs_array, unsigned long long int size)
+bool FileSystem::by_size_decreasing(FileSystem* f1, FileSystem* f2)
 {
-    //std::sort(fs_array, fs_array + size, test_by_size);
-    std::sort(fs_array, fs_array + size, _by_name);
+    return ( f1->get_size() > f2->get_size() );
+}
+
+void FileSystem::sort_(FileSystem** fs_array, unsigned long long int size, unsigned int mode)
+{
+    switch(mode){
+        case 0: std::sort(fs_array, fs_array + size, by_name_ascending);    break;
+        case 1: std::sort(fs_array, fs_array + size, by_name_decreasing);   break;
+        case 2: std::sort(fs_array, fs_array + size, by_size_ascending);    break;
+        case 3: std::sort(fs_array, fs_array + size, by_size_decreasing);   break;
+    }
 }

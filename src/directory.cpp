@@ -32,7 +32,6 @@ Directory::~Directory()
 {
     destructor_files();
     destructor_directories();
-    //~FileSystem();
 }
 
 bool Directory::is_empty() const
@@ -188,19 +187,38 @@ void Directory::sum_elements()
     nb_elements += nb_directories; // each directory of a directory == one element.
 }
 
-bool Directory::_ascending_name(Directory* d1, Directory* d2)
+void Directory::sort_dirs_by_name(bool ascending)
 {
-    return ( boost::to_lower_copy(d1->get_name()) < boost::to_lower_copy(d2->get_name()) );
+    if( ascending ) sort_((FileSystem**) directories, nb_directories, 0); //by_name_ascending
+    else            sort_((FileSystem**) directories, nb_directories, 1); //by_name_decreasing
 }
 
-bool Directory::_decreasing_name(Directory* d1, Directory* d2)
+void Directory::sort_files_by_name(bool ascending)
 {
-    return ( boost::to_lower_copy(d1->get_name()) > boost::to_lower_copy(d2->get_name()) );
+    if( ascending ) sort_((FileSystem**) files, nb_files, 0); //by_name_ascending
+    else            sort_((FileSystem**) files, nb_files, 1); //by_name_decreasing
 }
 
-void Directory::sort_dir_by_name(bool ascending)
+void Directory::sort_dirs_by_size(bool ascending)
 {
-    sort_by_name((FileSystem**) directories, nb_directories);
-    /*if( ascending ) std::sort(directories, directories + nb_directories, _ascending_name);
-    else            std::sort(directories, directories + nb_directories, _decreasing_name);*/
+    if( ascending ) sort_((FileSystem**) directories, nb_directories, 2); //by_size_ascending
+    else            sort_((FileSystem**) directories, nb_directories, 3); //by_size_decreasing
+}
+
+void Directory::sort_files_by_size(bool ascending)
+{
+    if( ascending ) sort_((FileSystem**) files, nb_files, 2); //by_size_ascending
+    else            sort_((FileSystem**) files, nb_files, 3); //by_size_decreasing
+}
+
+void Directory::sort_els_by_name(bool ascending)
+{
+    sort_dirs_by_name(ascending);
+    sort_files_by_name(ascending);
+}
+
+void Directory::sort_els_by_size(bool ascending)
+{
+    sort_dirs_by_size(ascending);
+    sort_files_by_size(ascending);
 }

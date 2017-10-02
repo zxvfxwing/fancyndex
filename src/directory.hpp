@@ -22,9 +22,6 @@ private:
     unsigned long long int sum_size();
     void sum_elements();
 
-    static bool _ascending_name(Directory* d1, Directory* d2);
-    static bool _decreasing_name(Directory* d1, Directory* d2);
-
 public:
     Directory(fs::path);
     ~Directory();
@@ -39,7 +36,12 @@ public:
     void sort_directories(unsigned int mode);
     void sort_files(unsigned int mode);
 
-    void sort_dir_by_name(bool ascending=true);
+    void sort_dirs_by_name(bool ascending=true);
+    void sort_dirs_by_size(bool ascending=true);
+    void sort_files_by_name(bool ascending=true);
+    void sort_files_by_size(bool ascending=true);
+    void sort_els_by_name(bool ascending=true);
+    void sort_els_by_size(bool ascending=true);
 };
 
 #endif //DIRECTORY_HPP

@@ -33,6 +33,11 @@ private:
     void maketime_readable(bool readable = true);
     void set_size_unit(const std::string & _size_unit);
 
+    static bool by_name_ascending(FileSystem* f1, FileSystem* f2);
+    static bool by_name_decreasing(FileSystem* f1, FileSystem* f2);
+    static bool by_size_ascending(FileSystem* f1, FileSystem* f2);
+    static bool by_size_decreasing(FileSystem* f1, FileSystem* f2);
+
 protected:
     void set_size(const unsigned long long int & size);
 
@@ -50,9 +55,7 @@ public:
     long double get_size_peasant() const;
     bool is_dotfile() const;
 
-    static bool _by_name(FileSystem* f1, FileSystem* f2);
-    static bool _by_size(FileSystem* f1, FileSystem* f2);
-    void sort_by_name(FileSystem** fs, unsigned long long int size);
+    void sort_(FileSystem** fs, unsigned long long int size, unsigned int mode);
 };
 
 #endif //FILESYSTEM_HPP

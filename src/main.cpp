@@ -109,13 +109,7 @@ auto filesystem_api = http_api(
         /*
         * JSON in alphabetic order :
         */
-
-        dir->sort_dir_by_name();
-        //dir->sort_by_name((FileSystem**) dir->get_directories(), dir->get_nb_directories());
-        //dir->sort_by_name((FileSystem**) dir->get_files(), dir->get_nb_files());
-
-        //dir->sort_dir_by_name();
-        //dir->sort_files(0);
+        dir->sort_els_by_name();
 
         // DIRECTORY HIMSELF
         j["full_size"] = dir->get_size();
