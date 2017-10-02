@@ -2,6 +2,9 @@ p {margin-top:0; margin-bottom:0; }
 dl {  margin-top:0; margin-bottom:0; padding-bottom: 7px; }
 dd {  margin-top:0; margin-bottom:0;  }
 
+th#name:hover, th#date:hover, th#size:hover {
+    color: #007BFF;
+}
 
 #loading {
     position:fixed;

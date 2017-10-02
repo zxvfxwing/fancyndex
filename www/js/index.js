@@ -26,6 +26,10 @@ $(document).ready(function(){
     api_list_directory(path);
     on_click();
     on_hover();
+
+    $("th#name").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/chevron-bottom.svg\">");
+    /*$("th#date").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/minus.svg\">");
+    $("th#size").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/minus.svg\">");*/
 });
 
 function api_list_directory(path){
@@ -47,11 +51,9 @@ function api_list_directory(path){
             $("#tr_"+i).append("<td id=\"name\">" + index.directories[i].name + "</td>");
             $("#tr_"+i).append("<td id=\"date\">" + index.directories[i].date + "</td>");
 
-            var size;
-            if( index.directories[i].size === parseInt(index.directories[i].size) )
-                size = parseInt( index.directories[i].size );
-            else
-                size = index.directories[i].size.toFixed(2);
+            var size = index.directories[i].size.substr(0, index.directories[i].size.indexOf(".")+3);
+            if( index.directories[i].size.includes(".00") )
+                size = index.directories[i].size.substr(0, index.directories[i].size.indexOf("."));
 
             $("#tr_"+i).append("<td id=\"size\">" + size + "</td>");
             $("#tr_"+i).append("<td id=\"unit\">" + index.directories[i].unit + "</td>");
@@ -83,11 +85,9 @@ function api_list_directory(path){
             $("#tr_"+y).append("<td id=\"name\">" + index.files[i].name + "</td>");
             $("#tr_"+y).append("<td id=\"date\">" + index.files[i].date + "</td>");
 
-            var size;
-            if( index.files[i].size === parseInt(index.files[i].size) )
-                size = parseInt( index.files[i].size );
-            else
-                size = index.files[i].size.toFixed(2);
+            var size = index.files[i].size.substr(0, index.files[i].size.indexOf(".")+3);
+            if( index.files[i].size.includes(".00") )
+                size = index.files[i].size.substr(0, index.files[i].size.indexOf("."));
 
             $("#tr_"+y).append("<td id=\"size\">" + size + "</td>");
             $("#tr_"+y).append("<td id=\"unit\">" + index.files[i].unit + "</td>");

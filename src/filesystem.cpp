@@ -1,16 +1,33 @@
 #include "filesystem.hpp"
 
+const std::string ibytes[NB_UNITS] =
+{
+    "Byte(s)",      "KibiByte(s)", "MebiByte(s)",
+    "GibiByte(s)",  "TebiByte(s)", "PebiBytes(s)",
+    "ExbiByte(s)",  "ZebiByte(s)", "YobiByte(s)"
+};
+
+const std::string bytes[NB_UNITS] =
+{
+    "Byte(s)",      "KiloByte(s)",  "MegaByte(s)",
+    "GigaBytes(s)", "TeraByte(s)",  "PetaByte(s)",
+    "ExaByte(s)",   "ZettaByte(s)", "YottaByte(s)"
+};
+
+const std::string ibytes_acro[NB_UNITS] =
+{ "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB" };
+
+const std::string bytes_acro[NB_UNITS] =
+{ "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+
+
 FileSystem::FileSystem(fs::path _path)
     :path(_path),
     name(""),
     date_raw(0),
     date_human(""),
     size(0),
-    dotfile(false),
-    ibytes(NULL),
-    bytes(NULL),
-    ibytes_acro(NULL),
-    bytes_acro(NULL)
+    dotfile(false)
 {
     try {
         if(fs::exists(path)){
@@ -45,10 +62,7 @@ FileSystem::FileSystem(fs::path _path)
 }
 
 FileSystem::~FileSystem()
-{
-    delete [] ibytes;   delete [] ibytes_acro;
-    delete [] bytes;    delete [] bytes_acro;
-}
+{ }
 
 std::string FileSystem::get_name() const
 {
@@ -73,32 +87,38 @@ unsigned long long int FileSystem::get_size() const
     return size;
 }
 
-long double FileSystem::get_size_human() const
+std::string FileSystem::get_size_human(unsigned int what) const
 {
-    long double size_human = size;
-    unsigned int power = 1;
-
-    while ( size_human > 1024.0 )
-    {
-        size_human /= 1024.0;
-        //size_unit = ibytes[power++];
+    long double dsize = size;
+    unsigned short int power = 0;
+    while( dsize > 1024.0 ){
+        ++power;
+        dsize /= 1024.0;
     }
 
-    return size_human;
+    switch( what ){
+        case 1: return ibytes[power];
+        case 2: return ibytes_acro[power];
+    }
+
+    return std::to_string(dsize);
 }
 
-long double FileSystem::get_size_peasant() const
+std::string FileSystem::get_size_peasant(unsigned int what) const
 {
-    long double size_human = size;
-    unsigned int power = 1;
-
-    while ( size_human > 1000.0 )
-    {
-        size_human /= 1000.0;
-        //size_unit = peasant_bytes[power++];
+    long double dsize = size;
+    unsigned int power = 0;
+    while( dsize > 1000.0 ){
+        ++power;
+        dsize /= 1000.0;
     }
 
-    return size_human;
+    switch( what ){
+        case 1: return bytes[power];
+        case 2: return bytes_acro[power];
+    }
+
+    return std::to_string(dsize);
 }
 
 void FileSystem::set_size(const unsigned long long int& _size)
@@ -142,30 +162,6 @@ bool FileSystem::is_dotfile() const
 {
     return dotfile;
 }
-
-void FileSystem::init_size_units_str()
-{
-    ibytes = new const std::string[NB_UNITS]
-    {
-        "Byte(s)",      "KibiByte(s)", "MebiByte(s)",
-        "GibiByte(s)",  "TebiByte(s)", "PebiBytes(s)",
-        "ExbiByte(s)",  "ZebiByte(s)", "YobiByte(s)"
-    };
-
-    bytes = new const std::string[NB_UNITS]
-    {
-        "Byte(s)",      "KiloByte(s)",  "MegaByte(s)",
-        "GigaBytes(s)", "TeraByte(s)",  "PetaByte(s)",
-        "ExaByte(s)",   "ZettaByte(s)", "YottaByte(s)"
-    };
-
-    ibytes_acro = new const std::string[NB_UNITS]
-    { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB" };
-
-    bytes_acro = new const std::string[NB_UNITS]
-    { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
-}
-
 
 bool FileSystem::by_name_ascending(FileSystem* f1, FileSystem* f2)
 {

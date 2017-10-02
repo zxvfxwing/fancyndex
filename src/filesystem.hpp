@@ -24,14 +24,7 @@ private:
     unsigned long long int size;
     bool dotfile;
 
-    const std::string* ibytes;
-    const std::string* bytes;
-    const std::string* ibytes_acro;
-    const std::string* bytes_acro;
-
-    void init_size_units_str();
-    void maketime_readable(bool readable = true);
-    void set_size_unit(const std::string & _size_unit);
+    void maketime_readable(bool readable =true);
 
     static bool by_name_ascending(FileSystem* f1, FileSystem* f2);
     static bool by_name_decreasing(FileSystem* f1, FileSystem* f2);
@@ -51,8 +44,10 @@ public:
     std::string get_date_human() const;
     std::time_t get_date_raw() const;
     unsigned long long int get_size() const;
-    long double get_size_human() const;
-    long double get_size_peasant() const;
+
+    std::string get_size_human(unsigned int what=0) const;
+    std::string get_size_peasant(unsigned int what=0) const;
+
     bool is_dotfile() const;
 
     void sort_(FileSystem** fs, unsigned long long int size, unsigned int mode);
