@@ -50,12 +50,7 @@ function api_list_directory(path){
             $("#tr_"+i).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"12\"></td>");
             $("#tr_"+i).append("<td id=\"name\">" + index.directories[i].name + "</td>");
             $("#tr_"+i).append("<td id=\"date\">" + index.directories[i].date + "</td>");
-
-            var size = index.directories[i].size.substr(0, index.directories[i].size.indexOf(".")+3);
-            if( index.directories[i].size.includes(".00") )
-                size = index.directories[i].size.substr(0, index.directories[i].size.indexOf("."));
-
-            $("#tr_"+i).append("<td id=\"size\">" + size + "</td>");
+            $("#tr_"+i).append("<td id=\"size\">" + index.directories[i].size + "</td>");
             $("#tr_"+i).append("<td id=\"unit\">" + index.directories[i].unit + "</td>");
 
             var content = "";
@@ -84,12 +79,7 @@ function api_list_directory(path){
             $("#tr_"+y).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"12\"></td>");
             $("#tr_"+y).append("<td id=\"name\">" + index.files[i].name + "</td>");
             $("#tr_"+y).append("<td id=\"date\">" + index.files[i].date + "</td>");
-
-            var size = index.files[i].size.substr(0, index.files[i].size.indexOf(".")+3);
-            if( index.files[i].size.includes(".00") )
-                size = index.files[i].size.substr(0, index.files[i].size.indexOf("."));
-
-            $("#tr_"+y).append("<td id=\"size\">" + size + "</td>");
+            $("#tr_"+y).append("<td id=\"size\">" + index.files[i].size + "</td>");
             $("#tr_"+y).append("<td id=\"unit\">" + index.files[i].unit + "</td>");
         }
 
@@ -115,10 +105,10 @@ function api_list_directory(path){
                 If Ajax fails two time in a row, means that there is a mistake somewhere.
                 Display error / information messages :
             */
-            $("table").hide();
+            $(".main-body").hide();
             $("body").append("<div class=\"alert alert-danger\" role=\"alert\"><strong>Wrong API configuration !</strong></div>");
             $("body").append("<div class=\"alert alert-warning\" role=\"alert\"><strong>You may check if the Json API C++ server is running</strong> (fancyndex executable)</div>");
-            $("body").append("<div class=\"alert alert-info\" role=\"alert\">Error might comes from <strong> url API configuration </strong>(actual one : <a href=\""+ api_index +"\">"+ api_index +"</a>)</div>");
+            $("body").append("<div class=\"alert alert-info\" role=\"alert\">Error mights comes from <strong> url API configuration </strong>(actual one : <a href=\""+ api_index +"\">"+ api_index +"</a>)</div>");
         }
     });
 }

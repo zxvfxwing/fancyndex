@@ -90,7 +90,7 @@ unsigned long long int FileSystem::get_size() const
 std::string FileSystem::get_size_human(unsigned int what) const
 {
     long double dsize = size;
-    unsigned short int power = 0;
+    unsigned int power = 0;
     while( dsize > 1024.0 ){
         ++power;
         dsize /= 1024.0;
@@ -101,7 +101,16 @@ std::string FileSystem::get_size_human(unsigned int what) const
         case 2: return ibytes_acro[power];
     }
 
-    return std::to_string(dsize);
+    unsigned int wanted_precision = 3;
+    unsigned int precision = 0;
+
+    unsigned long long int test_int = dsize;
+    std::string str_size = std::to_string(dsize);
+
+    if( test_int < dsize )
+        precision = wanted_precision;
+
+    return str_size.substr(0, str_size.find_first_of(".") + precision );
 }
 
 std::string FileSystem::get_size_peasant(unsigned int what) const
@@ -118,7 +127,16 @@ std::string FileSystem::get_size_peasant(unsigned int what) const
         case 2: return bytes_acro[power];
     }
 
-    return std::to_string(dsize);
+    unsigned int wanted_precision = 3;
+    unsigned int precision = 0;
+
+    unsigned long long int test_int = dsize;
+    std::string str_size = std::to_string(dsize);
+
+    if( test_int < dsize )
+        precision = wanted_precision;
+
+    return str_size.substr(0, str_size.find_first_of(".") + precision );
 }
 
 void FileSystem::set_size(const unsigned long long int& _size)
