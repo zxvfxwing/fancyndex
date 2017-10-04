@@ -27,7 +27,11 @@ FileSystem::FileSystem(fs::path _path)
     date_raw(0),
     date_human(""),
     size(0),
-    dotfile(false)
+    dotfile(false),
+    ibyte_pow(0),
+    byte_pow(0),
+    str_ib_size(""),
+    str_b_size("")
 {
     try {
         if(fs::exists(path)){
@@ -87,57 +91,67 @@ unsigned long long int FileSystem::get_size() const
     return size;
 }
 
-std::string FileSystem::get_size_human(bool mode) const
+void FileSystem::compute_unit(unsigned int wanted_precision)
 {
-    long double dsize = size;
-    unsigned int power = 0;
-    unsigned int wanted_precision = 3;
+    unsigned int kb = 1000;
+    unsigned int kib = 1024;
+    unsigned int int_dSize;
     unsigned int precision = 0;
+    long double dSize;
+    std::string strSize;
 
-    while( dsize > 1024.0 ){
-        ++power;
-        dsize /= 1024.0;
+    //compute unit for bytes :
+    dSize = size;
+    while( dSize > kb ){
+        ++byte_pow;
+        dSize /= kb;
     }
 
-    unsigned long long int test_int = dsize;
-
-    if( test_int < dsize )
+    int_dSize = dSize;
+    if( int_dSize < dSize )
         precision = wanted_precision;
 
-    std::string str_size = std::to_string(dsize);
-    str_size = str_size.substr(0, str_size.find_first_of(".") + precision );
+    str_b_size = std::to_string(dSize);
+    str_b_size = str_b_size.substr(0, str_b_size.find(".") + precision);
 
-    if( mode ) return str_size + " " + ibytes[power] ;
-    return str_size + " " + ibytes_acro[power] ;
+
+    //compute unit for ibytes :
+    dSize = size;
+    while( dSize > kib ){
+        ++ibyte_pow;
+        dSize /= kib;
+    }
+
+    int_dSize = dSize;
+    if( int_dSize < dSize )
+        precision = wanted_precision;
+
+    str_ib_size = std::to_string(dSize);
+    str_ib_size = str_ib_size.substr(0, str_ib_size.find(".") + precision);
 }
 
-std::string FileSystem::get_size_peasant(bool mode) const
+std::string FileSystem::get_size_human(unsigned int mode) const
 {
-    long double dsize = size;
-    unsigned int power = 0;
-    unsigned int wanted_precision = 3;
-    unsigned int precision = 0;
-
-    while( dsize > 1000.0 ){
-        ++power;
-        dsize /= 1000.0;
+    switch( mode ){
+        case 1: return ibytes[ibyte_pow];
+        case 2: return ibytes_acro[ibyte_pow];
+        default: return str_ib_size;
     }
+}
 
-    unsigned long long int test_int = dsize;
-
-    if( test_int < dsize )
-        precision = wanted_precision;
-
-    std::string str_size = std::to_string(dsize);
-    str_size = str_size.substr(0, str_size.find_first_of(".") + precision );
-
-    if( mode ) return str_size + " " + ibytes[power] ;
-    return str_size + " " + ibytes_acro[power] ;
+std::string FileSystem::get_size_peasant(unsigned int mode) const
+{
+    switch( mode ){
+        case 1: return bytes[byte_pow];
+        case 2: return bytes_acro[byte_pow];
+        default: return str_b_size;
+    }
 }
 
 void FileSystem::set_size(const unsigned long long int& _size)
 {
     size = _size;
+    compute_unit();
 }
 
 void FileSystem::maketime_readable(bool use_localtime)

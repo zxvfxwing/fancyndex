@@ -99,9 +99,9 @@ auto filesystem_api = http_api(
             throw error::unauthorized("The path ", param.path, " doesn't exists");
         }
 
-        //std::thread t_one(make_speedtest);
+        std::thread t_one(make_speedtest);
         Directory* dir = new Directory(p);
-        //t_one.join();
+        t_one.join();
 
         unsigned long long int i;
         json j;
@@ -109,8 +109,8 @@ auto filesystem_api = http_api(
         /*
         * JSON in alphabetic order :
         */
-        dir->sort_els_by_name();
-        //dir->sort_els_by_size();
+        //dir->sort_els_by_name();
+        dir->sort_els_by_size(false);
 
         // DIRECTORY HIMSELF
         j["full_size"] = dir->get_size();
@@ -130,6 +130,7 @@ auto filesystem_api = http_api(
             j["files"][i]["date"] = dir->get_file(i)->get_date_human();
             j["files"][i]["name"] = dir->get_file(i)->get_name();
             j["files"][i]["size"] = dir->get_file(i)->get_size_human();
+            j["files"][i]["unit"] = dir->get_file(i)->get_size_human(2);
         }
         // END FILES
 
@@ -139,6 +140,7 @@ auto filesystem_api = http_api(
             j["directories"][i]["name"] = dir->get_directory(i)->get_name();
             j["directories"][i]["nb_elements"] = dir->get_directory(i)->get_nb_elements();
             j["directories"][i]["size"] = dir->get_directory(i)->get_size_human();
+            j["directories"][i]["unit"] = dir->get_directory(i)->get_size_human(2);
         }
         // END DIRECTORIES
 
