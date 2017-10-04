@@ -90,30 +90,49 @@ unsigned long long int FileSystem::get_size() const
 std::string FileSystem::get_size_human(bool mode) const
 {
     long double dsize = size;
-    unsigned short int power = 0;
+    unsigned int power = 0;
+    unsigned int wanted_precision = 3;
+    unsigned int precision = 0;
 
     while( dsize > 1024.0 ){
         ++power;
         dsize /= 1024.0;
     }
 
-    if( mode )
-        return std::to_string(dsize) + " " + ibytes[power] ;
-    return std::to_string(dsize) + " " + ibytes_acro[power] ;
+    unsigned long long int test_int = dsize;
+
+    if( test_int < dsize )
+        precision = wanted_precision;
+
+    std::string str_size = std::to_string(dsize);
+    str_size = str_size.substr(0, str_size.find_first_of(".") + precision );
+
+    if( mode ) return str_size + " " + ibytes[power] ;
+    return str_size + " " + ibytes_acro[power] ;
 }
 
 std::string FileSystem::get_size_peasant(bool mode) const
 {
     long double dsize = size;
     unsigned int power = 0;
+    unsigned int wanted_precision = 3;
+    unsigned int precision = 0;
+
     while( dsize > 1000.0 ){
         ++power;
         dsize /= 1000.0;
     }
 
-    if( mode )
-        return std::to_string(dsize) + " " + bytes[power] ;
-    return std::to_string(dsize) + " " + bytes_acro[power] ;
+    unsigned long long int test_int = dsize;
+
+    if( test_int < dsize )
+        precision = wanted_precision;
+
+    std::string str_size = std::to_string(dsize);
+    str_size = str_size.substr(0, str_size.find_first_of(".") + precision );
+
+    if( mode ) return str_size + " " + ibytes[power] ;
+    return str_size + " " + ibytes_acro[power] ;
 }
 
 void FileSystem::set_size(const unsigned long long int& _size)
