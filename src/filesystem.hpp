@@ -45,8 +45,8 @@ public:
     std::time_t get_date_raw() const;
     unsigned long long int get_size() const;
 
-    std::string get_size_human(unsigned int what=0) const;
-    std::string get_size_peasant(unsigned int what=0) const;
+    std::string get_size_human(bool mode=true) const;
+    std::string get_size_peasant(bool mode=true) const;
 
     bool is_dotfile() const;
 

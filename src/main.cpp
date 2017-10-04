@@ -118,7 +118,7 @@ auto filesystem_api = http_api(
         j["nb_files"] = dir->get_nb_files();
         j["nb_elements"] = dir->get_nb_elements();
 
-        if(  param.path == "." )
+        if( param.path == "." )
             j["root_name"] = "Home";
         else
             j["root_name"] = dir->get_name();
@@ -130,7 +130,7 @@ auto filesystem_api = http_api(
             j["files"][i]["date"] = dir->get_file(i)->get_date_human();
             j["files"][i]["name"] = dir->get_file(i)->get_name();
             j["files"][i]["size"] = dir->get_file(i)->get_size_human();
-            j["files"][i]["unit"] = dir->get_file(i)->get_size_human(2);
+            //j["files"][i]["unit"] = dir->get_file(i)->get_size_human(2);
         }
         // END FILES
 
@@ -140,7 +140,7 @@ auto filesystem_api = http_api(
             j["directories"][i]["name"] = dir->get_directory(i)->get_name();
             j["directories"][i]["nb_elements"] = dir->get_directory(i)->get_nb_elements();
             j["directories"][i]["size"] = dir->get_directory(i)->get_size_human();
-            j["directories"][i]["unit"] = dir->get_directory(i)->get_size_human(2);
+            //j["directories"][i]["unit"] = dir->get_directory(i)->get_size_human(2);
         }
         // END DIRECTORIES
 
