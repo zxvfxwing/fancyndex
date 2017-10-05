@@ -55,7 +55,7 @@ FileSystem::FileSystem(fs::path _path)
         }
         else{
             if(fs::is_symlink(path))
-                throw std::runtime_error("Wrong symbolic link, check Documentation (git).");
+                throw std::runtime_error("Wrong symbolic link, check documentation.");
             else
                 throw std::runtime_error("Path given doesn't exists ...");
         }
@@ -211,6 +211,16 @@ bool FileSystem::by_size_decreasing(FileSystem* f1, FileSystem* f2)
     return ( f1->get_size() > f2->get_size() );
 }
 
+bool FileSystem::by_date_ascending(FileSystem* f1, FileSystem* f2)
+{
+    return ( f1->get_date_raw() < f2->get_date_raw() );
+}
+
+bool FileSystem::by_date_decreasing(FileSystem* f1, FileSystem* f2)
+{
+    return ( f1->get_date_raw() > f2->get_date_raw() );
+}
+
 void FileSystem::sort_(FileSystem** fs_array, unsigned long long int size, unsigned int mode)
 {
     switch(mode){
@@ -218,5 +228,7 @@ void FileSystem::sort_(FileSystem** fs_array, unsigned long long int size, unsig
         case 1: std::sort(fs_array, fs_array + size, by_name_decreasing);   break;
         case 2: std::sort(fs_array, fs_array + size, by_size_ascending);    break;
         case 3: std::sort(fs_array, fs_array + size, by_size_decreasing);   break;
+        case 4: std::sort(fs_array, fs_array + size, by_date_ascending);    break;
+        case 5: std::sort(fs_array, fs_array + size, by_date_decreasing);   break;
     }
 }

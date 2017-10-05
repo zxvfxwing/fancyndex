@@ -20,7 +20,7 @@ target_compile_options(
     -Wall
     -Wextra
     -pedantic-errors
-    -pthread
+    #-pthread
 )
 
 target_link_libraries(
@@ -28,7 +28,7 @@ target_link_libraries(
     boost_system
     boost_filesystem
     microhttpd
-    pthread
+    #pthread
 )
 
 add_custom_target(

@@ -33,15 +33,17 @@ public:
     File* get_file(unsigned long long int) const;
     Directory** get_directories() const;
     Directory* get_directory(unsigned long long int) const;
-    void sort_directories(unsigned int mode);
-    void sort_files(unsigned int mode);
 
+    /* Specific sorting functions */
     void sort_dirs_by_name(bool ascending=true);
     void sort_dirs_by_size(bool ascending=true);
     void sort_files_by_name(bool ascending=true);
     void sort_files_by_size(bool ascending=true);
+    void sort_dirs_by_date(bool ascending=true);
+    void sort_files_by_date(bool ascending=true);
     void sort_els_by_name(bool ascending=true);
     void sort_els_by_size(bool ascending=true);
+    void sort_els_by_date(bool ascending=true);
 };
 
 #endif //DIRECTORY_HPP

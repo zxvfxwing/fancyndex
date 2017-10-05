@@ -211,6 +211,18 @@ void Directory::sort_files_by_size(bool ascending)
     else            sort_((FileSystem**) files, nb_files, 3); //by_size_decreasing
 }
 
+void Directory::sort_dirs_by_date(bool ascending)
+{
+    if( ascending ) sort_((FileSystem**) directories, nb_directories, 4); //by_date_ascending
+    else            sort_((FileSystem**) directories, nb_directories, 5); //by_date_decreasing
+}
+
+void Directory::sort_files_by_date(bool ascending)
+{
+    if( ascending ) sort_((FileSystem**) files, nb_files, 4); //by_date_ascending
+    else            sort_((FileSystem**) files, nb_files, 5); //by_date_decreasing
+}
+
 void Directory::sort_els_by_name(bool ascending)
 {
     sort_dirs_by_name(ascending);
@@ -221,4 +233,10 @@ void Directory::sort_els_by_size(bool ascending)
 {
     sort_dirs_by_size(ascending);
     sort_files_by_size(ascending);
+}
+
+void Directory::sort_els_by_date(bool ascending)
+{
+    sort_dirs_by_date(ascending);
+    sort_files_by_date(ascending);
 }

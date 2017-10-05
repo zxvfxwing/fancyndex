@@ -31,10 +31,13 @@ private:
     void maketime_readable(bool readable =true);
     void compute_unit(unsigned int wanted_precision=3);
 
+    /* "How to sort" functions */
     static bool by_name_ascending(FileSystem* f1, FileSystem* f2);
     static bool by_name_decreasing(FileSystem* f1, FileSystem* f2);
     static bool by_size_ascending(FileSystem* f1, FileSystem* f2);
     static bool by_size_decreasing(FileSystem* f1, FileSystem* f2);
+    static bool by_date_ascending(FileSystem* f1, FileSystem* f2);
+    static bool by_date_decreasing(FileSystem* f1, FileSystem* f2);
 
 protected:
     void set_size(const unsigned long long int & size);

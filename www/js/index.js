@@ -3,6 +3,15 @@ const home_index_name = "Home";
 const api_index = "http://127.0.0.1:9099";
 const url = "http://127.0.0.1/?path=";
 
+const api_by_name = "by_name";
+const api_by_size = "by_size";
+const api_by_date = "by_date";
+const api_mode_GET = "?mode=";
+const api_path_GET = "&path=";
+
+var GET_mode = 1;
+var api_sort_method = api_by_name;
+
 var root;
 var actual_dir;
 var config_fail = false;
@@ -27,7 +36,7 @@ $(document).ready(function(){
     on_click();
     on_hover();
 
-    $("th#name").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/chevron-bottom.svg\">");
+    //$("th#name").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/chevron-bottom.svg\">");
     /*$("th#date").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/minus.svg\">");
     $("th#size").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/minus.svg\">");*/
 });
@@ -37,7 +46,7 @@ function api_list_directory(path){
     clean_all();
 
     actual_dir = path;
-    var api_directory = api_index + "/directory?path=" + path;
+    var api_directory = api_index + "/dir/" + api_sort_method + api_mode_GET + GET_mode + api_path_GET + path;
 
     var jqxhr = $.getJSON(api_directory, function(index){
 
@@ -92,6 +101,7 @@ function api_list_directory(path){
         update_back_button(path);
         update_information(index_json);
         update_download_button();
+        update_chevron_img();
         config_fail = false;
     });
 
@@ -210,6 +220,36 @@ function on_click(){
         update_download_button();
         $('input[type="checkbox"]').prop("checked", false);
     });
+
+    $(document).on("click", "th#name", function(){
+        if( api_sort_method == api_by_name && GET_mode == 1 )
+            GET_mode = 0;
+        else {
+            api_sort_method = api_by_name;
+            GET_mode = 1;
+        }
+        api_list_directory(actual_dir);
+    });
+
+    $(document).on("click", "th#size", function(){
+        if( api_sort_method == api_by_size && GET_mode == 1 )
+            GET_mode = 0;
+        else {
+            api_sort_method = api_by_size;
+            GET_mode = 1;
+        }
+        api_list_directory(actual_dir);
+    });
+
+    $(document).on("click", "th#date", function(){
+        if( api_sort_method == api_by_date && GET_mode == 1 )
+            GET_mode = 0;
+        else {
+            api_sort_method = api_by_date;
+            GET_mode = 1;
+        }
+        api_list_directory(actual_dir);
+    });
 }
 
 /*
@@ -226,6 +266,27 @@ function on_hover(){
         //$(this).removeClass("table-primary");
     });
 
+}
+
+function update_chevron_img(){
+    var _id;
+    var _svgName;
+
+    if( api_sort_method == api_by_name )
+        _id = "#name";
+    else if( api_sort_method == api_by_size )
+        _id = "#size";
+    else if ( api_sort_method == api_by_date )
+        _id = "#date";
+
+    if( GET_mode == 1 ) _svgName = "chevron-bottom";
+    else _svgName = "chevron-top";
+
+    $("th#name").find("img").remove();
+    $("th#size").find("img").remove();
+    $("th#date").find("img").remove();
+    
+    $("th"+_id).append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/"+ _svgName +".svg\">")
 }
 
 function update_download_button(){
