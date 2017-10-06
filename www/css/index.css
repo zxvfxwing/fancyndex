@@ -1,15 +1,31 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+  flex: 1 0 auto;
+}
+
+footer {
+    text-align: center;
+}
+
+.copyleft {
+  display:inline-block;
+  transform: rotate(180deg);
+}
+
 p {margin-top:0; margin-bottom:0; }
 dl {  margin-top:0; margin-bottom:0; padding-bottom: 7px; }
 dd {  margin-top:0; margin-bottom:0;  }
 
 th#name:hover, th#date:hover, th#size:hover {
-    color: #007BFF;
-}
-
-#loading {
-    position:fixed;
-    top:20px;
-    right:20px;
+    color: #007BFF; /* Bootstrap "primary" color */
 }
 
 .card {
