@@ -35,10 +35,6 @@ $(document).ready(function(){
     api_list_directory(path);
     on_click();
     on_hover();
-
-    //$("th#name").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/chevron-bottom.svg\">");
-    /*$("th#date").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/minus.svg\">");
-    $("th#size").append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/minus.svg\">");*/
 });
 
 function api_list_directory(path){
@@ -116,9 +112,9 @@ function api_list_directory(path){
                 Display error / information messages :
             */
             $(".main-body").hide();
-            $("body").append("<div class=\"alert alert-danger\" role=\"alert\"><strong>Wrong API configuration !</strong></div>");
-            $("body").append("<div class=\"alert alert-warning\" role=\"alert\"><strong>You may check if the Json API C++ server is running</strong> (fancyndex executable)</div>");
-            $("body").append("<div class=\"alert alert-info\" role=\"alert\">Error mights comes from <strong> url API configuration </strong>(actual one : <a href=\""+ api_index +"\">"+ api_index +"</a>)</div>");
+            $(".alert-div").append("<div class=\"alert alert-danger\" role=\"alert\"><strong>Wrong API configuration !</strong></div>");
+            $(".alert-div").append("<div class=\"alert alert-warning\" role=\"alert\"><strong>You may check if the Json API C++ server is running</strong> (fancyndex executable)</div>");
+            $(".alert-div").append("<div class=\"alert alert-info\" role=\"alert\">Error mights comes from <strong> url API configuration </strong>(actual one : <a href=\""+ api_index +"\">"+ api_index +"</a>)</div>");
         }
     });
 }
@@ -136,7 +132,7 @@ function on_click(){
             api_list_directory(clicked_dir);
         }
         else{
-            //$(this).parent().addClass("table-danger");
+            $(this).parent().addClass("table-danger");
             //$(this).parent().animateCss("shake");
 
             /*var tr_row = $(this).parent();
@@ -285,7 +281,7 @@ function update_chevron_img(){
     $("th#name").find("img").remove();
     $("th#size").find("img").remove();
     $("th#date").find("img").remove();
-    
+
     $("th"+_id).append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/"+ _svgName +".svg\">")
 }
 

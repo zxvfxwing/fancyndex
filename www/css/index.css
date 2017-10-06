@@ -62,7 +62,7 @@ tbody > tr:hover {
 .table #name    { width:100%; }
 .table #date    { visibility:hidden; }
 .table #size    { visibility:hidden; }
-.table #unit    { visibility:hidden; /*text-align:center;*/ }
+.table #unit    { visibility:hidden; }
 
 .alert          { text-align:center; }
 
