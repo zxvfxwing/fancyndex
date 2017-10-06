@@ -10,8 +10,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
-#define NB_UNITS 9
-
 namespace fs = boost::filesystem;
 
 class FileSystem

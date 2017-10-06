@@ -1,5 +1,7 @@
 #include "filesystem.hpp"
 
+#define NB_UNITS 9
+
 const std::string ibytes[NB_UNITS] =
 {
     "Byte(s)",      "KibiByte(s)", "MebiByte(s)",

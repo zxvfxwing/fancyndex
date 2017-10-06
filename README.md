@@ -12,8 +12,10 @@ pacaur -S iod-git (AUR)
 pacaur -S silicon-git (AUR)
 pacaur -S boost (extra)
 pacaur -S boost-libs (extra)
-pacaur -S iperf3 (community)
 ```
+
+### Others distribs :
+> TODO
 
 ### How to build ?
 > _You will need CMake (3.9) here._
@@ -30,43 +32,26 @@ cd build
 make run
 ```
 
-Let's visit http://localhost:9099
-[ ... ]
-Documentation will come
+Documentation will come ...
 
-## __version 0.1__ ##
+## __version 0.4__ ##
 
 Done :
-- List directory :
-    * Get files' names ;
-    * Get directories' names ;
-    * Get files' extensions ;
-    * Get last write date of files ;
-    * Get last write date of directories ;
-    * Get files' size (Byte) ;
-    * Get directories' size (Byte).
+- Silicon C++ API served by microhttpd server.
 
+- Web UI :
+    * JQuery: OK;
+    * AJAX: OK;
+    * Bootstrap 4.0: OK;
+
+- User actions :
+    * Sort by size;
+    * Sort by date;
+    * Sort by name;
+    * Download a single file;
 
 > TODO :
->- C++ API server (0.1.2) ;
->- Bootstrap (0.1.1) ;
->- Web interface - JQuery & AJAX (0.1.3) ;
+>- Create & download zip (7z certainly) archive (whole folder or multiples selections) ;
+>- Create thumbnails for images & videos (by .extension);
 >- Documentation ;
->- Nginx reverse-proxy doc ;
->- Create thumbnails for images & videos ;
->- Create zip archive on the fly ;
->- Database to count the number of downloads.
-
-
-
-symbolic link works only with real construction path
-i.e. :
-
-ln -s /home/user/directory /home/user/example/
-symlink of /home/user/example/directory --> /home/user/directory
-
-
-cd /home/user/example
-ln -s ../directory /home/user/example/
-symlink of /home/user/example/directory --> ../directory/
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^------ NOT WORKING
+>- Nginx https reverse-proxy doc ;
