@@ -1,7 +1,7 @@
 const home = ".";
 const home_index_name = "Home";
-const api_index = "http://127.0.0.1:9099";
-const url = "http://127.0.0.1/?path=";
+const api_index = "https://api.spokonline.net/fs";
+const url = "https://dl.spokonline.net/?path=";
 
 const api_by_name = "by_name";
 const api_by_size = "by_size";
@@ -27,7 +27,7 @@ $(document).ready(function(){
     if(pos < 0) path = home;
     else{
         path = fixed_url.substr(pos+1);
-        if( path == "" || path == "./")
+        if( path == "" || path == "./")
             path = home;
     }
 
@@ -168,15 +168,7 @@ function on_click(){
     $(document).on("click", ".file #type, .file #name, .file #date, .file #size", function(){
         var file_name = $(this).parent().find("#name").text();
         var clicked_file = actual_dir + "/" + file_name;
-
-        var jqxhr = $.get(clicked_file, function(){
-            window.location = clicked_file;
-        });
-
-        // If GET file fails :
-        jqxhr.fail(function(){
-            // MODAL POP UP
-        });
+        window.location = clicked_file;
     });
 
     // Back button :
