@@ -1,7 +1,6 @@
 #include "API.hpp"
 
 API::API()
-    :dir(NULL), unit(2), path(""), home("")
 {
     home = "/var/www/dl/";
 }
