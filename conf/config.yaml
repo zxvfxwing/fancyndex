@@ -1,0 +1,44 @@
+# Fancyndex's configuration file :
+---
+    exe:
+        # Path where fancyndex's exe can find the fancyndex folder on your system.
+        # i.e: fancyndex placed in /var/www/fancyndex, root_path = "/var/www/"
+        #
+        # Really important: do not forget the last "/" !
+        #
+        root_path: "/var/www/"
+
+        # Root Name :
+        #
+        # The name you want to display when fancyndex list your root directory.
+        # For fancyndex, ".", is the name of your root.
+        # For convenience we can show something else.
+        #
+        # default ("Home")
+        #root_name: "Home"
+
+        # Unit Mode :
+        #
+        # (0): Peasant representation of bytes size.
+        #     -> Base 10(^10), Decimal, where 1000 Bytes == 1 KiloByte
+        #
+        # (1): Human representation of bytes size.
+        #     -> Base 2(^2), Binary, where 1024 Bytes == 1 KibiByte
+        #
+        # default: (1)
+        #unit_mode: 1
+
+        # Unit Type :
+        #
+        # (1): unit size fullname (i.e: KibiByte(s))
+        # (2): unit size acronym (i.e: KiB)
+        #
+        # (0) -> used to display size in real (i.e: 1023)
+        # Don't use it here, or Unit and Size will display the same thing.
+        #
+        # default: (2)
+        #unit_type: 2
+
+
+    web:
+        

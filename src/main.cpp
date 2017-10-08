@@ -27,7 +27,6 @@ auto filesystem_api = http_api(
     /* Sort by name */
     GET / _dir / _by_name * get_parameters(_mode = int(), _path = std::string()) = [] (auto param, mhd_response* r) {
         set_headers(r);
-
         if( fs_api.set_path(param.path) < 0 ) path_error_message(param.path);
         if( param.mode == 1 ) fs_api.sort_by_name(true);
         else
@@ -39,7 +38,6 @@ auto filesystem_api = http_api(
     /* Sort by size */
     GET / _dir / _by_size * get_parameters(_mode = int(), _path = std::string()) = [] (auto param, mhd_response* r) {
         set_headers(r);
-        API api;
         if( fs_api.set_path(param.path) < 0 ) path_error_message(param.path);
         if( param.mode == 1 ) fs_api.sort_by_size(true);
         else
@@ -51,7 +49,6 @@ auto filesystem_api = http_api(
     /* Sort by date */
     GET / _dir / _by_date * get_parameters(_mode = int(), _path = std::string()) = [] (auto param, mhd_response* r) {
         set_headers(r);
-        API api;
         if( fs_api.set_path(param.path) < 0 ) path_error_message(param.path);
         if( param.mode == 1 ) fs_api.sort_by_date(true);
         else

@@ -2,11 +2,13 @@
 #define FILESYSTEM_HPP
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <ctime>
 #include <stdexcept>
 #include <algorithm>
 #include <vector>
+#include <thread>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -38,7 +40,7 @@ private:
     static bool by_date_decreasing(FileSystem* f1, FileSystem* f2);
 
 protected:
-    void set_size(const unsigned long long int & size);
+    void set_size(const unsigned long long int & _size);
 
 public:
     FileSystem(fs::path);

@@ -1,6 +1,7 @@
 #ifndef API_HPP
 #define API_HPP
 
+#include "yaml-cpp/yaml.h"
 #include "json.hpp"
 #include "directory.hpp"
 
@@ -10,26 +11,30 @@ class API
 {
 private:
     Directory* dir;
-    unsigned int unit;
+    unsigned int unit_mode;
+    unsigned int unit_type;
     std::string path;
     std::string home;
+    std::string home_name;
     json j;
 
-    void setup_d_JSON(bool type=true);
-    void setup_f_JSON(bool type=true);
+    bool runAPI;
+
+    void setup_d_JSON();
+    void setup_f_JSON();
 
 public:
     API();
     ~API();
 
     int  set_path(std::string path);
-    void set_unit(unsigned int _unit);
 
     void sort_by_name(bool ascending=true);
     void sort_by_size(bool ascending=true);
     void sort_by_date(bool ascending=true);
 
     void setup_JSON();
+    void clear_JSON();
 
     std::string return_answer();
 };
