@@ -11,32 +11,37 @@ class API
 {
 private:
     Directory* dir;
-    unsigned int unit_mode;
-    unsigned int unit_type;
     std::string path;
     std::string home;
     std::string home_name;
+    unsigned int unit_mode;
+    unsigned int unit_type;
+    unsigned int port;
+
     json j;
 
+    unsigned int sort_kind;
+    bool ascending;
     bool runAPI;
 
     void setup_d_JSON();
     void setup_f_JSON();
 
+    void sort_by_name();
+    void sort_by_size();
+    void sort_by_date();
+
 public:
     API();
     ~API();
 
-    int  set_path(std::string path);
-
-    void sort_by_name(bool ascending=true);
-    void sort_by_size(bool ascending=true);
-    void sort_by_date(bool ascending=true);
-
+    int  set_options(std::string _path, unsigned int _sort_kind=0, bool _ascending=true);
     void setup_JSON();
     void clear_JSON();
 
-    std::string return_answer();
+    unsigned int PORT() const;
+
+    std::string return_answer() const;
 };
 
 #endif //API_HPP

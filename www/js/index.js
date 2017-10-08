@@ -1,22 +1,26 @@
+/* ---------------------------------------------*/
+/* DO NOT INTERACT MANUALLY WITH THIS PART */
+
 const home = ".";
 const home_index_name = "Home";
-const api_index = "https://api.spokonline.net/fs";
-const url = "https://dl.spokonline.net/?path=";
+const api_index = "http://localhost:9099";
+//"https://api.spokonline.net/fs";
+const url = "http://localhost/?path=";
+//"https://dl.spokonline.net/?path=";
 
-const api_by_name = "by_name";
-const api_by_size = "by_size";
-const api_by_date = "by_date";
-const api_mode_GET = "?mode=";
-const api_path_GET = "&path=";
+const api_sort_GET = "sort=";
+const api_mode_GET = "mode=";
+const api_path_GET = "path=";
 
+var GET_sort = 0;
 var GET_mode = 1;
-var api_sort_method = api_by_name;
+/* /!\ DO NOT /!\ */
+/* ---------------------------------------------*/
 
 var root;
 var actual_dir;
 var config_fail = false;
 var nb_downloads = 0;
-
 var index_json;
 
 $(document).ready(function(){
@@ -38,28 +42,34 @@ $(document).ready(function(){
 });
 
 function api_list_directory(path){
-    // First delete all
+    /* first, we need to remove and clean previous work */
     clean_all();
 
     actual_dir = path;
-    var api_directory = api_index + "/dir/" + api_sort_method + api_mode_GET + GET_mode + api_path_GET + path;
+    var api_directory = api_index + "/dir?" + api_mode_GET + GET_mode + "&" + api_sort_GET + GET_sort + "&" + api_path_GET + path;
 
     var jqxhr = $.getJSON(api_directory, function(index){
+        index_json = index; // save json into global variable
 
-        // save json
-        index_json = index;
+        var i; // Loop index
+        var y; // tr index for files
+        var d; // dir temporary object
+        var f; // file temporary object
+        var content; // content of tooltip for folders
 
-        for(i in index.directories){
+        for(i=0; i < index.nb_directories; ++i){
+            d = index.directories[i];
+
             $("tbody").append("<tr id=\"tr_"+ i +"\" class=\"directory\"></tr>");
             $("#tr_"+i).append("<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>");
             $("#tr_"+i).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"12\"></td>");
-            $("#tr_"+i).append("<td id=\"name\">" + index.directories[i].name + "</td>");
-            $("#tr_"+i).append("<td id=\"date\">" + index.directories[i].date + "</td>");
-            $("#tr_"+i).append("<td id=\"size\">" + index.directories[i].size + "</td>");
-            $("#tr_"+i).append("<td id=\"unit\">" + index.directories[i].unit + "</td>");
+            $("#tr_"+i).append("<td id=\"name\">" + d.name + "</td>");
+            $("#tr_"+i).append("<td id=\"date\">" + d.date + "</td>");
+            $("#tr_"+i).append("<td id=\"size\">" + d.size + "</td>");
+            $("#tr_"+i).append("<td id=\"unit\">" + d.unit + "</td>");
 
-            var content = "";
-            if( index.directories[i].size > 0 ) { content = "Number of elements (" + (index.directories[i].nb_elements) + ")"; }
+            content = "";
+            if( d.size > 0 ) { content = "Number of elements (" + (d.nb_elements) + ")"; }
             else                                { content = "empty directory"; }
 
             $("#tr_"+i).tooltip(
@@ -77,15 +87,17 @@ function api_list_directory(path){
         }
 
         var nbd = index.nb_directories;
-        for(i in index.files){
-            var y = nbd+parseInt(i);
+        for(i=0; i < index.nb_files; ++i){
+            y = nbd+i;
+            f = index.files[i];
+
             $("tbody").append("<tr id=\"tr_"+ y +"\" class=\"file\"></tr>");
             $("#tr_"+y).append("<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>");
             $("#tr_"+y).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"12\"></td>");
-            $("#tr_"+y).append("<td id=\"name\">" + index.files[i].name + "</td>");
-            $("#tr_"+y).append("<td id=\"date\">" + index.files[i].date + "</td>");
-            $("#tr_"+y).append("<td id=\"size\">" + index.files[i].size + "</td>");
-            $("#tr_"+y).append("<td id=\"unit\">" + index.files[i].unit + "</td>");
+            $("#tr_"+y).append("<td id=\"name\">" + f.name + "</td>");
+            $("#tr_"+y).append("<td id=\"date\">" + f.date + "</td>");
+            $("#tr_"+y).append("<td id=\"size\">" + f.size + "</td>");
+            $("#tr_"+y).append("<td id=\"unit\">" + f.unit + "</td>");
         }
 
         $(".selection").animateCss("fadeIn");
@@ -210,33 +222,37 @@ function on_click(){
     });
 
     $(document).on("click", "th#name", function(){
-        if( api_sort_method == api_by_name && GET_mode == 1 )
+        if( GET_sort == 0 && GET_mode == 1 )
             GET_mode = 0;
         else {
-            api_sort_method = api_by_name;
+            GET_sort = 0;
             GET_mode = 1;
         }
         api_list_directory(actual_dir);
     });
 
     $(document).on("click", "th#size", function(){
-        if( api_sort_method == api_by_size && GET_mode == 1 )
+        if( GET_sort == 1 && GET_mode == 1 )
             GET_mode = 0;
         else {
-            api_sort_method = api_by_size;
+            GET_sort = 1;
             GET_mode = 1;
         }
         api_list_directory(actual_dir);
     });
 
     $(document).on("click", "th#date", function(){
-        if( api_sort_method == api_by_date && GET_mode == 1 )
+        if( GET_sort == 2 && GET_mode == 1 )
             GET_mode = 0;
         else {
-            api_sort_method = api_by_date;
+            GET_sort = 2;
             GET_mode = 1;
         }
         api_list_directory(actual_dir);
+    });
+
+    $(document).on("click", ".release-note", function(){
+        $("#release-note-modal").modal('show');
     });
 }
 
@@ -260,12 +276,12 @@ function update_chevron_img(){
     var _id;
     var _svgName;
 
-    if( api_sort_method == api_by_name )
-        _id = "#name";
-    else if( api_sort_method == api_by_size )
-        _id = "#size";
-    else if ( api_sort_method == api_by_date )
-        _id = "#date";
+    switch(GET_sort)
+    {
+        case 0: _id = "#name"; break;
+        case 1: _id = "#size"; break;
+        case 2: _id = "#date"; break;
+    }
 
     if( GET_mode == 1 ) _svgName = "chevron-bottom";
     else _svgName = "chevron-top";

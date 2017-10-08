@@ -8,10 +8,11 @@
 
 ```
 pacaur -S libmicrohttpd (community)
-pacaur -S iod-git (AUR)
-pacaur -S silicon-git (AUR)
-pacaur -S boost (extra)
-pacaur -S boost-libs (extra)
+pacaur -S yaml-cpp      (community)
+pacaur -S boost         (extra)
+pacaur -S boost-libs    (extra)
+pacaur -S iod-git       (AUR)
+pacaur -S silicon-git   (AUR)
 ```
 
 ### Others distribs :

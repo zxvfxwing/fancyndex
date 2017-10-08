@@ -15,6 +15,12 @@ footer {
     text-align: center;
 }
 
+.release-note:hover {
+    color: #17A2B8; /* Info color in Bootstrap */
+    /*#007BFF;*/
+    text-decoration: underline;
+}
+
 .copyleft {
   display:inline-block;
   transform: rotate(180deg);

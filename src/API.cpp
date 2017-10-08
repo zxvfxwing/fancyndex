@@ -5,6 +5,10 @@ API::API()
 {
     YAML::Node config = YAML::LoadFile("/var/www/fancyndex/conf/config.yaml");
 
+    /* Application PORT */
+    if( config["exe"]["port"] ) port = config["exe"]["port"].as<unsigned int>();
+    else port = 9099;
+
     /* root_path */
     if( config["exe"]["root_path"] ) home = config["exe"]["root_path"].as<std::string>();
     else throw std::runtime_error("There is no default option for `root_path` in config.yaml\n   Please modify your config file.");
@@ -20,7 +24,6 @@ API::API()
     /* Acronym or fullsize when displaying size unit */
     if( config["exe"]["unit_type"] ) unit_type = config["exe"]["unit_type"].as<unsigned int>();
     else unit_type = 2;
-    if( unit_type == 0 ) unit_type = 2;
 }
 
 API::~API()
@@ -28,14 +31,21 @@ API::~API()
     delete dir;
 }
 
-int API::set_path(std::string _path)
+int API::set_options(std::string _path, unsigned int _sort_kind, bool _ascending)
 {
     /*
-    * Check if it's just a page refresh of the API with the same path.
-    * If it's true, we are just going to dump() once again json without sorting and parsing.
+    * Check if it's just a page refresh of the API with the same path but different options.
+    * If it's true, we are just going to dump() json once again (with sorting if needed).
+    * No need to process all (like calcul full size ...).
     */
-    if( _path == path ){
-        runAPI = false;
+    if( path == _path )
+    {
+        if( sort_kind == _sort_kind && ascending == _ascending ) runAPI = false;
+        else{
+            sort_kind = _sort_kind;
+            ascending = _ascending;
+            runAPI = true;
+        }
         return 1;
     }
 
@@ -46,7 +56,11 @@ int API::set_path(std::string _path)
     }
 
     path = _path;
+    sort_kind = _sort_kind;
+    ascending = _ascending;
+
     std::string r_path = home + path;
+
     fs::path p(r_path);
 
     if(!fs::exists(p)){
@@ -59,19 +73,27 @@ int API::set_path(std::string _path)
     return 0;
 }
 
-void API::sort_by_name(bool ascending){
-    if( runAPI ) dir->sort_els_by_name(ascending);
+unsigned int API::PORT() const
+{
+    return port;
 }
 
-void API::sort_by_size(bool ascending){
-    if( runAPI ) dir->sort_els_by_size(ascending);
+void API::sort_by_name()
+{
+    dir->sort_els_by_name(ascending);
 }
 
-void API::sort_by_date(bool ascending){
-    if( runAPI ) dir->sort_els_by_date(ascending);
+void API::sort_by_size()
+{
+    dir->sort_els_by_size(ascending);
 }
 
-std::string API::return_answer()
+void API::sort_by_date()
+{
+     dir->sort_els_by_date(ascending);
+}
+
+std::string API::return_answer() const
 {
     return j.dump();
 }
@@ -126,7 +148,15 @@ void API::setup_d_JSON()
 
 void API::setup_JSON()
 {
-    if( runAPI ){
+    if( runAPI )
+    {
+        switch( sort_kind )
+        {
+            case 0: sort_by_name(); break;
+            case 1: sort_by_size(); break;
+            case 2: sort_by_date(); break;
+        }
+
         if( path == "." )
             j["root_name"] = home_name;
         else

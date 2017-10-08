@@ -1,6 +1,14 @@
 # Fancyndex's configuration file :
 ---
+    ## FANCYNDEX EXECUTABLE PART :
     exe:
+
+        # PORT :
+        # The port wich will be use by microhttpd to serve JSON API.
+        #
+        # default (9099)
+        # port: 9099
+
         # Path where fancyndex's exe can find the fancyndex folder on your system.
         # i.e: fancyndex placed in /var/www/fancyndex, root_path = "/var/www/"
         #
@@ -39,6 +47,8 @@
         # default: (2)
         #unit_type: 2
 
+        # Dotfiles (hidden files) :
+        #
+        #
 
     web:
-        
