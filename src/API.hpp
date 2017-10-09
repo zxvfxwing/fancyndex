@@ -17,12 +17,13 @@ private:
     unsigned int unit_mode;
     unsigned int unit_type;
     unsigned int port;
-
-    json j;
-
     unsigned int sort_kind;
     bool ascending;
+    bool show_hidden;
+    std::string http_ac;
+
     bool runAPI;
+    json j;
 
     void setup_d_JSON();
     void setup_f_JSON();
@@ -40,6 +41,7 @@ public:
     void clear_JSON();
 
     unsigned int PORT() const;
+    std::string HTTP_AccessCHeader() const;
 
     std::string return_answer() const;
 };

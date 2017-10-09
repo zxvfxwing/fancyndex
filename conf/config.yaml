@@ -12,7 +12,9 @@
         # Path where fancyndex's exe can find the fancyndex folder on your system.
         # i.e: fancyndex placed in /var/www/fancyndex, root_path = "/var/www/"
         #
-        # Really important: do not forget the last "/" !
+        # Really important:
+        #   > do not forget the last "/" !
+        #   > There is no default option for this one.
         #
         root_path: "/var/www/"
 
@@ -41,14 +43,28 @@
         # (1): unit size fullname (i.e: KibiByte(s))
         # (2): unit size acronym (i.e: KiB)
         #
-        # (0) -> used to display size in real (i.e: 1023)
+        # (0) -> used to display size in real (i.e: 104.9)
         # Don't use it here, or Unit and Size will display the same thing.
         #
-        # default: (2)
+        # default (2)
         #unit_type: 2
 
         # Dotfiles (hidden files) :
         #
+        # Do you want to show hidden files (which begin with a 'dot' -- i.e: ".something_I_want_to_hide.porn" )?
+        # (true) -> dotfiles displayed
+        # (false) -> dotfiles not displayed
         #
+        # default (true)
+        #dotfiles: true
 
+        # HTTP Header
+        # Access-Control-Allow-Origin :
+        #
+        # You may want to setup this header with specifics URL
+        #
+        # default (*)
+        #http_access_control: "*"
+
+    ## FANCYNDEX WEB UI PART
     web:

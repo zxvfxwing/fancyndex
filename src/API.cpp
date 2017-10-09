@@ -24,6 +24,14 @@ API::API()
     /* Acronym or fullsize when displaying size unit */
     if( config["exe"]["unit_type"] ) unit_type = config["exe"]["unit_type"].as<unsigned int>();
     else unit_type = 2;
+
+    /* dotfiles / hidden files displayed or not */
+    if( config["exe"]["dotfiles"] ) show_hidden = config["exe"]["dotfiles"].as<bool>();
+    else show_hidden = true;
+
+    /* HTTP Header, Access-Control-Allow-Origin */
+    if( config["exe"]["http_access_control"] ) http_ac = config["exe"]["http_access_control"].as<std::string>();
+    else http_ac = "*";
 }
 
 API::~API()
@@ -34,9 +42,9 @@ API::~API()
 int API::set_options(std::string _path, unsigned int _sort_kind, bool _ascending)
 {
     /*
-    * Check if it's just a page refresh of the API with the same path but different options.
-    * If it's true, we are just going to dump() json once again (with sorting if needed).
-    * No need to process all (like calcul full size ...).
+    * While settings options, we can test this options to know if user changed something when calling API multiples times.
+    * i.e:
+    * if the Path is the same, and only options are differents, we don't have to run full process. Only sort & dump json.
     */
     if( path == _path )
     {
@@ -49,6 +57,7 @@ int API::set_options(std::string _path, unsigned int _sort_kind, bool _ascending
         return 1;
     }
 
+    /* clear memory & json before reloading */
     if( dir != NULL ){
         clear_JSON();
         delete dir;
@@ -60,7 +69,6 @@ int API::set_options(std::string _path, unsigned int _sort_kind, bool _ascending
     ascending = _ascending;
 
     std::string r_path = home + path;
-
     fs::path p(r_path);
 
     if(!fs::exists(p)){
@@ -96,6 +104,11 @@ void API::sort_by_date()
 std::string API::return_answer() const
 {
     return j.dump();
+}
+
+std::string API::HTTP_AccessCHeader() const
+{
+    return http_ac;
 }
 
 void API::clear_JSON(){

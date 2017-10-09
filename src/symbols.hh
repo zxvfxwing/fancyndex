@@ -10,21 +10,6 @@
     iod_define_symbol(ascending_name)
 #endif
 
-#ifndef IOD_SYMBOL_by_date
-#define IOD_SYMBOL_by_date
-    iod_define_symbol(by_date)
-#endif
-
-#ifndef IOD_SYMBOL_by_name
-#define IOD_SYMBOL_by_name
-    iod_define_symbol(by_name)
-#endif
-
-#ifndef IOD_SYMBOL_by_size
-#define IOD_SYMBOL_by_size
-    iod_define_symbol(by_size)
-#endif
-
 #ifndef IOD_SYMBOL_decreasing_name
 #define IOD_SYMBOL_decreasing_name
     iod_define_symbol(decreasing_name)

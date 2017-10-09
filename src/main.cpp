@@ -9,9 +9,9 @@ using namespace s;  // Symbols namespace
 
 API fs_api;
 
-void set_headers(mhd_response* r)
+void set_headers(mhd_response* r, std::string AccessCAOrigin)
 {
-    r->set_header("Access-Control-Allow-Origin", "http://localhost");
+    r->set_header("Access-Control-Allow-Origin", AccessCAOrigin);
     r->set_header("Content-Type", "application/json; charset=UTF-8");
 }
 
@@ -24,7 +24,7 @@ auto filesystem_api = http_api(
 
     GET / _dir * get_parameters(_mode = int(), _sort = int(), _path = std::string()) = [] (auto param, mhd_response* r)
     {
-        set_headers(r);
+        set_headers(r, fs_api.HTTP_AccessCHeader());
         int result = fs_api.set_options(param.path, param.sort, bool(param.mode));
         if( result < 0 ) path_error_message(param.path);
         fs_api.setup_JSON();

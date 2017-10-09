@@ -8,13 +8,14 @@ File::File(fs::path file)
     try {
         if(fs::is_regular_file(file)){
             if(file.has_extension()){
-                std::string name = get_name();
                 /*
                 *   If name begin with a '.', "has_extension()" function has mistaken.
                 *   Indeed, path.extension().string() == path.filename().string() here.
                 *   It's part of our job to fix it :
                 */
                 if( is_dotfile() ){
+                    std::string name = get_name();
+
                     /*
                     * Find last occurence of dot in the dotfile to get the actual extension
                     * Begin from string last character.
@@ -39,7 +40,7 @@ File::File(fs::path file)
             set_size(fs::file_size(file));
         }
         else{
-            throw std::runtime_error("ERROR: " + file.filename().string() + " is not a regular file.\n");
+            throw std::runtime_error("ERROR: " + get_name() + " is not a regular file.\n");
         }
     }
     catch(const fs::filesystem_error& e){

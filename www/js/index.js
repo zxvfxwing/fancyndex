@@ -1,6 +1,5 @@
 /* ---------------------------------------------*/
 /* DO NOT INTERACT MANUALLY WITH THIS PART */
-
 const home = ".";
 const home_index_name = "Home";
 const api_index = "http://localhost:9099";
@@ -21,6 +20,7 @@ var root;
 var actual_dir;
 var config_fail = false;
 var nb_downloads = 0;
+var dl_array = [];
 var index_json;
 
 $(document).ready(function(){
@@ -187,38 +187,46 @@ function on_click(){
     $(document).on("click", ".back-button", function(){
         var pos = actual_dir.lastIndexOf("/");
         var back_path = actual_dir.substr(0,pos);
-
         api_list_directory(back_path);
     });
 
     $(document).on("click", ".selection", function(){
-        if( ! $(this).closest("tr").hasClass("selected") ){
-            $(this).closest("tr").addClass("selected");
-            ++nb_downloads;
-            update_download_button();
-        }
-        else{
-            $(this).closest("tr").removeClass("selected");
-            --nb_downloads;
-            update_download_button();
-        }
+        update_download_array();
     });
-
 
     $(document).on("click", ".download-button", function(){
-        if( nb_downloads == 0 || nb_downloads == (index_json.nb_files + index_json.nb_directories) ){
+        if( nb_downloads == 0 ){
             $('input[type="checkbox"]').prop("checked", true);
+            update_download_array();
             $("#dl_modal").modal('show');
-            nb_downloads = (index_json.nb_files + index_json.nb_directories);
-            update_download_button();
+        }
+
+        /* Only one selection, and it's a file */
+        else if( nb_downloads ==  1 && dl_array[0][1] == 1 ){
+            window.location = actual_dir + "/" + $("#tr_"+dl_array[0,0]).find("#name").text();
+        }
+
+        /* Multiples selections */
+        else{
+            if( nb_downloads == (index_json.nb_directories + index_json.nb_files) ){
+                $("#dl_modal").modal('show');
+            }
+
+            for(var i=0; i < nb_downloads; ++i) {
+                if( dl_array[i][1] == 1 ){
+                    console.log(dl_array[i][0] - index_json.nb_directories);
+                }
+                else {
+                    console.log(dl_array[i][0]);
+                }
+            }
+
         }
     });
 
-
     $(document).on("click", ".back-modal-button", function(){
-        nb_downloads = 0;
-        update_download_button();
         $('input[type="checkbox"]').prop("checked", false);
+        update_download_array();
     });
 
     $(document).on("click", "th#name", function(){
@@ -291,6 +299,32 @@ function update_chevron_img(){
     $("th#date").find("img").remove();
 
     $("th"+_id).append(" <img src=\"./fancyndex/www/icon/open-iconic/svg/"+ _svgName +".svg\">")
+}
+
+function update_download_array(){
+    nb_downloads = 0;
+    dl_array = [];
+    var thisTR;
+    $('input[type=checkbox]').each(function (){
+        thisTR = $(this).closest("tr");
+
+        if( this.checked == true ){
+            thisTR.addClass("selected");
+
+            dl_array[nb_downloads] = [];
+
+            if( thisTR.hasClass("directory") )  dl_array[nb_downloads][1] = 0;
+            else                                dl_array[nb_downloads][1] = 1;
+
+            /* Get the tr_n° */
+            dl_array[nb_downloads][0] = thisTR.attr("id").replace(/^\D+/g, '');
+            ++nb_downloads;
+        }
+        else{
+            thisTR.removeClass("selected");
+        }
+    });
+    update_download_button();
 }
 
 function update_download_button(){
