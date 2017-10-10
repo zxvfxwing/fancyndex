@@ -20,7 +20,6 @@ target_compile_options(
     -Wall
     -Wextra
     -pedantic-errors
-    -pthread
 )
 
 target_link_libraries(
@@ -28,7 +27,6 @@ target_link_libraries(
     boost_system
     boost_filesystem
     microhttpd
-    pthread
     yaml-cpp
 )
 
@@ -39,5 +37,5 @@ add_custom_target(
 
 add_custom_target(
     symbol
-    COMMAND iod_generate_symbols ../src/*.cpp ../src/symbols.hh
+    COMMAND iod_generate_symbols ../src/main.cpp ../src/symbols.hh
 )

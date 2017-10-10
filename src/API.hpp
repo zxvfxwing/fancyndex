@@ -41,9 +41,10 @@ public:
     void clear_JSON();
 
     unsigned int PORT() const;
+    std::string HOME() const;
     std::string HTTP_AccessCHeader() const;
 
-    std::string return_answer() const;
+    std::string answer() const;
 };
 
 #endif //API_HPP

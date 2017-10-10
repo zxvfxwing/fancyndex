@@ -142,18 +142,19 @@ File** Directory::get_files() const
 
 File* Directory::get_file(unsigned long long int index) const
 {
-    assert(index < nb_files);
+    if( index > nb_files ) return NULL;
     return files[index];
 }
 
 Directory** Directory::get_directories() const
 {
+
     return directories;
 }
 
 Directory* Directory::get_directory(unsigned long long int index) const
 {
-    assert(index < nb_directories);
+    if( index > nb_directories ) return NULL;
     return directories[index];
 }
 

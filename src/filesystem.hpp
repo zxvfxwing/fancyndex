@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <ctime>
+#include <cstdlib>
 #include <stdexcept>
 #include <algorithm>
 #include <vector>

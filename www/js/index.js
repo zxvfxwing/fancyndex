@@ -203,7 +203,7 @@ function on_click(){
 
         /* Only one selection, and it's a file */
         else if( nb_downloads ==  1 && dl_array[0][1] == 1 ){
-            window.location = actual_dir + "/" + $("#tr_"+dl_array[0,0]).find("#name").text();
+            window.location = actual_dir + "/" + dl_array[0][0];
         }
 
         /* Multiples selections */
@@ -214,7 +214,7 @@ function on_click(){
 
             for(var i=0; i < nb_downloads; ++i) {
                 if( dl_array[i][1] == 1 ){
-                    console.log(dl_array[i][0] - index_json.nb_directories);
+                    console.log(dl_array[i][0]);
                 }
                 else {
                     console.log(dl_array[i][0]);
@@ -317,8 +317,9 @@ function update_download_array(){
             else                                dl_array[nb_downloads][1] = 1;
 
             /* Get the tr_n° */
-            dl_array[nb_downloads][0] = thisTR.attr("id").replace(/^\D+/g, '');
-            ++nb_downloads;
+            var tr_num = thisTR.attr("id").replace(/^\D+/g, '');
+
+            dl_array[nb_downloads++][0] = $("#tr_"+ tr_num).find("#name").text();
         }
         else{
             thisTR.removeClass("selected");

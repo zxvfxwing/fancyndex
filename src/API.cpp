@@ -32,6 +32,13 @@ API::API()
     /* HTTP Header, Access-Control-Allow-Origin */
     if( config["exe"]["http_access_control"] ) http_ac = config["exe"]["http_access_control"].as<std::string>();
     else http_ac = "*";
+
+    /* flush archives from system */
+    std::string cmd = "rm -rf " + home + "fancyndex/archive";
+    system(cmd.c_str());
+
+    cmd = "mkdir -p " + home + "fancyndex/archive";
+    system(cmd.c_str());
 }
 
 API::~API()
@@ -58,7 +65,7 @@ int API::set_options(std::string _path, unsigned int _sort_kind, bool _ascending
     }
 
     /* clear memory & json before reloading */
-    if( dir != NULL ){
+    if( dir != NULL ) {
         clear_JSON();
         delete dir;
         dir = NULL;
@@ -86,6 +93,11 @@ unsigned int API::PORT() const
     return port;
 }
 
+std::string API::HOME() const
+{
+    return home;
+}
+
 void API::sort_by_name()
 {
     dir->sort_els_by_name(ascending);
@@ -101,7 +113,7 @@ void API::sort_by_date()
      dir->sort_els_by_date(ascending);
 }
 
-std::string API::return_answer() const
+std::string API::answer() const
 {
     return j.dump();
 }
