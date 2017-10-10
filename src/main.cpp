@@ -56,7 +56,7 @@ auto FileSystemAPI = http_api(
         while( i < param.list.length() ){
 
             /* GET list, separated by commas */
-            pos = param.list.find(" ", i);
+            pos = param.list.find(",", i);
             name = param.list.substr(i, pos-i);
 
             /* Verification on system */
@@ -70,7 +70,7 @@ auto FileSystemAPI = http_api(
             }
 
             i += name.length()+1;
-            archive_list += full_path + " ";
+            archive_list += "\""+ full_path + "\" ";
         }
 
         /* 7z Archive part */
@@ -78,7 +78,8 @@ auto FileSystemAPI = http_api(
             archive_time = std::to_string( time(0) );
             archive_path = "fancyndex/archive/" + archive_time + ".7z";
             archive_absolute_path = fs_api.HOME() + archive_path;
-            cmd = "7z a " + archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
+	    
+	    cmd = "7z a " +  archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
             system(cmd.c_str());
         }
 

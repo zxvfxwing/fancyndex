@@ -2,10 +2,8 @@
 /* DO NOT INTERACT MANUALLY WITH THIS PART */
 const home = ".";
 const home_index_name = "Home";
-const api_index = "http://localhost:9099";
-//"https://api.spokonline.net/fs";
-const url = "http://localhost/?path=";
-//"https://dl.spokonline.net/?path=";
+const api_index = "https://api.spokonline.net/fs";
+const url = "https://dl.spokonline.net/?path=";
 
 const api_sort_GET = "sort=";
 const api_mode_GET = "mode=";
@@ -142,7 +140,7 @@ function api_download_archive(){
     var api_archive = api_index + "/archive?" + api_active_path_GET + actual_dir + "/&" + api_list_GET;
 
     for(var i=0; i < nb_downloads; ++i){
-        api_archive += dl_array[i][0] + " ";
+        api_archive += dl_array[i][0] + ",";
     }
 
     /* call API with right url */
@@ -256,7 +254,7 @@ function on_click(){
     });
 
     $(document).on("click", ".back-modal-button", function(){
-        wait_and_deselect();
+        wait_and_deselect(actual_dir);
     });
 
     $(document).on("click", "th#name", function(){
