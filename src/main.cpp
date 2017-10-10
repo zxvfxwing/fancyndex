@@ -35,10 +35,10 @@ auto FileSystemAPI = http_api(
     {
         bool good = true;
         std::string archive_time = "";
-        std::string archive_name = "";
+        std::string archive_path = "";
+        std::string archive_absolute_path = "";
         std::string archive_list = "";
         std::string cmd = "";
-
 
         set_headers(r, fs_api.HTTP_AccessCHeader());
 
@@ -52,11 +52,12 @@ auto FileSystemAPI = http_api(
         std::string name = "";
         std::string full_path = "";
 
-        unsigned long long int i;
-        for(i=0; i < param.list.length(); i+=name.length()+1){
+        unsigned long long int i = 0;
+        while( i < param.list.length() ){
+
             /* GET list, separated by commas */
             pos = param.list.find(" ", i);
-            name = param.list.substr(i, pos);
+            name = param.list.substr(i, pos-i);
 
             /* Verification on system */
             full_path = fs_api.HOME() + param.active_path + name;
@@ -68,21 +69,23 @@ auto FileSystemAPI = http_api(
                 break;
             }
 
+            i += name.length()+1;
             archive_list += full_path + " ";
         }
 
         /* 7z Archive part */
         if( good ){
             archive_time = std::to_string( time(0) );
-            archive_name = fs_api.HOME() + "fancyndex/archive/" + archive_time + ".7z";
-            cmd = "7z a " + archive_name + " " + archive_list + " 2>/dev/null 1>/dev/null &";
+            archive_path = "fancyndex/archive/" + archive_time + ".7z";
+            archive_absolute_path = fs_api.HOME() + archive_path;
+            cmd = "7z a " + archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
             system(cmd.c_str());
         }
 
         json j;
         j["ok"] = good;
-        j["arhive_name"] = archive_name;
-        
+        j["archive_path"] = archive_path;
+
         return j.dump();
     }
 );

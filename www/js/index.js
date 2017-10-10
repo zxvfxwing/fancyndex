@@ -1,4 +1,4 @@
-/* ---------------------------------------------*/
+/* --------------------------------------------- */
 /* DO NOT INTERACT MANUALLY WITH THIS PART */
 const home = ".";
 const home_index_name = "Home";
@@ -11,10 +11,13 @@ const api_sort_GET = "sort=";
 const api_mode_GET = "mode=";
 const api_path_GET = "path=";
 
+const api_active_path_GET = "active_path=";
+const api_list_GET = "list=";
+
 var GET_sort = 0;
 var GET_mode = 1;
 /* /!\ DO NOT /!\ */
-/* ---------------------------------------------*/
+/* --------------------------------------------- */
 
 var root;
 var actual_dir;
@@ -131,6 +134,35 @@ function api_list_directory(path){
     });
 }
 
+function api_download_archive(){
+
+    /* Add a gif loading animation */
+    $(".info").append("<img class=\"loading\" src=\"./fancyndex/www/gif/ajax_load.gif\" alt=\"Loading\" width=\"40\">");
+
+    var api_archive = api_index + "/archive?" + api_active_path_GET + actual_dir + "/&" + api_list_GET;
+
+    for(var i=0; i < nb_downloads; ++i){
+        api_archive += dl_array[i][0] + " ";
+    }
+
+    /* call API with right url */
+    var archive_answer;
+    var jqxhr = $.getJSON(api_archive, function(answer){
+        archive_answer = answer;
+    });
+
+    jqxhr.done(function(){
+        /* remove gif */
+        $(".loading").remove();
+
+        /* if archiving didn't failed, get the download */
+        if( archive_answer.archive_path != "" )
+            window.location = archive_answer.archive_path;
+
+        wait_and_deselect(actual_dir);
+    });
+}
+
 function on_click(){
 
     // Directory
@@ -181,6 +213,7 @@ function on_click(){
         var file_name = $(this).parent().find("#name").text();
         var clicked_file = actual_dir + "/" + file_name;
         window.location = clicked_file;
+        wait_and_deselect(actual_dir);
     });
 
     // Back button :
@@ -204,6 +237,7 @@ function on_click(){
         /* Only one selection, and it's a file */
         else if( nb_downloads ==  1 && dl_array[0][1] == 1 ){
             window.location = actual_dir + "/" + dl_array[0][0];
+            wait_and_deselect(actual_dir);
         }
 
         /* Multiples selections */
@@ -211,22 +245,18 @@ function on_click(){
             if( nb_downloads == (index_json.nb_directories + index_json.nb_files) ){
                 $("#dl_modal").modal('show');
             }
-
-            for(var i=0; i < nb_downloads; ++i) {
-                if( dl_array[i][1] == 1 ){
-                    console.log(dl_array[i][0]);
-                }
-                else {
-                    console.log(dl_array[i][0]);
-                }
+            else{
+                api_download_archive();
             }
-
         }
     });
 
+    $(document).on("click", ".dl-modal-button", function(){
+        api_download_archive();
+    });
+
     $(document).on("click", ".back-modal-button", function(){
-        $('input[type="checkbox"]').prop("checked", false);
-        update_download_array();
+        wait_and_deselect();
     });
 
     $(document).on("click", "th#name", function(){
@@ -278,6 +308,15 @@ function on_hover(){
         //$(this).removeClass("table-primary");
     });
 
+}
+
+function wait_and_deselect(dir){
+    if( dir == actual_dir ){
+        setTimeout(function(){
+            $('input[type="checkbox"]').prop("checked", false);
+            update_download_array();
+        }, 2000);
+    }
 }
 
 function update_chevron_img(){
