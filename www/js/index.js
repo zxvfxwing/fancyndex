@@ -2,8 +2,8 @@
 /* DO NOT INTERACT MANUALLY WITH THIS PART */
 const home = ".";
 const home_index_name = "Home";
-const api_index = "https://api.spokonline.net/fs";
-const url = "https://dl.spokonline.net/?path=";
+const api_index = "http://localhost:9099"; //"https://api.spokonline.net/fs";
+const url = "http://localhost/?path="; //"https://dl.spokonline.net/?path=";
 
 const api_sort_GET = "sort=";
 const api_mode_GET = "mode=";
@@ -24,6 +24,8 @@ var nb_downloads = 0;
 var dl_array = [];
 var index_json;
 
+var do_animation = true;
+
 $(document).ready(function(){
     var fixed_url = decode_utf8(window.location.href);
     var pos = fixed_url.indexOf("=");
@@ -43,8 +45,9 @@ $(document).ready(function(){
 });
 
 function api_list_directory(path){
-    /* first, we need to remove and clean previous work */
-    clean_all();
+
+    if( actual_dir == path ) do_animation = false;
+    else do_animation = true;
 
     actual_dir = path;
     var api_directory = api_index + "/dir?" + api_mode_GET + GET_mode + "&" + api_sort_GET + GET_sort + "&" + api_path_GET + path;
@@ -58,58 +61,61 @@ function api_list_directory(path){
         var f; // file temporary object
         var content; // content of tooltip for folders
 
+        var elements = [];
+        var tr_dir;
+        var tds_dir;
+
         for(i=0; i < index.nb_directories; ++i){
             d = index.directories[i];
 
-            $("tbody").append("<tr id=\"tr_"+ i +"\" class=\"directory\"></tr>");
-            $("#tr_"+i).append("<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>");
-            $("#tr_"+i).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"12\"></td>");
-            $("#tr_"+i).append("<td id=\"name\">" + d.name + "</td>");
-            $("#tr_"+i).append("<td id=\"date\">" + d.date + "</td>");
-            $("#tr_"+i).append("<td id=\"size\">" + d.size + "</td>");
-            $("#tr_"+i).append("<td id=\"unit\">" + d.unit + "</td>");
+            tds_dir =
+                "<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>" +
+                "<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/folder.svg\" width=\"12\"></td>" +
+                "<td id=\"name\">" + d.name + "</td>" +
+                "<td id=\"date\">" + d.date + "</td>" +
+                "<td id=\"size\">" + d.size + "</td>" +
+                "<td id=\"unit\">" + d.unit + "</td>"
+            ;
 
-            content = "";
-            if( d.size > 0 ) { content = "Number of elements (" + (d.nb_elements) + ")"; }
-            else                                { content = "empty directory"; }
-
-            $("#tr_"+i).tooltip(
-                {
-                    title: content,
-                    placement: "auto",
-                    animation: true,
-                    trigger: "hover",
-                    delay: {
-                        "show": 200,
-                        "hide": 0
-                    }
-                }
-            );
+            tr_dir = "<tr id=\"tr_"+ i +"\" class=\"directory\">" + tds_dir + "</tr>";
+            elements.push(tr_dir);
         }
 
+        var tr_file;
+        var tds_file;
         var nbd = index.nb_directories;
+
         for(i=0; i < index.nb_files; ++i){
             y = nbd+i;
             f = index.files[i];
 
-            $("tbody").append("<tr id=\"tr_"+ y +"\" class=\"file\"></tr>");
-            $("#tr_"+y).append("<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>");
-            $("#tr_"+y).append("<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"12\"></td>");
-            $("#tr_"+y).append("<td id=\"name\">" + f.name + "</td>");
-            $("#tr_"+y).append("<td id=\"date\">" + f.date + "</td>");
-            $("#tr_"+y).append("<td id=\"size\">" + f.size + "</td>");
-            $("#tr_"+y).append("<td id=\"unit\">" + f.unit + "</td>");
+            tds_file =
+                "<td id=\"select\"><input class=\"selection\" type=\"checkbox\"></td>" +
+                "<td id=\"type\"><img src=\"./fancyndex/www/icon/open-iconic/svg/file.svg\" width=\"12\"></td>" +
+                "<td id=\"name\">" + f.name + "</td>" +
+                "<td id=\"date\">" + f.date + "</td>" +
+                "<td id=\"size\">" + f.size + "</td>" +
+                "<td id=\"unit\">" + f.unit + "</td>"
+            ;
+
+            tr_file = "<tr id=\"tr_"+ y +"\" class=\"file\">" + tds_file + "</tr>";
+            elements.push(tr_file);
         }
 
-        $(".selection").animateCss("fadeIn");
+        clean_all();
+        $("tbody").append(elements);
+
     });
 
     jqxhr.done(function(){
-        update_url(path);
-        update_nav(path);
-        update_back_button(path);
-        update_information(index_json);
-        update_download_button();
+        if(do_animation){
+            $(".selection").animateCss("fadeIn");
+            update_url(path);
+            update_nav(path);
+            update_back_button(path);
+            update_information(index_json);
+            update_download_button();
+        }
         update_chevron_img();
         config_fail = false;
     });
@@ -258,8 +264,9 @@ function on_click(){
     });
 
     $(document).on("click", "th#name", function(){
-        if( GET_sort == 0 && GET_mode == 1 )
+        if( GET_sort == 0 && GET_mode == 1 ){
             GET_mode = 0;
+        }
         else {
             GET_sort = 0;
             GET_mode = 1;
@@ -268,8 +275,9 @@ function on_click(){
     });
 
     $(document).on("click", "th#size", function(){
-        if( GET_sort == 1 && GET_mode == 1 )
+        if( GET_sort == 1 && GET_mode == 1 ){
             GET_mode = 0;
+        }
         else {
             GET_sort = 1;
             GET_mode = 1;
@@ -278,8 +286,9 @@ function on_click(){
     });
 
     $(document).on("click", "th#date", function(){
-        if( GET_sort == 2 && GET_mode == 1 )
+        if( GET_sort == 2 && GET_mode == 1 ){
             GET_mode = 0;
+        }
         else {
             GET_sort = 2;
             GET_mode = 1;
@@ -426,10 +435,11 @@ function loading(){
 
 function clean_all(){
     $("tbody > tr").remove();
-    $("li").remove();
-    $(".nav-img").remove();
-    $(".back-button").remove();
-
+    if( do_animation ){
+        $("li").remove();
+        $(".nav-img").remove();
+        $(".back-button").remove();
+    }
     nb_downloads=0;
 }
 
