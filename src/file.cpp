@@ -62,15 +62,3 @@ bool File::is_extension_ok() const
 {
     return extension_ok;
 }
-
-
-/*bool File::_ascending_name(File* f1, File* f2)
-{
-    return ( boost::to_lower_copy(f1->get_name()) < boost::to_lower_copy(f2->get_name()) );
-}
-
-bool File::_decreasing_name(File* f1, File* f2)
-{
-    return ( boost::to_lower_copy(f1->get_name()) > boost::to_lower_copy(f2->get_name()) );
-}
-*/

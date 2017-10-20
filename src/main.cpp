@@ -78,10 +78,9 @@ auto FileSystemAPI = http_api(
             archive_time = std::to_string( time(0) );
             archive_path = "fancyndex/archive/" + archive_time + ".7z";
             archive_absolute_path = fs_api.HOME() + archive_path;
-	    
 
-	    /* Create an archive without compression, juste copy documents inside it */ 
-	    cmd = "7z a -mx=1 " +  archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
+    	    /* Create an archive without compression, juste copy documents inside it */
+    	    cmd = "7z a -mx=1 " +  archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
             system(cmd.c_str());
         }
 
