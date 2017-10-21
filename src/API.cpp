@@ -3,8 +3,9 @@
 API::API()
     :dir(NULL)
 {
-    YAML::Node config = YAML::LoadFile("/var/www/fancyndex/conf/config.yaml");
-    //YAML::LoadFile("/var/www/dl/fancyndex/conf/config.yaml");
+    YAML::Node config = 
+    //YAML::LoadFile("/var/www/fancyndex/conf/config.yaml");
+    YAML::LoadFile("/var/www/dl/fancyndex/conf/config.yaml");
 
     /* Application PORT */
     if( config["exe"]["port"] ) port = config["exe"]["port"].as<unsigned int>();
