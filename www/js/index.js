@@ -3,11 +3,11 @@
 const home = ".";
 const home_index_name = "Home";
 const api_index = 
-//"http://localhost:9099"; 
-	"https://api.spokonline.net/fs";
+	"http://localhost:9099"; 
+	//"https://api.spokonline.net/fs";
 const url = 
-	//"http://localhost/?path="; 
-	"https://dl.spokonline.net/?path=";
+	"http://localhost/?path="; 
+	//"https://dl.spokonline.net/?path=";
 
 const api_sort_GET = "sort=";
 const api_mode_GET = "mode=";

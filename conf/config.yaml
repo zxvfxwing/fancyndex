@@ -16,7 +16,7 @@
         #   > do not forget the last "/" !
         #   > There is no default option for this one.
         #
-        root_path: "/var/www/dl/"
+        root_path: "/var/www/"
 
         # Root Name :
         #

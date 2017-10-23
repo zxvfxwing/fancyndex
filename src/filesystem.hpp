@@ -19,17 +19,12 @@ class FileSystem
 {
 private:
     fs::path path;
-    std::string name;
-    std::time_t date_raw;
-    std::string date_human;
     unsigned long long int size;
-    bool dotfile;
     unsigned int ibyte_pow;
     unsigned int byte_pow;
     std::string str_ib_size;
     std::string str_b_size;
 
-    void maketime_readable(bool readable =true);
     void compute_unit(unsigned int wanted_precision=3);
 
     /* "How to sort" functions */

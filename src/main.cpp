@@ -24,10 +24,14 @@ auto FileSystemAPI = http_api(
 
     GET / _dir * get_parameters(_mode = int(), _sort = int(), _path = std::string()) = [] (auto param, mhd_response* r)
     {
+    	time_t init = clock();
         set_headers(r, fs_api.HTTP_AccessCHeader());
         int result = fs_api.set_options(param.path, param.sort, bool(param.mode));
         if( result < 0 ) path_error_message(param.path);
         fs_api.setup_JSON();
+	    time_t end = clock();
+
+	    std::cerr << (double) (end - init) / CLOCKS_PER_SEC << std::endl;
         return fs_api.answer();
     },
 
@@ -78,9 +82,9 @@ auto FileSystemAPI = http_api(
             archive_time = std::to_string( time(0) );
             archive_path = "fancyndex/archive/" + archive_time + ".zip";
             archive_absolute_path = fs_api.HOME() + archive_path;
-	    
-	    /* Create an archive without compression, juste copy documents inside it */
-	    cmd = "zip -0 " +  archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
+
+	        /* Create an archive without compression, juste copy documents inside it */
+	        cmd = "zip -0 " +  archive_absolute_path + " " + archive_list + " 2>/dev/null 1>/dev/null";
             /* system(cmd.c_str()); */
         }
 

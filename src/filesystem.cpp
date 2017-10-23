@@ -25,37 +25,14 @@ const std::string bytes_acro[NB_UNITS] =
 
 FileSystem::FileSystem(fs::path _path)
     :path(_path),
-    name(""),
-    date_raw(0),
-    date_human(""),
     size(0),
-    dotfile(false),
     ibyte_pow(0),
     byte_pow(0),
     str_ib_size(""),
     str_b_size("")
 {
     try {
-        if(fs::exists(path)){
-            if(path.has_filename()){
-                name = path.filename().string();
-                /*
-                * if name == ".", means that we are on the source directory
-                * To get his real name, need to call `canonical` function.
-                */
-                if(name == ".")
-                    name = get_canonical_name();
-
-                if( name[0] == '.' )
-                    dotfile = true;
-            }
-            else
-                throw std::runtime_error("This file or directory has no name !");
-
-            date_raw = fs::last_write_time(path);
-            maketime_readable();
-        }
-        else{
+        if(!fs::exists(path)){
             if(fs::is_symlink(path))
                 throw std::runtime_error("Wrong symbolic link, check documentation.");
             else
@@ -72,22 +49,31 @@ FileSystem::~FileSystem()
 
 std::string FileSystem::get_name() const
 {
+    std::string name = path.filename().string();
+    if( name == "." )
+        name = get_canonical_name();
+
     return name;
 }
 
 std::string FileSystem::get_date_human() const
 {
-    return date_human;
+    struct tm* timeinfo;
+    char date[80];
+
+    std::time_t date_raw = get_date_raw();
+
+    timeinfo = localtime(&date_raw);
+    strftime(date, 80, "%F %T", timeinfo);
+
+    return date;
 }
 
 std::time_t FileSystem::get_date_raw() const
 {
-    return date_raw;
+    return fs::last_write_time(path);
 }
 
-/*
-    return size
-*/
 unsigned long long int FileSystem::get_size() const
 {
     return size;
@@ -156,23 +142,6 @@ void FileSystem::set_size(const unsigned long long int& _size)
     compute_unit();
 }
 
-void FileSystem::maketime_readable(bool use_localtime)
-{
-    struct tm* timeinfo;
-    char buffer[80];
-
-    try{
-        if(use_localtime)   timeinfo = localtime(&date_raw);
-        else                timeinfo = gmtime(&date_raw);
-        strftime(buffer, 80, "%F %T", timeinfo);
-    }
-    catch(std::exception& e){
-        std::cerr << "Something went wrong when making the timestamp readable for human : " << e.what() << std::endl;
-    }
-
-    date_human = buffer;
-}
-
 std::string FileSystem::get_canonical() const
 {
     return fs::canonical(path).string();
@@ -190,7 +159,7 @@ std::string FileSystem::get_absolute() const
 
 bool FileSystem::is_dotfile() const
 {
-    return dotfile;
+    return (get_name()[0] == '.')? true:false;
 }
 
 bool FileSystem::by_name_ascending(FileSystem* f1, FileSystem* f2)
