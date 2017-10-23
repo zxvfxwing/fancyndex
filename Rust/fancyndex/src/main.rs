@@ -1,30 +1,80 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
-//#![warn(unused_imports)]
+
+#[macro_use]
+extern crate serde_derive;
+extern crate toml;
 
 extern crate rocket;
 
 use std::path::{Path, PathBuf};
 use rocket::response::Redirect;
-// use rocket::http::RawStr;
+use rocket::State;
+
+use std::io;
+use std::io::prelude::*;
+use std::fs::File;
+use std::io::BufReader;
+use std::process;
+
+mod lib;
 
 #[get("/")]
-fn home() -> Redirect {
-    Redirect::to("/home")
+fn home(cfg: State<Config>) -> String {
+    let path = Path::new(&cfg.home[..]);
+
+    if path.exists() && path.is_dir() {
+        println!("path found!");
+    }
+
+    format!("cfg_home: {}, path: {}", cfg.home, path.display())
 }
 
 #[get("/<user_path..>")]
-fn user_path(user_path: PathBuf) -> String {
+fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
 
-    let path = Path::new("/").join(&user_path);
+    let path = Path::new(&cfg.home[..]).join(&user_path);
 
-    if path.exists() {
-        println!("!YOUHOU");
+    if path.exists() && path.is_dir() {
+        println!("path found!");
     }
 
-    format!("user_path {}, path: {}", user_path.display(), path.display())
+    format!("cfg_home: {}, user_path: {}, path: {}", cfg.home, user_path.display(), path.display())
+}
+
+#[derive(Deserialize)]
+struct Config {
+    home: String,
+}
+
+fn init_cfg_file(filename: &str) -> Config {
+
+    match read_file(filename) {
+        Ok(s) =>  {
+            let config: Config = toml::from_str(&s[..]).unwrap();
+            config
+        },
+        Err(e) => {
+            println!("Error: {}", e.to_string());
+            process::exit(1);
+        },
+    }
+
+}
+
+fn read_file(filename: &str) -> Result<String, io::Error> {
+    let cfg_file = File::open(filename)?;
+    let mut buf_reader = BufReader::new(cfg_file);
+    let mut contents = String::new();
+    buf_reader.read_to_string(&mut contents)?;
+    Ok(contents)
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![home, user_path]).launch();
+
+    let cfg = init_cfg_file("/home/spoken/Git/fancyndex/Rust/fancyndex/src/config.toml");
+
+    rocket::ignite()
+        .manage(cfg)
+        .mount("/", routes![home, user_path]).launch();
 }
