@@ -6,10 +6,11 @@ extern crate serde_derive;
 extern crate toml;
 
 extern crate rocket;
+extern crate rocket_contrib;
 
 use std::path::{Path, PathBuf};
-use rocket::response::Redirect;
 use rocket::State;
+use rocket_contrib::Template;
 
 use std::io;
 use std::io::prelude::*;
@@ -17,17 +18,24 @@ use std::fs::File;
 use std::io::BufReader;
 use std::process;
 
-mod lib;
+use std::collections::HashMap;
 
 #[get("/")]
-fn home(cfg: State<Config>) -> String {
+fn home(cfg: State<Config>) -> Template {
     let path = Path::new(&cfg.home[..]);
 
     if path.exists() && path.is_dir() {
         println!("path found!");
     }
 
-    format!("cfg_home: {}, path: {}", cfg.home, path.display())
+    println!("cfg_home: {}, path: {}", cfg.home, path.display());
+
+    let mut context = HashMap::new();
+    context.insert("home", &cfg.home);
+
+    Template::render("index", context)
+
+    //Template::render("index", format!("{home}", home = cfg.home))
 }
 
 #[get("/<user_path..>")]
@@ -48,18 +56,13 @@ struct Config {
 }
 
 fn init_cfg_file(filename: &str) -> Config {
-
     match read_file(filename) {
-        Ok(s) =>  {
-            let config: Config = toml::from_str(&s[..]).unwrap();
-            config
-        },
+        Ok(s) => toml::from_str(&s[..]).unwrap(),
         Err(e) => {
             println!("Error: {}", e.to_string());
-            process::exit(1);
+            process::exit(1)
         },
     }
-
 }
 
 fn read_file(filename: &str) -> Result<String, io::Error> {
@@ -71,10 +74,11 @@ fn read_file(filename: &str) -> Result<String, io::Error> {
 }
 
 fn main() {
-
     let cfg = init_cfg_file("/home/spoken/Git/fancyndex/Rust/fancyndex/src/config.toml");
 
     rocket::ignite()
         .manage(cfg)
-        .mount("/", routes![home, user_path]).launch();
+        .mount("/", routes![home, user_path])
+        .attach(Template::fairing())
+        .launch();
 }
