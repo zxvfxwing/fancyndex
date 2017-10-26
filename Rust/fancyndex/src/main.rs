@@ -20,6 +20,12 @@ use std::process;
 
 use std::collections::HashMap;
 
+#[derive(Serialize)]
+struct TemplateContext {
+    name: String,
+    vecf: Vec<TemplateContext>
+}
+
 #[get("/")]
 fn home(cfg: State<Config>) -> Template {
     let path = Path::new(&cfg.home[..]);
@@ -33,8 +39,16 @@ fn home(cfg: State<Config>) -> Template {
     let mut context = HashMap::new();
     context.insert("home", &cfg.home);
 
-    Template::render("index", context)
+    let v: Vec<TemplateContext> = Vec::new();
 
+    let essaie = TemplateContext {
+        name: String::from("essaie"),
+        vecf: v,
+    };
+
+    let mut tpml = Template::render("index", context);
+    tpml = Template::render("index", essaie);
+    tpml
     //Template::render("index", format!("{home}", home = cfg.home))
 }
 
