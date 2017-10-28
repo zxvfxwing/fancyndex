@@ -35,6 +35,12 @@ struct Context {
     number: i32
 }
 
+#[derive(Serialize)]
+struct Folder {
+    dirs: Vec<Dir>,
+    files: Vec<File>
+}
+
 #[get("/")]
 fn home(cfg: State<Config>) -> Template {
     let path = Path::new(&cfg.home[..]);
@@ -57,6 +63,21 @@ fn home(cfg: State<Config>) -> Template {
 
     v.push(vone);
 
+    for entry in path.read_dir().expect("read_dir call failed") {
+
+        if let Ok(entry) = entry {
+            if let Ok(metadata) = entry.metadata() {
+                if let Ok(time) = metadata.modified() {
+                    let datetime: DateTime<Local> = time.into();
+                    println!("{}", datetime.format("%Y-%m-%d %T"));
+                }
+
+                println!("{} => {} | {}", entry.path().display(), metadata.is_dir(), metadata.len());
+            }
+        }
+
+    }
+
     let essaie = TemplateContext {
         vecf: v
     };
@@ -73,23 +94,18 @@ fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
     }
 
     for entry in path.read_dir().expect("read_dir call failed") {
-        if let Ok(entry) = entry {
-            //let metadata = entry.metadata().expect("metadata call failed");
 
+        if let Ok(entry) = entry {
             if let Ok(metadata) = entry.metadata() {
                 if let Ok(time) = metadata.modified() {
-
-                    let naive_datetime = NaiveDateTime::from_timestamp(timestamp, 0);
-                    let datetime_again: DateTime<UTC> = DateTime::from_utc(naive_datetime, UTC);
-
-                    println!("{}", datetime_again);
-
-                    println!("{:?}", time);
+                    let datetime: DateTime<Local> = time.into();
+                    println!("{}", datetime.format("%Y-%m-%d %T"));
                 }
-            }
 
-            println!("{}", entry.path().display());
+                println!("{} => {} | {}", entry.path().display(), metadata.is_dir(), metadata.len());
+            }
         }
+
     }
 
     format!("cfg_home: {}, user_path: {}, path: {}", cfg.home, user_path.display(), path.display())
