@@ -8,6 +8,8 @@ extern crate toml;
 extern crate rocket;
 extern crate rocket_contrib;
 
+extern crate chrono;
+
 use std::path::{Path, PathBuf};
 use rocket::State;
 use rocket_contrib::Template;
@@ -20,10 +22,17 @@ use std::process;
 
 use std::collections::HashMap;
 
+use chrono::prelude::*;
+
 #[derive(Serialize)]
 struct TemplateContext {
+    vecf: Vec<Context>
+}
+
+#[derive(Serialize)]
+struct Context {
     name: String,
-    vecf: Vec<TemplateContext>
+    number: i32
 }
 
 #[get("/")]
@@ -39,26 +48,48 @@ fn home(cfg: State<Config>) -> Template {
     let mut context = HashMap::new();
     context.insert("home", &cfg.home);
 
-    let v: Vec<TemplateContext> = Vec::new();
+    let mut v: Vec<Context> = Vec::new();
 
-    let essaie = TemplateContext {
-        name: String::from("essaie"),
-        vecf: v,
+    let vone = Context {
+        name: String::from("This is an example"),
+        number: 42
     };
 
-    let mut tpml = Template::render("index", context);
-    tpml = Template::render("index", essaie);
-    tpml
-    //Template::render("index", format!("{home}", home = cfg.home))
+    v.push(vone);
+
+    let essaie = TemplateContext {
+        vecf: v
+    };
+
+    Template::render("index", essaie)
 }
 
 #[get("/<user_path..>")]
 fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
-
     let path = Path::new(&cfg.home[..]).join(&user_path);
 
     if path.exists() && path.is_dir() {
         println!("path found!");
+    }
+
+    for entry in path.read_dir().expect("read_dir call failed") {
+        if let Ok(entry) = entry {
+            //let metadata = entry.metadata().expect("metadata call failed");
+
+            if let Ok(metadata) = entry.metadata() {
+                if let Ok(time) = metadata.modified() {
+
+                    let naive_datetime = NaiveDateTime::from_timestamp(timestamp, 0);
+                    let datetime_again: DateTime<UTC> = DateTime::from_utc(naive_datetime, UTC);
+
+                    println!("{}", datetime_again);
+
+                    println!("{:?}", time);
+                }
+            }
+
+            println!("{}", entry.path().display());
+        }
     }
 
     format!("cfg_home: {}, user_path: {}, path: {}", cfg.home, user_path.display(), path.display())
