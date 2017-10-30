@@ -1,5 +1,7 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
+#![warn(unused_imports)]
+#![warn(dead_code)]
 
 #[macro_use]
 extern crate serde_derive;
@@ -24,6 +26,11 @@ use std::collections::HashMap;
 
 use chrono::prelude::*;
 
+
+mod filesystem;
+use filesystem::directory;
+
+
 #[derive(Serialize)]
 struct TemplateContext {
     vecf: Vec<Context>
@@ -35,14 +42,17 @@ struct Context {
     number: i32
 }
 
+/*
 #[derive(Serialize)]
 struct Folder {
     dirs: Vec<Dir>,
     files: Vec<File>
 }
+*/
 
 #[get("/")]
 fn home(cfg: State<Config>) -> Template {
+
     let path = Path::new(&cfg.home[..]);
 
     if path.exists() && path.is_dir() {
@@ -87,6 +97,16 @@ fn home(cfg: State<Config>) -> Template {
 
 #[get("/<user_path..>")]
 fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
+
+    let dir = directory::Directory::new();
+    println!("{}", dir.name());
+
+    let the_file = dir.get_file(0);
+    println!("{}", the_file.name());
+
+    println!("{}", user_path.display());
+
+
     let path = Path::new(&cfg.home[..]).join(&user_path);
 
     if path.exists() && path.is_dir() {
