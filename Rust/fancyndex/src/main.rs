@@ -1,10 +1,7 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
-#![warn(unused_imports)]
-#![warn(dead_code)]
 
-#[macro_use]
-extern crate serde_derive;
+#[macro_use] extern crate serde_derive;
 extern crate toml;
 
 extern crate rocket;
@@ -12,7 +9,7 @@ extern crate rocket_contrib;
 
 extern crate chrono;
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use rocket::State;
 use rocket_contrib::Template;
 
@@ -26,10 +23,8 @@ use std::collections::HashMap;
 
 use chrono::prelude::*;
 
-
 mod filesystem;
 use filesystem::directory;
-
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -42,18 +37,14 @@ struct Context {
     number: i32
 }
 
-/*
-#[derive(Serialize)]
-struct Folder {
-    dirs: Vec<Dir>,
-    files: Vec<File>
-}
-*/
-
 #[get("/")]
 fn home(cfg: State<Config>) -> Template {
+    let mut path = PathBuf::new();
+    path.push(&cfg.home[..]);
 
-    let path = Path::new(&cfg.home[..]);
+    let dir = directory::Directory::new(&path);
+
+    println!("{}", dir.name());
 
     if path.exists() && path.is_dir() {
         println!("path found!");
@@ -81,7 +72,6 @@ fn home(cfg: State<Config>) -> Template {
                     let datetime: DateTime<Local> = time.into();
                     println!("{}", datetime.format("%Y-%m-%d %T"));
                 }
-
                 println!("{} => {} | {}", entry.path().display(), metadata.is_dir(), metadata.len());
             }
         }
@@ -98,16 +88,17 @@ fn home(cfg: State<Config>) -> Template {
 #[get("/<user_path..>")]
 fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
 
-    let dir = directory::Directory::new();
-    println!("{}", dir.name());
-
-    let the_file = dir.get_file(0);
-    println!("{}", the_file.name());
-
     println!("{}", user_path.display());
 
+    let mut path = PathBuf::new();
+    path.push(&cfg.home[..]);
+    path.push(&user_path);
 
-    let path = Path::new(&cfg.home[..]).join(&user_path);
+    let dir = directory::Directory::new(&path);
+    println!("{}", dir.name());
+    println!("{}", dir.size());
+    println!("{}", dir.datetime());
+
 
     if path.exists() && path.is_dir() {
         println!("path found!");

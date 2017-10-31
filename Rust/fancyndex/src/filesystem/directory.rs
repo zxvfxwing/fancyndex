@@ -1,55 +1,84 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
+use std::process;
 
-use filesystem::file::File;
-
-pub struct Directory {
-    name: String,
-    directories: Vec<Directory>,
-    files: Vec<File>,
+pub struct Directory <'a> {
+    path: &'a PathBuf,
+    directories: Vec<Directory<'a>>,
+    files: Vec<PathBuf>,
 }
 
-impl Directory {
+impl<'a> Directory<'a> {
 
-    /*fn new(&str) {
 
-    }*/
+    fn run(&mut self) {
 
-    /*
-    *   Construction d'une nouvelle instance de la structure `Directory`
-    *   All fields are private here, getter needed.
-    */
-    pub fn new() -> Directory {
-
-        let f = File { name: "mouahahah".to_string() };
-
-        Directory {
-            name: "try".to_string(),
-            directories: Vec::new(),
-            files: {
-                let mut vecf = Vec::new();
-                vecf.push(f);
-                vecf
+        if let Ok(entries) = self.path.read_dir() {
+            for entry in entries {
+                if let Ok(entry) = entry {
+                    if let Ok(metadata) = entry.metadata() {
+                        if metadata.is_dir() {
+                            let newBPath = entry.path();
+                            self.directories.push(Directory::new(&newBPath));
+                        }
+                        else {
+                            self.files.push(entry.path());
+                        }
+                    }
+                }
             }
         }
+
     }
 
-    pub fn name(&self) -> &str {
-        &self.name
+    /*
+    *   New instance of Directory struct
+    *   All fields are private here, getter needed.
+    */
+    pub fn new(p: &PathBuf) -> Directory {
+
+        if p.is_file() { process::exit(1); }
+
+        let mut new_dir = Directory {
+            path: p,
+            directories: Vec::new(),
+            files: Vec::new(),
+        };
+
+        new_dir.run();
+        new_dir
     }
 
-    pub fn get_dir(&self, index: usize) -> &Directory {
-        &self.directories[index]
+    pub fn name(&self) -> String {
+        super::get_filename(&self.path)
     }
 
-    pub fn get_file(&self, index: usize) -> &File {
-        &self.files[index]
-    }
-
-    pub fn dirs(&self) -> &Vec<Directory> {
+    pub fn directories(&self) -> &Vec<Directory> {
         &self.directories
     }
 
-    pub fn files(&self) -> &Vec<File> {
+    pub fn files(&self) -> &Vec<PathBuf> {
         &self.files
+    }
+
+    pub fn size(&self) -> u64 {
+        let mut size = 0u64;
+
+        for dir in &self.directories {
+            size += dir.size();
+        }
+
+        for file in &self.files {
+            size += super::get_size(file);
+        }
+
+        size
+    }
+
+    pub fn datetime(&self) -> String {
+
+
+
+
+        super::get_datetime(&self.path)
     }
 }
