@@ -1,24 +1,21 @@
 use std::path::PathBuf;
 use std::process;
 
-pub struct Directory <'a> {
-    path: &'a PathBuf,
-    directories: Vec<Directory<'a>>,
+pub struct Directory {
+    path: PathBuf,
+    directories: Vec<Directory>,
     files: Vec<PathBuf>,
 }
 
-impl<'a> Directory<'a> {
-
+impl Directory {
 
     fn run(&mut self) {
-
         if let Ok(entries) = self.path.read_dir() {
             for entry in entries {
                 if let Ok(entry) = entry {
                     if let Ok(metadata) = entry.metadata() {
                         if metadata.is_dir() {
-                            let newBPath = entry.path();
-                            self.directories.push(Directory::new(&newBPath));
+                            self.directories.push(Directory::new(&entry.path()));
                         }
                         else {
                             self.files.push(entry.path());
@@ -27,7 +24,6 @@ impl<'a> Directory<'a> {
                 }
             }
         }
-
     }
 
     /*
@@ -39,7 +35,7 @@ impl<'a> Directory<'a> {
         if p.is_file() { process::exit(1); }
 
         let mut new_dir = Directory {
-            path: p,
+            path: p.to_path_buf(),
             directories: Vec::new(),
             files: Vec::new(),
         };
@@ -75,10 +71,6 @@ impl<'a> Directory<'a> {
     }
 
     pub fn datetime(&self) -> String {
-
-
-
-
         super::get_datetime(&self.path)
     }
 }
