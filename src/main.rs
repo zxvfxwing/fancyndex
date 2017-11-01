@@ -37,9 +37,7 @@ struct Context {
 
 #[get("/")]
 fn home(cfg: State<Config>) -> Template {
-    let mut path = PathBuf::new();
-    path.push(&cfg.home[..]);
-
+    let path = filesystem::get_parent_current_dir();
     let dir = directory::Directory::new(&path);
 
     println!("{}", dir.name());
@@ -72,11 +70,14 @@ fn home(cfg: State<Config>) -> Template {
 #[get("/<user_path..>")]
 fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
 
-    let mut path = PathBuf::new();
-    path.push(&cfg.home[..]);
+    let mut path = filesystem::get_parent_current_dir();
     path.push(&user_path);
 
     if !path.exists() {
+        /* Redirection */
+    }
+
+    if path.is_file() {
         /* Redirection */
     }
 
@@ -84,13 +85,14 @@ fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
     println!("{}", dir.name());
     println!("{}", dir.size());
     println!("{}", dir.datetime());
+    println!("{}", dir.nb_elements());
 
     for x in dir.directories() {
         println!("{} - {} - {} - {}", x.name(), x.size(), x.datetime(), x.timestamp());
     }
 
     for y in dir.files() {
-        println!("{} - {} - {}", y.name(), y.size(), y.datetime());
+        println!("{} - {} - {} - {}", y.name(), y.size(), y.datetime(), y.timestamp());
     }
 
     format!("cfg_home: {}, user_path: {}, path: {}", cfg.home, user_path.display(), path.display())
@@ -120,7 +122,7 @@ fn read_file(filename: &str) -> Result<String, io::Error> {
 }
 
 fn main() {
-    let cfg = init_cfg_file("/home/spoken/Git/fancyndex/Rust/fancyndex/src/config.toml");
+    let cfg = init_cfg_file("/home/spoken/Git/fancyndex/src/config.toml");
 
     rocket::ignite()
         .manage(cfg)

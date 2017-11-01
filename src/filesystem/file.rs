@@ -33,4 +33,8 @@ impl File {
     pub fn datetime(&self) -> String {
         super::get_datetime(&self.path)
     }
+
+    pub fn timestamp(&self) -> i64 {
+        super::get_timestamp(&self.path)
+    }
 }
