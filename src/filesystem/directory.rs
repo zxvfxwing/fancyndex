@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 use std::process;
-use std::thread;
+//use std::thread;
 
 use filesystem::file::File;
 
@@ -49,9 +49,8 @@ impl Directory {
                 if let Ok(entry) = entry {
                     let path_buf = &entry.path();
                     let filename = &super::get_filename(path_buf)[..];
-                    /* Not counting dotfiles, namefile which begin with a dot */
+                    /* Not counting dotfiles, filename which begin with a dot */
                     if filename.chars().nth(0).unwrap() != '.' {
-                        //println!("{}", path_buf.display());
                         self.add_entry(path_buf);
                     }
                 }

@@ -9,15 +9,17 @@ extern crate rocket_contrib;
 
 extern crate chrono;
 
-use std::path::PathBuf;
-use rocket::State;
+use std::path::{Path, PathBuf};
+//use rocket::State;
 use rocket_contrib::Template;
+use rocket::response::Redirect;
+use rocket::response::NamedFile;
 
-use std::io;
-use std::io::prelude::*;
-use std::fs::File;
-use std::io::BufReader;
-use std::process;
+//use std::io;
+//use std::io::prelude::*;
+//use std::fs::File;
+//use std::io::BufReader;
+//use std::process;
 
 use std::collections::HashMap;
 
@@ -36,20 +38,15 @@ struct Context {
 }
 
 #[get("/")]
-fn home(cfg: State<Config>) -> Template {
+fn home() -> Template {
     let path = filesystem::get_parent_current_dir();
+
+    println!("{}", path.display());
+
     let dir = directory::Directory::new(&path);
 
-    println!("{}", dir.name());
-
-    if path.exists() && path.is_dir() {
-        println!("path found!");
-    }
-
-    println!("cfg_home: {}, path: {}", cfg.home, path.display());
-
     let mut context = HashMap::new();
-    context.insert("home", &cfg.home);
+    context.insert("home", "mdr".to_string());
 
     let mut v: Vec<Context> = Vec::new();
 
@@ -67,8 +64,13 @@ fn home(cfg: State<Config>) -> Template {
     Template::render("index", essaie)
 }
 
-#[get("/<user_path..>")]
-fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
+#[get("/fancyndex/www/<file..>")]
+fn www(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("").join(file)).ok()
+}
+
+#[get("/path/<user_path..>")]
+fn user_path(user_path: PathBuf) -> String {
 
     let mut path = filesystem::get_parent_current_dir();
     path.push(&user_path);
@@ -77,8 +79,10 @@ fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
         /* Redirection */
     }
 
+    /* Redirection */
     if path.is_file() {
-        /* Redirection */
+        println!("{}", path.display());
+        Redirect::to("/file/<file..>");
     }
 
     let dir = directory::Directory::new(&path);
@@ -95,9 +99,10 @@ fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
         println!("{} - {} - {} - {}", y.name(), y.size(), y.datetime(), y.timestamp());
     }
 
-    format!("cfg_home: {}, user_path: {}, path: {}", cfg.home, user_path.display(), path.display())
+    format!("user_path: {}, path: {}", user_path.display(), path.display())
 }
 
+/*
 #[derive(Deserialize)]
 struct Config {
     home: String,
@@ -120,13 +125,14 @@ fn read_file(filename: &str) -> Result<String, io::Error> {
     buf_reader.read_to_string(&mut contents)?;
     Ok(contents)
 }
+*/
 
 fn main() {
-    let cfg = init_cfg_file("/home/spoken/Git/fancyndex/src/config.toml");
+    //let cfg = init_cfg_file("/home/spoken/Git/fancyndex/src/config.toml");
 
     rocket::ignite()
-        .manage(cfg)
-        .mount("/", routes![home, user_path])
+        //.manage(cfg)
+        .mount("/", routes![home, user_path, www])
         .attach(Template::fairing())
         .launch();
 }

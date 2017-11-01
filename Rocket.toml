@@ -1,0 +1,9 @@
+[global]
+address = "localhost"
+port = 8000
+workers = 4
+template_dir = "www/templates/"
+
+#[global.tls]
+#certs = ""
+#key = ""
