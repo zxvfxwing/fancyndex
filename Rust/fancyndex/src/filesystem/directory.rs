@@ -1,10 +1,13 @@
 use std::path::PathBuf;
 use std::process;
 
+use filesystem::file::File;
+
 pub struct Directory {
     path: PathBuf,
+    size: u64,
     directories: Vec<Directory>,
-    files: Vec<PathBuf>,
+    files: Vec<File>,
 }
 
 impl Directory {
@@ -14,12 +17,37 @@ impl Directory {
             for entry in entries {
                 if let Ok(entry) = entry {
                     if let Ok(metadata) = entry.metadata() {
+
                         if metadata.is_dir() {
-                            self.directories.push(Directory::new(&entry.path()));
+                            let new_dir = Directory::new(&entry.path());
+                            self.size += new_dir.size();
+                            self.directories.push(new_dir);
                         }
+
+                        else if metadata.is_file() {
+                            let new_file = File::new(&entry.path());
+                            self.size += new_file.size();
+                            self.files.push(new_file);
+                        }
+
+                        /* If entry isn't a directory & file -> symbolic link, so read it */
                         else {
-                            self.files.push(entry.path());
+                            if let Ok(link) = entry.path().read_link() {
+                                if let Ok(metadata) = link.metadata() {
+                                    if metadata.is_dir() {
+                                        let new_dir = Directory::new(&entry.path());
+                                        self.size += new_dir.size();
+                                        self.directories.push(new_dir);
+                                    }
+                                    else {
+                                        let new_file = File::new(&entry.path());
+                                        self.size += new_file.size();
+                                        self.files.push(new_file);
+                                    }
+                                }
+                            }
                         }
+
                     }
                 }
             }
@@ -32,10 +60,14 @@ impl Directory {
     */
     pub fn new(p: &PathBuf) -> Directory {
 
-        if p.is_file() { process::exit(1); }
+        if p.is_file() {
+            println!("This PathBuf is a file. You cannot make an instance of struct Directory with it !");
+            process::exit(1);
+        }
 
         let mut new_dir = Directory {
             path: p.to_path_buf(),
+            size: 0u64,
             directories: Vec::new(),
             files: Vec::new(),
         };
@@ -52,25 +84,19 @@ impl Directory {
         &self.directories
     }
 
-    pub fn files(&self) -> &Vec<PathBuf> {
+    pub fn files(&self) -> &Vec<File> {
         &self.files
     }
 
     pub fn size(&self) -> u64 {
-        let mut size = 0u64;
-
-        for dir in &self.directories {
-            size += dir.size();
-        }
-
-        for file in &self.files {
-            size += super::get_size(file);
-        }
-
-        size
+        self.size
     }
 
     pub fn datetime(&self) -> String {
         super::get_datetime(&self.path)
+    }
+
+    pub fn timestamp(&self) -> i64 {
+        super::get_timestamp(&self.path)
     }
 }

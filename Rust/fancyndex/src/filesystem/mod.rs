@@ -1,9 +1,14 @@
 pub mod directory;
+pub mod file;
 
 use chrono::prelude::*;
 use std::path::PathBuf;
 
 /* Debug atm */
+fn get_current_timestamp() -> i64 {
+    Local::now().timestamp()
+}
+
 fn get_current_datetime(datetime_format: &str) -> String {
     println!("datetime not found, so we take default one :");
     Local::now().format(datetime_format).to_string()
@@ -23,6 +28,25 @@ fn get_size(p: &PathBuf) -> u64 {
     match p.metadata() {
         Ok(metadata) => metadata.len(),
         Err(_) => 0u64,
+    }
+}
+
+fn get_timestamp(p: &PathBuf) -> i64 {
+    match p.metadata() {
+        Ok(metadata) => {
+            /*
+            * Convert
+            * std::time::SystemTime => chrono:: DateTime<Local>
+            */
+            match metadata.modified() {
+                Ok(time) => {
+                    let datetime: DateTime<Local> = time.into();
+                    datetime.timestamp()
+                },
+                Err(_) => get_current_timestamp()
+            }
+        },
+        Err(_) => get_current_timestamp()
     }
 }
 

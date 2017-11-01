@@ -21,8 +21,6 @@ use std::process;
 
 use std::collections::HashMap;
 
-use chrono::prelude::*;
-
 mod filesystem;
 use filesystem::directory;
 
@@ -64,20 +62,6 @@ fn home(cfg: State<Config>) -> Template {
 
     v.push(vone);
 
-    for entry in path.read_dir().expect("read_dir call failed") {
-
-        if let Ok(entry) = entry {
-            if let Ok(metadata) = entry.metadata() {
-                if let Ok(time) = metadata.modified() {
-                    let datetime: DateTime<Local> = time.into();
-                    println!("{}", datetime.format("%Y-%m-%d %T"));
-                }
-                println!("{} => {} | {}", entry.path().display(), metadata.is_dir(), metadata.len());
-            }
-        }
-
-    }
-
     let essaie = TemplateContext {
         vecf: v
     };
@@ -88,35 +72,25 @@ fn home(cfg: State<Config>) -> Template {
 #[get("/<user_path..>")]
 fn user_path(user_path: PathBuf, cfg: State<Config>) -> String {
 
-    println!("{}", user_path.display());
-
     let mut path = PathBuf::new();
     path.push(&cfg.home[..]);
     path.push(&user_path);
+
+    if !path.exists() {
+        /* Redirection */
+    }
 
     let dir = directory::Directory::new(&path);
     println!("{}", dir.name());
     println!("{}", dir.size());
     println!("{}", dir.datetime());
 
-
-    if path.exists() && path.is_dir() {
-        println!("path found!");
+    for x in dir.directories() {
+        println!("{} - {} - {} - {}", x.name(), x.size(), x.datetime(), x.timestamp());
     }
 
-    for entry in path.read_dir().expect("read_dir call failed") {
-
-        if let Ok(entry) = entry {
-            if let Ok(metadata) = entry.metadata() {
-                if let Ok(time) = metadata.modified() {
-                    let datetime: DateTime<Local> = time.into();
-                    println!("{}", datetime.format("%Y-%m-%d %T"));
-                }
-
-                println!("{} => {} | {}", entry.path().display(), metadata.is_dir(), metadata.len());
-            }
-        }
-
+    for y in dir.files() {
+        println!("{} - {} - {}", y.name(), y.size(), y.datetime());
     }
 
     format!("cfg_home: {}, user_path: {}, path: {}", cfg.home, user_path.display(), path.display())
