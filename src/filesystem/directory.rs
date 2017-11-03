@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 use std::process;
-//use std::thread;
 
 use filesystem::file::File;
 
@@ -80,6 +79,10 @@ impl Directory {
         new_dir
     }
 
+    pub fn path(&self) -> &PathBuf {
+        &self.path
+    }
+
     pub fn name(&self) -> String {
         super::get_filename(&self.path)
     }
@@ -96,14 +99,26 @@ impl Directory {
         self.size
     }
 
+    pub fn nb_dirs(&self) -> u64 {
+        self.directories.len() as u64
+    }
+
+    pub fn nb_files(&self) -> u64 {
+        self.files.len() as u64
+    }
+
+    pub fn nb_elements(&self) -> u64 {
+        self.nb_dirs() + self.nb_files()
+    }
+
     pub fn nb_total_files(&self) -> u64 {
         let mut nb_total_files = 0u64;
 
         for dir in &self.directories {
-            nb_total_files += dir.files().len() as u64;
+            nb_total_files += dir.nb_files();
         }
 
-        nb_total_files += self.files.len() as u64;
+        nb_total_files += self.nb_files();
         nb_total_files
     }
 

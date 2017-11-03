@@ -20,6 +20,7 @@ use std::path::{Path, PathBuf};
 //use rocket::State;
 use rocket_contrib::Template;
 use rocket::response::Redirect;
+use rocket::response::NamedFile;
 
 //use std::io;
 //use std::io::prelude::*;
@@ -32,6 +33,8 @@ use std::collections::HashMap;
 mod filesystem;
 use filesystem::directory;
 
+use std::fs::File;
+
 #[derive(Serialize)]
 struct TemplateContext {
     vecf: Vec<Context>
@@ -42,6 +45,19 @@ struct Context {
     name: String,
     number: i32
 }
+
+#[get("/www/<file..>")]
+fn www(file: PathBuf) -> std::fs::File /*Option<NamedFile>*/ {
+    println!("{}", file.display());
+
+    let mut path = filesystem::get_parent_current_dir();
+    let www_dir = Path::new("fancyndex/www/").join(file);
+    path.push(www_dir);
+
+    File::open(path).ok()
+    //NamedFile::open(path).ok()
+}
+
 
 #[get("/")]
 fn home() -> Template {
@@ -70,11 +86,23 @@ fn home() -> Template {
     Template::render("index", essaie)
 }
 
-#[get("/path/<user_path..>")]
-fn user_path(user_path: PathBuf) -> String {
+#[get("/path")]
+fn home_path() -> String {
+    let path = filesystem::get_parent_current_dir();
 
+    if !path.exists() {
+        /* Redirection */
+    }
+
+    let dir = directory::Directory::new(&path);
+
+    format!("home_path: {}", path.display())
+}
+
+#[get("/path/<wanted_path..>")]
+fn wanted_path(wanted_path: PathBuf) -> String {
     let mut path = filesystem::get_parent_current_dir();
-    path.push(&user_path);
+    path.push(&wanted_path);
 
     if !path.exists() {
         /* Redirection */
@@ -87,20 +115,22 @@ fn user_path(user_path: PathBuf) -> String {
     }
 
     let dir = directory::Directory::new(&path);
-    println!("{}", dir.name());
-    println!("{}", dir.size());
-    println!("{}", dir.datetime());
-    println!("{}", dir.nb_total_files());
+    /*
+        println!("{}", dir.name());
+        println!("{}", dir.size());
+        println!("{}", dir.datetime());
+        println!("{}", dir.nb_total_files());
+    */
 
     for x in dir.directories() {
-        println!("{} - {} - {} - {}", x.name(), x.size(), x.datetime(), x.timestamp());
+        //println!("{} - {} - {} - {}", x.name(), x.size(), x.datetime(), x.timestamp());
     }
 
     for y in dir.files() {
-        println!("{} - {} - {} - {}", y.name(), y.size(), y.datetime(), y.timestamp());
+        //println!("{} - {} - {} - {}", y.name(), y.size(), y.datetime(), y.timestamp());
     }
 
-    format!("user_path: {}, path: {}", user_path.display(), path.display())
+    format!("wanted_path: {}, path: {}", wanted_path.display(), path.display())
 }
 
 /*
@@ -133,7 +163,8 @@ fn main() {
 
     rocket::ignite()
         //.manage(cfg)
-        .mount("/", routes![home, user_path])
+        .mount("/", routes![home])
+        .mount("/fancyndex/", routes![home_path, wanted_path, www])
         .attach(Template::fairing())
         .launch();
 }
