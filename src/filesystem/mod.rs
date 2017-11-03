@@ -59,7 +59,6 @@ pub fn get_size(p: &PathBuf) -> u64 {
     }
 }
 
-
 pub fn get_systemtime(p: &PathBuf) -> SystemTime {
     match p.metadata() {
         Ok(metadata) => {

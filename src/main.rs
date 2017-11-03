@@ -1,10 +1,3 @@
-/*
-*
-* On va garder l'idée d'une API + côté client
-*
-*/
-
-
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
@@ -28,12 +21,10 @@ use rocket::response::NamedFile;
 //use std::io::BufReader;
 //use std::process;
 
-use std::collections::HashMap;
+//use std::collections::HashMap;
 
 mod filesystem;
 use filesystem::directory;
-
-use std::fs::File;
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -47,17 +38,9 @@ struct Context {
 }
 
 #[get("/www/<file..>")]
-fn www(file: PathBuf) -> std::fs::File /*Option<NamedFile>*/ {
-    println!("{}", file.display());
-
-    let mut path = filesystem::get_parent_current_dir();
-    let www_dir = Path::new("fancyndex/www/").join(file);
-    path.push(www_dir);
-
-    File::open(path).ok()
-    //NamedFile::open(path).ok()
+fn www(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("www/").join(file)).ok()
 }
-
 
 #[get("/")]
 fn home() -> Template {
@@ -65,10 +48,7 @@ fn home() -> Template {
 
     println!("{}", path.display());
 
-    let dir = directory::Directory::new(&path);
-
-    let mut context = HashMap::new();
-    context.insert("home", "mdr".to_string());
+    //let dir = directory::Directory::new(&path);
 
     let mut v: Vec<Context> = Vec::new();
 
@@ -111,7 +91,6 @@ fn wanted_path(wanted_path: PathBuf) -> String {
     /* Redirection */
     if path.is_file() {
         println!("{}", path.display());
-        //Redirect::to("/file/<file..>");
     }
 
     let dir = directory::Directory::new(&path);

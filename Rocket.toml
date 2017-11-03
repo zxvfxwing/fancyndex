@@ -1,7 +1,7 @@
 [global]
 address = "localhost"
 port = 8000
-workers = 4
+workers = 50
 template_dir = "www/templates/"
 
 #[global.tls]
