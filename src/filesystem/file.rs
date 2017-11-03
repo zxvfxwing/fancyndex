@@ -7,7 +7,6 @@ pub struct File {
 }
 
 impl File {
-
     pub fn new(p: &PathBuf) -> File {
 
         if p.is_dir() {

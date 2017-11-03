@@ -96,16 +96,15 @@ impl Directory {
         self.size
     }
 
-    pub fn nb_elements(&self) -> u64 {
-        let mut nb_elements = 0u64;
+    pub fn nb_total_files(&self) -> u64 {
+        let mut nb_total_files = 0u64;
 
         for dir in &self.directories {
-            nb_elements += dir.nb_elements();
-            nb_elements += 1;
+            nb_total_files += dir.files().len() as u64;
         }
 
-        nb_elements += self.files.len() as u64;
-        nb_elements
+        nb_total_files += self.files.len() as u64;
+        nb_total_files
     }
 
     pub fn datetime(&self) -> String {

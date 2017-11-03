@@ -1,3 +1,10 @@
+/*
+*
+* On va garder l'idée d'une API + côté client
+*
+*/
+
+
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
@@ -13,7 +20,6 @@ use std::path::{Path, PathBuf};
 //use rocket::State;
 use rocket_contrib::Template;
 use rocket::response::Redirect;
-use rocket::response::NamedFile;
 
 //use std::io;
 //use std::io::prelude::*;
@@ -64,11 +70,6 @@ fn home() -> Template {
     Template::render("index", essaie)
 }
 
-#[get("/fancyndex/www/<file..>")]
-fn www(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("").join(file)).ok()
-}
-
 #[get("/path/<user_path..>")]
 fn user_path(user_path: PathBuf) -> String {
 
@@ -82,14 +83,14 @@ fn user_path(user_path: PathBuf) -> String {
     /* Redirection */
     if path.is_file() {
         println!("{}", path.display());
-        Redirect::to("/file/<file..>");
+        //Redirect::to("/file/<file..>");
     }
 
     let dir = directory::Directory::new(&path);
     println!("{}", dir.name());
     println!("{}", dir.size());
     println!("{}", dir.datetime());
-    println!("{}", dir.nb_elements());
+    println!("{}", dir.nb_total_files());
 
     for x in dir.directories() {
         println!("{} - {} - {} - {}", x.name(), x.size(), x.datetime(), x.timestamp());
@@ -132,7 +133,7 @@ fn main() {
 
     rocket::ignite()
         //.manage(cfg)
-        .mount("/", routes![home, user_path, www])
+        .mount("/", routes![home, user_path])
         .attach(Template::fairing())
         .launch();
 }

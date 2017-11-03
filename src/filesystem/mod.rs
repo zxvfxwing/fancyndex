@@ -5,13 +5,14 @@ use chrono::prelude::*;
 use std::path::PathBuf;
 use std::env;
 use std::process;
+use std::time::SystemTime;
 
 pub fn get_parent_current_dir() -> PathBuf {
     let current_path = get_current_directory();
     match current_path.parent() {
         Some(parent) => parent.to_path_buf(),
         None => {
-            println!("We cannot read the current directory of fancyndex.");
+            println!("We cannot read the parent of the current directory.");
             println!("Please check permissions !");
             println!("Exiting program ...");
             process::exit(1)
@@ -58,40 +59,25 @@ pub fn get_size(p: &PathBuf) -> u64 {
     }
 }
 
-pub fn get_timestamp(p: &PathBuf) -> i64 {
+
+pub fn get_systemtime(p: &PathBuf) -> SystemTime {
     match p.metadata() {
         Ok(metadata) => {
-            /*
-            * Convert
-            * std::time::SystemTime => chrono:: DateTime<Local>
-            */
             match metadata.modified() {
-                Ok(time) => {
-                    let datetime: DateTime<Local> = time.into();
-                    datetime.timestamp()
-                },
-                Err(_) => get_current_timestamp()
+                Ok(time) => time,
+                Err(_) => SystemTime::now()
             }
-        },
-        Err(_) => get_current_timestamp()
+        }
+        Err(_) => SystemTime::now()
     }
 }
 
+pub fn get_timestamp(p: &PathBuf) -> i64 {
+    let datetime: DateTime<Local> = get_systemtime(p).into();
+    datetime.timestamp()
+}
+
 pub fn get_datetime(p: &PathBuf) -> String {
-    match p.metadata() {
-        Ok(metadata) => {
-            /*
-            * Convert
-            * std::time::SystemTime => chrono:: DateTime<Local>
-            */
-            match metadata.modified() {
-                Ok(time) => {
-                    let datetime: DateTime<Local> = time.into();
-                    datetime.format("%Y-%m-%d %T").to_string()
-                },
-                Err(_) => get_current_datetime("%Y-%m-%d %T")
-            }
-        },
-        Err(_) => get_current_datetime("%Y-%m-%d %T")
-    }
+    let datetime: DateTime<Local> = get_systemtime(p).into();
+    datetime.format("%Y-%m-%d %T").to_string()
 }
