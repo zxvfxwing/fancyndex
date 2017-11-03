@@ -10,8 +10,12 @@ extern crate rocket_contrib;
 extern crate chrono;
 
 use std::path::{Path, PathBuf};
+
 //use rocket::State;
+
 use rocket_contrib::Template;
+use rocket_contrib::Json;
+
 use rocket::response::Redirect;
 use rocket::response::NamedFile;
 
@@ -28,7 +32,7 @@ use filesystem::directory;
 
 #[derive(Serialize)]
 struct TemplateContext {
-    vecf: Vec<Context>
+    dirs: Vec<directory::Directory>,
 }
 
 #[derive(Serialize)]
@@ -67,7 +71,7 @@ fn home() -> Template {
 }
 
 #[get("/path")]
-fn home_path() -> String {
+fn home_path() -> Json<TemplateContext> {
     let path = filesystem::get_parent_current_dir();
 
     if !path.exists() {
@@ -76,7 +80,20 @@ fn home_path() -> String {
 
     let dir = directory::Directory::new(&path);
 
-    format!("home_path: {}", path.display())
+    let mut v: Vec<Context> = Vec::new();
+
+    let vone = Context {
+        name: String::from("This is an example"),
+        number: 42,
+    };
+
+    v.push(vone);
+
+    let essaie = TemplateContext {
+        vecf: v
+    };
+
+    Json(essaie)
 }
 
 #[get("/path/<wanted_path..>")]
