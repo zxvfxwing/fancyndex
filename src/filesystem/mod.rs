@@ -7,17 +7,21 @@ use std::env;
 use std::process;
 use std::time::SystemTime;
 
-pub fn get_parent_current_dir() -> PathBuf {
-    let current_path = get_current_directory();
-    match current_path.parent() {
+pub fn get_parent_dir(p: &PathBuf) -> PathBuf {
+    match p.parent() {
         Some(parent) => parent.to_path_buf(),
         None => {
-            println!("We cannot read the parent of the current directory.");
+            println!("We cannot read the parent of {} directory.", p.display());
             println!("Please check permissions !");
             println!("Exiting program ...");
             process::exit(1)
         }
     }
+}
+
+pub fn get_parent_current_dir() -> PathBuf {
+    let current_path = get_current_directory();
+    get_parent_dir(&current_path)
 }
 
 pub fn get_current_directory() -> PathBuf {

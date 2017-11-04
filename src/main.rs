@@ -30,9 +30,11 @@ use rocket::response::NamedFile;
 mod filesystem;
 use filesystem::directory;
 
+mod api;
+
 #[derive(Serialize)]
 struct TemplateContext {
-    dirs: Vec<directory::Directory>,
+    vecf: Vec<Context>,
 }
 
 #[derive(Serialize)]
@@ -41,12 +43,26 @@ struct Context {
     number: i32
 }
 
+/* API Fancyndex */
 #[get("/www/<file..>")]
 fn www(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("www/").join(file)).ok()
 }
 
+#[get("/dl/<file..>")]
+fn download(file: PathBuf) -> Option<NamedFile> {
+    let mut path = filesystem::get_parent_current_dir();
+    path.push(file);
+    NamedFile::open(path).ok()
+}
+
 #[get("/")]
+fn index() -> Redirect {
+    Redirect::to("/home")
+}
+
+/* Normal route */
+#[get("/home")]
 fn home() -> Template {
     let path = filesystem::get_parent_current_dir();
 
@@ -70,63 +86,42 @@ fn home() -> Template {
     Template::render("index", essaie)
 }
 
-#[get("/path")]
-fn home_path() -> Json<TemplateContext> {
-    let path = filesystem::get_parent_current_dir();
-
-    if !path.exists() {
-        /* Redirection */
-    }
-
-    let dir = directory::Directory::new(&path);
-
-    let mut v: Vec<Context> = Vec::new();
-
-    let vone = Context {
-        name: String::from("This is an example"),
-        number: 42,
-    };
-
-    v.push(vone);
-
-    let essaie = TemplateContext {
-        vecf: v
-    };
-
-    Json(essaie)
+#[get("/home/<user_path..>")]
+fn user_path(user_path: PathBuf) -> Template {
+    // TODO
+    let empty:Vec<i32> = Vec::new();
+    Template::render("index", empty)
 }
 
+/* API Fancyndex */
+#[get("/path")]
+fn home_path() -> Json<api::ApiJSON> {
+    let path = filesystem::get_parent_current_dir();
+    api::ApiJSON::list_dir(&path)
+}
+
+/*
+* Changer la route "dl" en quelque chose de plus naturelle,
+* plus une option dans la route dite normale, dans le cas où le listing demandé est un fichier.
+*/
 #[get("/path/<wanted_path..>")]
-fn wanted_path(wanted_path: PathBuf) -> String {
+fn wanted_path(wanted_path: PathBuf) -> Result<Json<api::ApiJSON>, Redirect> {
     let mut path = filesystem::get_parent_current_dir();
     path.push(&wanted_path);
 
-    if !path.exists() {
-        /* Redirection */
+    /* Redirect if path given doesn't exists or redirect to download if it's a file */
+    match path.exists() {
+        true => {
+            match path.is_dir() {
+                false => {
+                    let route = format!("/fancyndex/dl/{}", wanted_path.display());
+                    Err(Redirect::to(&route[..]))
+                },
+                true => Ok(api::ApiJSON::list_dir(&path))
+            }
+        },
+        false => Err(Redirect::to("/fancyndex/path"))
     }
-
-    /* Redirection */
-    if path.is_file() {
-        println!("{}", path.display());
-    }
-
-    let dir = directory::Directory::new(&path);
-    /*
-        println!("{}", dir.name());
-        println!("{}", dir.size());
-        println!("{}", dir.datetime());
-        println!("{}", dir.nb_total_files());
-    */
-
-    for x in dir.directories() {
-        //println!("{} - {} - {} - {}", x.name(), x.size(), x.datetime(), x.timestamp());
-    }
-
-    for y in dir.files() {
-        //println!("{} - {} - {} - {}", y.name(), y.size(), y.datetime(), y.timestamp());
-    }
-
-    format!("wanted_path: {}, path: {}", wanted_path.display(), path.display())
 }
 
 /*
@@ -159,8 +154,8 @@ fn main() {
 
     rocket::ignite()
         //.manage(cfg)
-        .mount("/", routes![home])
-        .mount("/fancyndex/", routes![home_path, wanted_path, www])
+        .mount("/", routes![index, home, user_path])
+        .mount("/_fancyndex/", routes![home_path, wanted_path, www, download])
         .attach(Template::fairing())
         .launch();
 }
