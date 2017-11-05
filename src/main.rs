@@ -88,25 +88,7 @@ fn index() -> Redirect {
 #[get("/home")]
 fn home() -> Template {
     let path = filesystem::get_parent_current_dir();
-
-    println!("{}", path.display());
-
-    //let dir = directory::Directory::new(&path);
-
-    let mut v: Vec<Context> = Vec::new();
-
-    let vone = Context {
-        name: String::from("This is an example"),
-        number: 42
-    };
-
-    v.push(vone);
-
-    let essaie = TemplateContext {
-        vecf: v
-    };
-
-    Template::render("index", essaie)
+    Template::render("index", api::full(&path))
 }
 
 #[get("/home/<user_path..>")]
@@ -119,20 +101,7 @@ fn user_path(user_path: PathBuf) -> Result<Template, Redirect> {
         true => {
             match path.is_dir() {
                 true => {
-                    let mut v: Vec<Context> = Vec::new();
-
-                    let vone = Context {
-                        name: String::from("This is an example"),
-                        number: 42
-                    };
-
-                    v.push(vone);
-
-                    let essaie = TemplateContext {
-                        vecf: v
-                    };
-
-                    Ok(Template::render("index", essaie))
+                    Ok(Template::render("index", api::full(&path)))
                 },
                 false => {
                     let route = format!("/dl/{}", user_path.display());

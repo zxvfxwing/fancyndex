@@ -1,11 +1,23 @@
 {{> header}}
 
 <body>
+{{name}}
 
-{{#each vecf}}
+{{#each directories}}
 <h1>
     {{this.name}}
-    {{this.number}}
+    {{this.size}}
+    {{this.timestamp}}
+    {{this.datetime}}
+</h1>
+{{/each}}
+
+{{#each files}}
+<h1>
+    {{this.name}}
+    {{this.size}}
+    {{this.timestamp}}
+    {{this.datetime}}
 </h1>
 {{/each}}
 

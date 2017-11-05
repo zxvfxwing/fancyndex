@@ -33,11 +33,12 @@ pub struct DirJSON {
 }
 
 
-fn full(p: &PathBuf) -> FullJSON {
-    let dir = directory::Directory::new(p);
+pub fn full(p: &PathBuf) -> FullJSON {
+    let dir = directory::Directory::new(p, -1, 0);
 
     FullJSON {
         name: {
+            /* Créer une fonction pour check le nom d'un fichier */
             let home = filesystem::get_parent_current_dir();
             if filesystem::get_filename(&home) == dir.name() {
                 "Home".to_string()

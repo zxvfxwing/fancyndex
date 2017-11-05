@@ -8,13 +8,19 @@ pub struct Directory {
     path: PathBuf,
     directories: Vec<Directory>,
     files: Vec<File>,
+    wanted_depth: i64,
+    depth: i64,
 }
 
 impl Directory {
 
     fn add_entry(&mut self, entry: &PathBuf) {
         if let Ok(metadata) = entry.metadata() {
-            if metadata.is_dir()  { self.add_dir(entry);     }
+            if metadata.is_dir()  {
+                let wanted_depth = self.wanted_depth;
+                let current_depth = self.depth + 1;
+                self.add_dir(entry, wanted_depth, current_depth);
+            }
             else
             if metadata.is_file() { self.add_file(entry);    }
             else                  { self.add_symlink(entry); }
@@ -25,30 +31,47 @@ impl Directory {
         self.files.push(File::new(&entry));
     }
 
-    fn add_dir(&mut self, entry: &PathBuf) {
-        self.directories.push(Directory::new(&entry));
+    fn add_dir(&mut self, entry: &PathBuf, wanted_depth: i64, depth: i64) {
+        self.directories.push(Directory::new(&entry, wanted_depth, depth));
     }
 
     fn add_symlink(&mut self, entry: &PathBuf) {
         if let Ok(link) = entry.read_link() {
             if let Ok(metadata) = link.metadata() {
-                if metadata.is_dir() { self.add_dir(&entry);  }
+                if metadata.is_dir() {
+                    let wanted_depth = self.wanted_depth;
+                    let current_depth = self.depth + 1;
+                    self.add_dir(entry, wanted_depth, current_depth);
+                }
                 else                 { self.add_file(&entry); }
             }
         }
     }
 
     fn run(&mut self) {
-        if let Ok(entries) = self.path.read_dir() {
-            for entry in entries {
-                    if let Ok(entry) = entry {
-                        let path_buf = &entry.path();
-                        let filename = &super::get_filename(path_buf)[..];
-                        /* Not counting dotfiles, filename which begin with a dot */
-                        if filename.chars().nth(0).unwrap() != '.' {
-                            self.add_entry(path_buf);
+        if self.wanted_depth < 0 || self.depth < self.wanted_depth {
+            if let Ok(entries) = self.path.read_dir() {
+                for entry in entries {
+                        if let Ok(entry) = entry {
+
+                            /*
+                            *  Essayer de traiter le cas des hidden files
+                            *  => Donner auss en option la possibilité de suivre
+                            * Les liens symboliques
+                            * De base => true
+                            * Fichier de conf à lire
+                            *  Améliorer cette fonction pour trouver
+                            *  Si c'est un fichier caché
+                            */
+
+                            let path_buf = &entry.path();
+                            let filename = &super::get_filename(path_buf)[..];
+                            /* Not counting dotfiles, filename which begin with a dot */
+                            if filename.chars().nth(0).unwrap() != '.' {
+                                self.add_entry(path_buf);
+                            }
                         }
-                    }
+                }
             }
         }
     }
@@ -58,6 +81,8 @@ impl Directory {
             path: p.to_path_buf(),
             directories: Vec::new(),
             files: Vec::new(),
+            wanted_depth: 0,
+            depth: 0
         }
     }
 
@@ -65,7 +90,7 @@ impl Directory {
     *   New instance of Directory struct
     *   All fields are private here, getter needed.
     */
-    pub fn new(p: &PathBuf) -> Directory {
+    pub fn new(p: &PathBuf, wanted_depth: i64, current_depth: i64) -> Directory {
         if p.is_file() {
             println!("This PathBuf is a file. You cannot make an instance of struct Directory with it !");
             process::exit(1);
@@ -75,6 +100,8 @@ impl Directory {
             path: p.to_path_buf(),
             directories: Vec::new(),
             files: Vec::new(),
+            wanted_depth: wanted_depth,
+            depth: current_depth,
         };
 
         new_dir.run();
