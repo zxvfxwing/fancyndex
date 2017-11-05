@@ -7,6 +7,7 @@ extern crate toml;
 extern crate rocket;
 extern crate rocket_contrib;
 
+//extern crate crossbeam;
 extern crate chrono;
 
 use std::path::{Path, PathBuf};
@@ -18,6 +19,8 @@ use rocket_contrib::Json;
 
 use rocket::response::Redirect;
 use rocket::response::NamedFile;
+
+use rocket::http::Header;
 
 //use std::io;
 //use std::io::prelude::*;
@@ -49,11 +52,31 @@ fn www(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("www/").join(file)).ok()
 }
 
-#[get("/dl/<file..>")]
-fn download(file: PathBuf) -> Option<NamedFile> {
+#[get("/dl")]
+fn download_home() -> Redirect {
+    Redirect::to("/home")
+}
+
+#[get("/dl/file/<file..>")]
+fn download_file(file: PathBuf) -> Result<Option<NamedFile>, Redirect> {
     let mut path = filesystem::get_parent_current_dir();
     path.push(file);
-    NamedFile::open(path).ok()
+
+    match path.exists() {
+        true => {
+            match path.is_file() {
+                true => {
+                    Ok(NamedFile::open(path).ok())
+                },
+                false => {
+                    Err(Redirect::to("/home"))
+                }
+            }
+        },
+        false => {
+            Err(Redirect::to("/home"))
+        }
+    }
 }
 
 #[get("/")]
@@ -87,25 +110,78 @@ fn home() -> Template {
 }
 
 #[get("/home/<user_path..>")]
-fn user_path(user_path: PathBuf) -> Template {
-    // TODO
-    let empty:Vec<i32> = Vec::new();
-    Template::render("index", empty)
+fn user_path(user_path: PathBuf) -> Result<Template, Redirect> {
+
+    let mut path = filesystem::get_parent_current_dir();
+    path.push(&user_path);
+
+    match path.exists() {
+        true => {
+            match path.is_dir() {
+                true => {
+                    let mut v: Vec<Context> = Vec::new();
+
+                    let vone = Context {
+                        name: String::from("This is an example"),
+                        number: 42
+                    };
+
+                    v.push(vone);
+
+                    let essaie = TemplateContext {
+                        vecf: v
+                    };
+
+                    Ok(Template::render("index", essaie))
+                },
+                false => {
+                    let route = format!("/dl/{}", user_path.display());
+                    Err(Redirect::to(&route[..]))
+                }
+            }
+        },
+        false => {
+            Err(Redirect::to("/home"))
+        }
+    }
 }
 
 /* API Fancyndex */
-#[get("/path")]
-fn home_path() -> Json<api::ApiJSON> {
+
+#[get("/dir")]
+fn home_dir() -> Json<api::DirJSON> {
     let path = filesystem::get_parent_current_dir();
-    api::ApiJSON::list_dir(&path)
+    api::dir_light_info(&path)
 }
 
-/*
-* Changer la route "dl" en quelque chose de plus naturelle,
-* plus une option dans la route dite normale, dans le cas où le listing demandé est un fichier.
-*/
+#[get("/dir/<wanted_dir..>")]
+fn wanted_dir(wanted_dir: PathBuf) -> Result<Json<api::DirJSON>, Redirect> {
+    let mut path = filesystem::get_parent_current_dir();
+    path.push(&wanted_dir);
+
+    /* Redirect if path given doesn't exists or redirect to download if it's a file */
+    match path.exists() {
+        true => {
+            match path.is_dir() {
+                false => {
+                    Err(Redirect::to("/_fancyndex/dir/"))
+                },
+                true => Ok(api::dir_light_info(&path))
+            }
+        },
+        false => Err(Redirect::to("/_fancyndex/dir"))
+    }
+}
+
+
+#[get("/path")]
+fn home_path() -> Json<api::FullJSON> {
+    let path = filesystem::get_parent_current_dir();
+    api::list_full_dir(&path)
+}
+
 #[get("/path/<wanted_path..>")]
-fn wanted_path(wanted_path: PathBuf) -> Result<Json<api::ApiJSON>, Redirect> {
+fn wanted_path(wanted_path: PathBuf) -> Result<Json<api::FullJSON>, Redirect> {
     let mut path = filesystem::get_parent_current_dir();
     path.push(&wanted_path);
 
@@ -114,13 +190,13 @@ fn wanted_path(wanted_path: PathBuf) -> Result<Json<api::ApiJSON>, Redirect> {
         true => {
             match path.is_dir() {
                 false => {
-                    let route = format!("/fancyndex/dl/{}", wanted_path.display());
+                    let route = format!("/dl/file/{}", wanted_path.display());
                     Err(Redirect::to(&route[..]))
                 },
-                true => Ok(api::ApiJSON::list_dir(&path))
+                true => Ok(api::list_full_dir(&path))
             }
         },
-        false => Err(Redirect::to("/fancyndex/path"))
+        false => Err(Redirect::to("/_fancyndex/path"))
     }
 }
 
@@ -152,10 +228,12 @@ fn read_file(filename: &str) -> Result<String, io::Error> {
 fn main() {
     //let cfg = init_cfg_file("/home/spoken/Git/fancyndex/src/config.toml");
 
+    Header::new("Cache-Control", "max-age=650000");
+
     rocket::ignite()
         //.manage(cfg)
-        .mount("/", routes![index, home, user_path])
-        .mount("/_fancyndex/", routes![home_path, wanted_path, www, download])
+        .mount("/", routes![index, home, user_path, download_home, download_file])
+        .mount("/_fancyndex/", routes![home_path, wanted_path, www, home_dir, wanted_dir])
         .attach(Template::fairing())
         .launch();
 }

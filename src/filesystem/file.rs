@@ -3,7 +3,6 @@ use std::process;
 
 pub struct File {
     path: PathBuf,
-    size: u64,
 }
 
 impl File {
@@ -17,7 +16,6 @@ impl File {
 
         File {
             path: p.to_path_buf(),
-            size: super::get_size(p),
         }
     }
 
@@ -26,7 +24,7 @@ impl File {
     }
 
     pub fn size(&self) -> u64 {
-        self.size
+        super::get_size(&self.path)
     }
 
     pub fn datetime(&self) -> String {
@@ -37,3 +35,5 @@ impl File {
         super::get_timestamp(&self.path)
     }
 }
+
+/* Faire disparaître ce module, le remplacer par un vecteur de PathBuf tout simplement */

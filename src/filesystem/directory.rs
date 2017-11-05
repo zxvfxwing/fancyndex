@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 use std::process;
+//use crossbeam;
 
 use filesystem::file::File;
 
 pub struct Directory {
     path: PathBuf,
-    size: u64,
     directories: Vec<Directory>,
     files: Vec<File>,
 }
@@ -22,15 +22,11 @@ impl Directory {
     }
 
     fn add_file(&mut self, entry: &PathBuf) {
-        let new_file = File::new(&entry);
-        self.size += new_file.size();
-        self.files.push(new_file);
+        self.files.push(File::new(&entry));
     }
 
     fn add_dir(&mut self, entry: &PathBuf) {
-        let new_dir = Directory::new(&entry);
-        self.size += new_dir.size();
-        self.directories.push(new_dir);
+        self.directories.push(Directory::new(&entry));
     }
 
     fn add_symlink(&mut self, entry: &PathBuf) {
@@ -45,15 +41,23 @@ impl Directory {
     fn run(&mut self) {
         if let Ok(entries) = self.path.read_dir() {
             for entry in entries {
-                if let Ok(entry) = entry {
-                    let path_buf = &entry.path();
-                    let filename = &super::get_filename(path_buf)[..];
-                    /* Not counting dotfiles, filename which begin with a dot */
-                    if filename.chars().nth(0).unwrap() != '.' {
-                        self.add_entry(path_buf);
+                    if let Ok(entry) = entry {
+                        let path_buf = &entry.path();
+                        let filename = &super::get_filename(path_buf)[..];
+                        /* Not counting dotfiles, filename which begin with a dot */
+                        if filename.chars().nth(0).unwrap() != '.' {
+                            self.add_entry(path_buf);
+                        }
                     }
-                }
             }
+        }
+    }
+
+    pub fn soft_new(p: &PathBuf) -> Directory {
+        Directory {
+            path: p.to_path_buf(),
+            directories: Vec::new(),
+            files: Vec::new(),
         }
     }
 
@@ -62,7 +66,6 @@ impl Directory {
     *   All fields are private here, getter needed.
     */
     pub fn new(p: &PathBuf) -> Directory {
-
         if p.is_file() {
             println!("This PathBuf is a file. You cannot make an instance of struct Directory with it !");
             process::exit(1);
@@ -70,7 +73,6 @@ impl Directory {
 
         let mut new_dir = Directory {
             path: p.to_path_buf(),
-            size: 0u64,
             directories: Vec::new(),
             files: Vec::new(),
         };
@@ -96,7 +98,17 @@ impl Directory {
     }
 
     pub fn size(&self) -> u64 {
-        self.size
+        let mut size = 0u64;
+
+        for dir in &self.directories {
+            size += dir.size();
+        }
+
+        for file in &self.files {
+            size += file.size();
+        }
+
+        size
     }
 
     pub fn nb_dirs(&self) -> u64 {
@@ -111,15 +123,15 @@ impl Directory {
         self.nb_dirs() + self.nb_files()
     }
 
-    pub fn nb_total_files(&self) -> u64 {
-        let mut nb_total_files = 0u64;
+    pub fn nb_total_elements(&self) -> u64 {
+        let mut nb_total_elements = 0u64;
 
         for dir in &self.directories {
-            nb_total_files += dir.nb_files();
+            nb_total_elements += dir.nb_total_elements();
         }
 
-        nb_total_files += self.nb_files();
-        nb_total_files
+        nb_total_elements += self.nb_elements();
+        nb_total_elements
     }
 
     pub fn datetime(&self) -> String {
