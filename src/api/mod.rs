@@ -6,9 +6,10 @@
 */
 
 use std::path::PathBuf;
-use filesystem::{self, Entry};
+use filesystem;
 use walkdir::{WalkDir, DirEntry};
 
+/*
 pub fn get_dir_info(p: &PathBuf) -> Vec<Entry> {
     let mut entries: Vec<Entry> = Vec::new();
 
@@ -16,7 +17,7 @@ pub fn get_dir_info(p: &PathBuf) -> Vec<Entry> {
                                 .max_depth(1)
                                 .into_iter();
 
-    for entry in walker.filter_entry(|e| !filesystem::dir_entry_is_hidden(e)) {
+    for entry in walker.filter_entry(|e| !filesystem::is_hidden(e)) {
         if let Ok(entry) = entry {
             entries.push(Entry::new(&entry, true));
         }
@@ -57,3 +58,4 @@ pub fn get_dir_full(p: &PathBuf) -> Entry {
 
     the_entry
 }
+*/

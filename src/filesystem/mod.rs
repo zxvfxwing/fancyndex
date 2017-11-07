@@ -2,6 +2,8 @@
 * Filesystem Module
 */
 
+pub mod directory;
+
 /* Use */
 /* STD Lib */
 use std::env;
@@ -53,8 +55,6 @@ static A_IBYTES: &'static [&str] = &[
     "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"
 ];
 
-
-
 /*
 * Get current directory's std::path::PathBuf
 *
@@ -99,12 +99,12 @@ pub fn get_parent_cdir() -> PathBuf {
     get_parent_dir(&get_current_dir())
 }
 
-pub fn dir_entry_fname(entry: &DirEntry) -> String {
-    match entry.file_name().to_str() {
-        Some(filename_str) => filename_str.to_string(),
-        None => {
-            error::err_msg("No str found in filename !");
-            "__NoFileName__".to_string()
+pub fn get_filename(p: &PathBuf) -> String {
+    match p.file_name() {
+        None => panic!("No file_name found !"),
+        Some(filename) => match filename.to_str() {
+            None => panic!("No str in file_name !"),
+            Some(fname_str) => fname_str.to_string()
         }
     }
 }
@@ -134,11 +134,8 @@ pub fn dir_entry_timestamp(entry: &DirEntry) -> i64 {
     datetime.timestamp()
 }
 
-pub fn dir_entry_is_hidden(entry: &DirEntry) -> bool {
-    entry.file_name()
-         .to_str()
-         .map(|s| s.starts_with("."))
-         .unwrap_or(false)
+pub fn is_hidden(path: &PathBuf) -> bool {
+    get_filename(path).starts_with(".")
 }
 
 pub fn dir_entry_size(entry: &DirEntry) -> u64 {
@@ -154,6 +151,7 @@ pub fn dir_entry_type(entry: &DirEntry) -> bool {
     entry.file_type().is_file()
 }
 
+/*
 #[derive(Serialize)]
 pub struct Entry {
     name: String,
@@ -252,3 +250,4 @@ impl Entry {
         self.elements = elements;
     }
 }
+*/

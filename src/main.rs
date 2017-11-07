@@ -29,7 +29,8 @@ mod api;
 mod utils;
 
 /* Modules Use */
-use filesystem::Entry;
+
+/*
 
 #[get("/")]
 fn qqc() -> Json<Entry> {
@@ -63,12 +64,18 @@ fn path(path: PathBuf) -> Template {
     Template::render("index", entries)
 }
 
+*/
+
 fn main() {
-    rocket::ignite()
+    /*rocket::ignite()
         //.manage(cfg)
-        .mount("_api", routes![qqc])
-        .mount("_fancyndex/dir/", routes![api, api_path])
-        .mount("/home", routes![home, path])
+        //.mount("_api", routes![qqc])
+        //.mount("_fancyndex/dir/", routes![api, api_path])
+        //.mount("/home", routes![home, path])
         .attach(Template::fairing())
         .launch();
+    */
+
+    let mut dir = filesystem::directory::Directory::new_one(&filesystem::get_parent_cdir());
+    dir.deep_run();
 }
