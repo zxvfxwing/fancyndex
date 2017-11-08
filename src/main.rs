@@ -25,57 +25,8 @@ use walkdir::{DirEntry, WalkDir};
 
 /* Modules */
 mod filesystem;
-mod api;
 mod utils;
 
-/* Modules Use */
-
-/*
-
-#[get("/")]
-fn qqc() -> Json<Entry> {
-    Json(api::get_dir_full(&filesystem::get_parent_cdir()))
-}
-
-
-#[get("/")]
-fn api() -> Json< Vec<Entry> > {
-    let entries = api::get_dir_info(&filesystem::get_parent_cdir());
-    Json(entries)
-}
-
-#[get("/<path..>")]
-fn api_path(path: PathBuf) -> Json< Vec<Entry> > {
-    let path = filesystem::get_parent_cdir().join(path);
-    let entries = api::get_dir_info(&path);
-    Json(entries)
-}
-
-#[get("/")]
-fn home() -> Template {
-    let entries = api::get_dir_info(&filesystem::get_parent_cdir());
-    Template::render("index", entries)
-}
-
-#[get("/<path..>")]
-fn path(path: PathBuf) -> Template {
-    let path = filesystem::get_parent_cdir().join(path);
-    let entries = api::get_dir_info(&path);
-    Template::render("index", entries)
-}
-
-*/
-
 fn main() {
-    /*rocket::ignite()
-        //.manage(cfg)
-        //.mount("_api", routes![qqc])
-        //.mount("_fancyndex/dir/", routes![api, api_path])
-        //.mount("/home", routes![home, path])
-        .attach(Template::fairing())
-        .launch();
-    */
 
-    let mut dir = filesystem::directory::Directory::new_one(&filesystem::get_parent_cdir());
-    dir.deep_run();
 }
