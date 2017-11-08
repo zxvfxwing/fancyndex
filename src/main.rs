@@ -27,6 +27,30 @@ use walkdir::{DirEntry, WalkDir};
 mod filesystem;
 mod utils;
 
-fn main() {
+use filesystem::directory::Directory;
 
+#[get("/")]
+fn home() -> Json<Directory> {
+    let path = filesystem::get_parent_cdir();
+
+    
+
+}
+
+#[get("/<path..>")]
+fn path(path: PathBuf) -> Json<Directory> {
+
+
+
+}
+
+fn main() {
+    rocket::ignite()
+        //.manage(cfg)
+        //.mount("_api", routes![qqc])
+        //.mount("_fancyndex/dir/", routes![api, api_path])
+        //.mount("/home", routes![home, path])
+        .mount("/", routes![home, path])
+        .attach(Template::fairing())
+        .launch();
 }

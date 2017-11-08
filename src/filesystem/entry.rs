@@ -2,12 +2,8 @@ use std::path::PathBuf;
 
 #[derive(Serialize)]
 pub struct Entry {
-    path: String,
     name: String,
-    bsize: u64,
-    hsize: f64,
-    bstring: u64,
-    acro_bstring: String,
+    size: u64,
     datetime: String,
     timestamp: i64,
     elements: u64,
@@ -15,15 +11,13 @@ pub struct Entry {
 
 impl Entry {
 
-    pub fn new(p: &PathBuf) {
+    pub fn new(p: &PathBuf) -> Entry {
         Entry {
-            path: super::get_path_string(p),
             name: super::get_filename(p),
-            bsize: super::get_size(p),
-            hsize: 0.0f64,
+            size: super::get_size(p),
             datetime: super::get_datetime(p),
             timestamp: super::get_timestamp(p),
-            elements: super::get_nb_elements(p),
+            elements: 0u64,
         }
     }
 

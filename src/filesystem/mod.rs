@@ -17,55 +17,6 @@ use utils::error;
 pub mod directory;
 pub mod entry;
 
-/* Constants */
-/* -------------------------------------------- */
-static BYTES: &'static [&str] = &[
-    "Byte(s)",
-    "KiloByte(s)",
-    "MegaByte(s)",
-    "GigaByte(s)",
-    "TeraByte(s)",
-    "PetaByte(s)",
-    "ExaByte(s)",
-    "ZettaByte(s)",
-    "YottaByte(s)"
-];
-
-static A_BYTES: &'static [&str] = &[
-    "B",
-    "KB",
-    "MB",
-    "GB",
-    "TB",
-    "PB",
-    "EB",
-    "ZB",
-    "YB"
-];
-
-static IBYTES: &'static [&str] = &[
-    "Byte(s)",
-    "KibiByte(s)",
-    "MebiByte(s)",
-    "GibiByte(s)",
-    "TebiByte(s)",
-    "PebiByte(s)",
-    "ExbiByte(s)",
-    "ZebiByte(s)",
-    "YobiByte(s)"
-];
-
-static A_IBYTES: &'static [&str] = &[
-    "B",
-    "KiB",
-    "MiB",
-    "GiB",
-    "TiB",
-    "PiB",
-    "EiB",
-    "ZiB",
-    "YiB"
-];
 /* -------------------------------------------- */
 
 /*
