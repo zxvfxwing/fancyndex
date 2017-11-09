@@ -30,15 +30,36 @@ mod utils;
 use filesystem::directory::Directory;
 
 #[get("/")]
-fn home() -> Json<Directory> {
+fn home() {
     let path = filesystem::get_parent_cdir();
 
-    
+    if let Ok(entries) = path.read_dir() {
+        for entry in entries {
+            if let Ok(entry) = entry {
 
+                let mut size = 0u64;
+                let mut elts = 0u64;
+
+                let walker = WalkDir::new(entry.path()).follow_links(true).into_iter();
+
+                for entry in walker {
+                    if let Ok(entry) = entry {
+                        // println!("{}", entry.path().display());
+                        if entry.file_type().is_file() {
+                            size += entry.metadata().unwrap().len();
+                        }
+                        elts+=1;
+                    }
+                }
+
+                println!("{} -- {}, {}", entry.path().display(), size, elts);
+            }
+        }
+    }
 }
 
 #[get("/<path..>")]
-fn path(path: PathBuf) -> Json<Directory> {
+fn path(path: PathBuf) {
 
 
 
