@@ -27,22 +27,28 @@ use rocket::response::NamedFile;
 mod filesystem;
 mod utils;
 
-//use filesystem::directory::Directory;
+use filesystem::directory::Directory;
 use filesystem::walkdir::WalkDir;
 
 #[get("/")]
-fn home() {
+fn home() -> Json<Directory> {
     let path = filesystem::get_parent_cdir();
+    let walker = WalkDir::init(&path)
+        .do_symlink(true)
+        .binary_unit(true)
+        .do_hidden(true);
+
+    Json(walker.run())
+}
+
+#[get("/<path..>")]
+fn path(path: PathBuf) -> Json<Directory> {
+    let path = filesystem::get_parent_cdir().join(path);
     let walker = WalkDir::init(&path)
         .do_symlink(true)
         .do_hidden(true);
 
-    walker.run();
-}
-
-#[get("/<path..>")]
-fn path(path: PathBuf) {
-
+    Json(walker.run())
 }
 
 fn main() {

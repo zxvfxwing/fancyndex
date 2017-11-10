@@ -8,15 +8,45 @@ use std::time::SystemTime;
 /* Chrono extern crate */
 use chrono::prelude::*;
 
-/* WalkDir DirEntry */
-use walkdir::DirEntry;
-
 use utils::error;
 
 /* Modules */
 pub mod directory;
-pub mod entry;
+pub mod file;
 pub mod walkdir;
+
+/* Constant */
+static BYTES: &'static [&str] = &[
+    "Byte(s)",
+    "KiloByte(s)",
+    "MegaByte(s)",
+    "GigaByte(s)",
+    "TeraByte(s)",
+    "PetaByte(s)",
+    "ExaByte(s)",
+    "ZettaByte(s)",
+    "YottaByte(s)"
+];
+
+static A_BYTES: &'static [&str] = &[
+    "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
+];
+
+static IBYTES: &'static [&str] = &[
+    "Byte(s)",
+    "KibiByte(s)",
+    "MebiByte(s)",
+    "GibiByte(s)",
+    "TebiByte(s)",
+    "PebiByte(s)",
+    "ExbiByte(s)",
+    "ZebiByte(s)",
+    "YobiByte(s)"
+];
+
+static A_IBYTES: &'static [&str] = &[
+    "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"
+];
 
 /* -------------------------------------------- */
 
@@ -127,4 +157,33 @@ pub fn get_filename(p: &PathBuf) -> String {
 
 pub fn is_hidden(path: &PathBuf) -> bool {
     get_filename(path).starts_with(".")
+}
+
+/* Convert bytes size to either decimal / binary size, readable for human */
+pub fn get_human_size(size: u64, mode: bool) -> (f64, String, String) {
+
+    let mut hsize = size as f64;
+    let mut power = 0usize;
+
+    match mode {
+        /* Binary */
+        true => {
+            let div = 1024.0f64;
+            while hsize >= div {
+                hsize /= div;
+                power+=1;
+            }
+            return (hsize, IBYTES[power].to_string(), A_IBYTES[power].to_string());
+        },
+
+        /* Decimal */
+        false => {
+            let div = 1000.0f64;
+            while hsize >= div {
+                hsize /= div;
+                power+=1;
+            }
+            return (hsize, BYTES[power].to_string(), A_BYTES[power].to_string());
+        }
+    }
 }

@@ -24,13 +24,15 @@ use std::path::PathBuf;
 use std::fs::DirEntry;
 use utils::error;
 
-//use filesystem::directory::Directory;
+use filesystem::directory::Directory;
+use filesystem::file::File;
 
 pub struct WalkDir {
     path: PathBuf,
     do_hidden: bool,
     do_symlink: bool,
     go_deep: bool,
+    unit_mode: bool,
     sort_method: u8,
 }
 
@@ -42,6 +44,7 @@ impl WalkDir {
             do_hidden: false,
             do_symlink: false,
             go_deep: true,
+            unit_mode: true,
             sort_method: 0u8,
         }
     }
@@ -58,6 +61,11 @@ impl WalkDir {
 
     pub fn go_deep(mut self, mode: bool) -> WalkDir {
         self.go_deep = mode;
+        return self;
+    }
+
+    pub fn binary_unit(mut self, mode: bool) -> WalkDir {
+        self.unit_mode = mode;
         return self;
     }
 
@@ -82,7 +90,7 @@ impl WalkDir {
         let mut size = 0u64;
         let mut elts = 0u64;
 
-        if self.go_deep && (!WalkDir::is_hidden(entry) | self.do_hidden) {
+        if self.go_deep && !WalkDir::is_hidden(entry) | self.do_hidden {
             match entry.file_type() {
                 Ok(ftype) => {
                     if ftype.is_dir() {
@@ -132,18 +140,40 @@ impl WalkDir {
         return (size, elts);
     }
 
-    pub fn run(&self) {
+    pub fn run(&self) -> Directory {
+
+        let mut vec_dir: Vec<Directory> = Vec::new();
+        let mut vec_file: Vec<File> = Vec::new();
+
+        let mut size = 0u64;
+        let mut elts = 0u64;
+
         if let Ok(entries) = self.path.read_dir() {
             for entry in entries {
                 if let Ok(entry) = entry {
+                    if self.do_hidden | !WalkDir::is_hidden(&entry) {
+                        let result = self.deep_run(&entry);
+                        let epath = entry.path();
 
-                    if( self.do_hidden | !WalkDir::is_hidden(&entry) ) {
-                        let tup = self.deep_run(&entry);
+                        if epath.is_dir() {
+                            vec_dir.push( Directory::new(&epath, result.0, result.1, self.unit_mode) );
+                        }
+                        else {
+                            vec_file.push( File::new(&epath, result.0, self.unit_mode) );
+                        }
+
+                        size += result.0;
+                        elts += result.1;
                     }
-
                 }
             }
         }
-    }
 
+        let mut dir = Directory::new(&self.path, size, elts, self.unit_mode);
+
+        dir.add_dirs(vec_dir);
+        dir.add_files(vec_file);
+
+        return dir;
+    }
 }
