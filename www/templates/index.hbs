@@ -1,19 +1,12 @@
 {{> header}}
 
 <body>
-{{name}}
 
-{{#each this}}
+{{#each directories}}
 <p>
     {{this.name}}
-    {{this.ftape}}
-    {{this.timestamp}}
-    {{this.datetime}}
     {{this.size}}
-    {{this.hsize}}
-    {{this.unit}}
-    {{this.acro_unit}}
-    {{this.elements}}
+    {{this.short_unit}}
 </p>
 {{/each}}
 

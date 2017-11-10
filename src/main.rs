@@ -30,18 +30,18 @@ mod utils;
 use filesystem::directory::Directory;
 use filesystem::walkdir::WalkDir;
 
-#[get("/")]
+#[get("/api")]
 fn home() -> Json<Directory> {
     let path = filesystem::get_parent_cdir();
     let walker = WalkDir::init(&path)
-        .do_symlink(true)
+        .do_symlink(false)
         .binary_unit(true)
-        .do_hidden(true);
+        .do_hidden(false);
 
     Json(walker.run())
 }
 
-#[get("/<path..>")]
+#[get("/api/<path..>")]
 fn path(path: PathBuf) -> Json<Directory> {
     let path = filesystem::get_parent_cdir().join(path);
     let walker = WalkDir::init(&path)
@@ -51,13 +51,36 @@ fn path(path: PathBuf) -> Json<Directory> {
     Json(walker.run())
 }
 
+#[get("/home")]
+fn homee() -> Template {
+    let path = filesystem::get_parent_cdir();
+    let walker = WalkDir::init(&path)
+        .do_symlink(false)
+        .binary_unit(true)
+        .do_hidden(false)
+        .go_deep(false);
+
+    Template::render("index", walker.run())
+}
+
+#[get("/home/<path..>")]
+fn pathe(path: PathBuf) -> Template {
+    let path = filesystem::get_parent_cdir().join(path);
+    let walker = WalkDir::init(&path)
+        .do_symlink(true)
+        .do_hidden(true)
+        .go_deep(false);
+
+    Template::render("index", walker.run())
+}
+
 fn main() {
     rocket::ignite()
         //.manage(cfg)
         //.mount("_api", routes![qqc])
         //.mount("_fancyndex/dir/", routes![api, api_path])
         //.mount("/home", routes![home, path])
-        .mount("/", routes![home, path])
+        .mount("/", routes![home, path, homee, pathe])
         .attach(Template::fairing())
         .launch();
 }
