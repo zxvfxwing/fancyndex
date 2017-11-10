@@ -21,47 +21,27 @@ use rocket::response::Redirect;
 use rocket::response::NamedFile;
 
 /* Walkdir */
-use walkdir::{DirEntry, WalkDir};
+/*use walkdir::{DirEntry, WalkDir}; */
 
 /* Modules */
 mod filesystem;
 mod utils;
 
-use filesystem::directory::Directory;
+//use filesystem::directory::Directory;
+use filesystem::walkdir::WalkDir;
 
 #[get("/")]
 fn home() {
     let path = filesystem::get_parent_cdir();
+    let walker = WalkDir::init(&path)
+        .do_symlink(true)
+        .do_hidden(true);
 
-    if let Ok(entries) = path.read_dir() {
-        for entry in entries {
-            if let Ok(entry) = entry {
-
-                let mut size = 0u64;
-                let mut elts = 0u64;
-
-                let walker = WalkDir::new(entry.path()).follow_links(true).into_iter();
-
-                for entry in walker {
-                    if let Ok(entry) = entry {
-                        // println!("{}", entry.path().display());
-                        if entry.file_type().is_file() {
-                            size += entry.metadata().unwrap().len();
-                        }
-                        elts+=1;
-                    }
-                }
-
-                println!("{} -- {}, {}", entry.path().display(), size, elts);
-            }
-        }
-    }
+    walker.run();
 }
 
 #[get("/<path..>")]
 fn path(path: PathBuf) {
-
-
 
 }
 

@@ -16,6 +16,7 @@ use utils::error;
 /* Modules */
 pub mod directory;
 pub mod entry;
+pub mod walkdir;
 
 /* -------------------------------------------- */
 
