@@ -11,7 +11,6 @@ extern crate toml;
 /* -- Use -- */
 /* STD Lib */
 use std::path::PathBuf;
-use std::cmp;
 use std::ffi::OsString;
 
 /* Rocket Web Framework Use */

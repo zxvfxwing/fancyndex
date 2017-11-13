@@ -1,25 +1,3 @@
-/*
-*
-* WalkDir struct & module
-*
-* Init a WalkDir object with differents parameters.
-* Follow symbolic link (true/false), default = false
-* Compute hidden file (true/false), default = false
-*
-* sort method :
-*   - 0: name down
-*   - 1: name up
-*   - 2: date down
-*   - 3: date up
-*   - 4: size down
-*   - 5: size up
-*   default = 0
-*
-* This object will run (deep or not, depends on depth setup)
-* throught directory.
-*
-*/
-
 use std::path::PathBuf;
 use std::fs::DirEntry;
 use utils::error;
@@ -33,8 +11,7 @@ pub struct WalkDir {
     do_hidden: bool,
     do_symlink: bool,
     go_deep: bool,
-    unit_mode: bool,
-    sort_method: u8,
+    unit_mode: bool
 }
 
 impl WalkDir {
@@ -46,7 +23,6 @@ impl WalkDir {
             do_symlink: false,
             go_deep: true,
             unit_mode: true,
-            sort_method: 0u8,
         }
     }
 
@@ -67,16 +43,6 @@ impl WalkDir {
 
     pub fn binary_unit(mut self, mode: bool) -> WalkDir {
         self.unit_mode = mode;
-        return self;
-    }
-
-    pub fn sorting_method(mut self, method: u8) -> WalkDir {
-        if method > 5 {
-            error::err_msg("No sort method associated to this number !");
-            error::err_msg("Should be bewteen [0-5].");
-            return self;
-        }
-        self.sort_method = method;
         return self;
     }
 
@@ -188,6 +154,8 @@ impl WalkDir {
 
         dir.add_dirs(vec_dir);
         dir.add_files(vec_file);
+
+        dir.sort_by_name_ascending();
 
         return dir;
     }

@@ -25,4 +25,16 @@ impl File {
             datetime: super::get_datetime(p),
         }
     }
+
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn get_size(&self) -> u64  {
+        self.size
+    }
+
+    pub fn get_timestamp(&self) -> i64 {
+        self.timestamp
+    }
 }

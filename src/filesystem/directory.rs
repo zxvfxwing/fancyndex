@@ -41,4 +41,46 @@ impl Directory {
     pub fn add_files(&mut self, new: Vec<File>) {
         self.files = new;
     }
+
+    pub fn get_name(&self) -> &str {
+        &self.name
+    }
+
+    pub fn get_size(&self) -> u64  {
+        self.size
+    }
+
+    pub fn get_timestamp(&self) -> i64 {
+        self.timestamp
+    }
+
+    pub fn sort_by_size_ascending(&mut self) {
+        self.directories.sort_unstable_by(|a, b| a.get_size().cmp(&b.get_size()));
+        self.files.sort_unstable_by(|a, b| a.get_size().cmp(&b.get_size()));
+    }
+
+    pub fn sort_by_size_descending(&mut self) {
+        self.directories.sort_unstable_by(|b, a| a.get_size().cmp(&b.get_size()));
+        self.files.sort_unstable_by(|b, a| a.get_size().cmp(&b.get_size()));
+    }
+
+    pub fn sort_by_time_ascending(&mut self) {
+        self.directories.sort_unstable_by(|a, b| a.get_timestamp().cmp(&b.get_timestamp()));
+        self.files.sort_unstable_by(|a, b| a.get_timestamp().cmp(&b.get_timestamp()));
+    }
+
+    pub fn sort_by_time_descending(&mut self) {
+        self.directories.sort_unstable_by(|b, a| a.get_timestamp().cmp(&b.get_timestamp()));
+        self.files.sort_unstable_by(|b, a| a.get_timestamp().cmp(&b.get_timestamp()));
+    }
+
+    pub fn sort_by_name_ascending(&mut self) {
+        self.directories.sort_unstable_by(|a, b| a.get_name().to_lowercase().cmp(&b.get_name().to_lowercase()));
+        self.files.sort_unstable_by(|a, b| a.get_name().to_lowercase().cmp(&b.get_name().to_lowercase()));
+    }
+
+    pub fn sort_by_name_descending(&mut self) {
+        self.directories.sort_unstable_by(|b, a| a.get_name().to_lowercase().cmp(&b.get_name().to_lowercase()));
+        self.files.sort_unstable_by(|b, a| a.get_name().to_lowercase().cmp(&b.get_name().to_lowercase()));
+    }
 }
