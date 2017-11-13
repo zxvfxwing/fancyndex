@@ -6,11 +6,11 @@
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate chrono;
-extern crate walkdir;
+extern crate toml;
 
 /* -- Use -- */
 /* STD Lib */
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::cmp;
 use std::ffi::OsString;
 
@@ -19,6 +19,7 @@ use rocket_contrib::Template;
 use rocket_contrib::Json;
 use rocket::response::Redirect;
 use rocket::response::NamedFile;
+use rocket::State;
 
 /* Walkdir */
 /*use walkdir::{DirEntry, WalkDir}; */
@@ -26,60 +27,64 @@ use rocket::response::NamedFile;
 /* Modules */
 mod filesystem;
 mod utils;
+mod conf;
 
 use filesystem::directory::Directory;
 use filesystem::walkdir::WalkDir;
+use conf::Config;
 
 #[get("/api")]
-fn home() -> Json<Directory> {
+fn home(cfg: State<Config>) -> Json<Directory> {
     let path = filesystem::get_parent_cdir();
     let walker = WalkDir::init(&path)
-        .do_symlink(false)
-        .binary_unit(true)
-        .do_hidden(false);
+        .do_hidden(cfg.walk_options.do_hidden)
+        .do_symlink(cfg.walk_options.do_symlink)
+        .binary_unit(cfg.unit_options.binary_unit);
 
     Json(walker.run())
 }
 
 #[get("/api/<path..>")]
-fn path(path: PathBuf) -> Json<Directory> {
+fn path(path: PathBuf, cfg: State<Config>) -> Json<Directory> {
     let path = filesystem::get_parent_cdir().join(path);
     let walker = WalkDir::init(&path)
-        .do_symlink(true)
-        .do_hidden(true);
+        .do_hidden(cfg.walk_options.do_hidden)
+        .do_symlink(cfg.walk_options.do_symlink)
+        .binary_unit(cfg.unit_options.binary_unit);
 
     Json(walker.run())
 }
 
 #[get("/home")]
-fn homee() -> Template {
+fn homee(cfg: State<Config>) -> Template {
     let path = filesystem::get_parent_cdir();
     let walker = WalkDir::init(&path)
-        .do_symlink(false)
-        .binary_unit(true)
-        .do_hidden(false)
+        .do_hidden(cfg.walk_options.do_hidden)
+        .do_symlink(cfg.walk_options.do_symlink)
+        .binary_unit(cfg.unit_options.binary_unit)
         .go_deep(false);
 
     Template::render("index", walker.run())
 }
 
 #[get("/home/<path..>")]
-fn pathe(path: PathBuf) -> Template {
+fn pathe(path: PathBuf, cfg: State<Config>) -> Template {
     let path = filesystem::get_parent_cdir().join(path);
     let walker = WalkDir::init(&path)
-        .do_symlink(true)
-        .do_hidden(true)
+        .do_hidden(cfg.walk_options.do_hidden)
+        .do_symlink(cfg.walk_options.do_symlink)
+        .binary_unit(cfg.unit_options.binary_unit)
         .go_deep(false);
 
     Template::render("index", walker.run())
 }
 
 fn main() {
+    /* Read config file when starting server */
+    let cfg = conf::init_cfg_file("Fancyndex.toml");
+
     rocket::ignite()
-        //.manage(cfg)
-        //.mount("_api", routes![qqc])
-        //.mount("_fancyndex/dir/", routes![api, api_path])
-        //.mount("/home", routes![home, path])
+        .manage(cfg)
         .mount("/", routes![home, path, homee, pathe])
         .attach(Template::fairing())
         .launch();

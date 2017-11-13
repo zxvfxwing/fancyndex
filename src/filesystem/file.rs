@@ -17,7 +17,7 @@ impl File {
 
         File {
             name: super::get_filename(p),
-            size: super::get_size(p),
+            size: size,
             hsize: hsize.0,
             unit: hsize.1,
             short_unit: hsize.2,

@@ -161,29 +161,23 @@ pub fn is_hidden(path: &PathBuf) -> bool {
 
 /* Convert bytes size to either decimal / binary size, readable for human */
 pub fn get_human_size(size: u64, mode: bool) -> (f64, String, String) {
-
     let mut hsize = size as f64;
     let mut power = 0usize;
+    let mut div = 1024.0f64;
+
+    if !mode { div = 1000.0f64; }
+
+    //let s = hsize / div
+
+    while hsize >= div {
+        hsize /= div;
+        power+=1;
+    }
+
+    println!("{}", hsize);
 
     match mode {
-        /* Binary */
-        true => {
-            let div = 1024.0f64;
-            while hsize >= div {
-                hsize /= div;
-                power+=1;
-            }
-            return (hsize, IBYTES[power].to_string(), A_IBYTES[power].to_string());
-        },
-
-        /* Decimal */
-        false => {
-            let div = 1000.0f64;
-            while hsize >= div {
-                hsize /= div;
-                power+=1;
-            }
-            return (hsize, BYTES[power].to_string(), A_BYTES[power].to_string());
-        }
+        true => return (hsize, IBYTES[power].to_string(), A_IBYTES[power].to_string()),
+        false => return (hsize, BYTES[power].to_string(), A_BYTES[power].to_string())
     }
 }

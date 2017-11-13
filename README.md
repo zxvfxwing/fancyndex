@@ -6,9 +6,3 @@
 
 - Rust
 - Rocket web framework
-- Bootstrap
-- JQuery
-- Popper.js
-- Animate.css
-
-** Version 0.5 => 0.6 **

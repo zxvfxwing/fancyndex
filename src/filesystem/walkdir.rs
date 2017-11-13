@@ -24,6 +24,7 @@ use std::path::PathBuf;
 use std::fs::DirEntry;
 use utils::error;
 
+use filesystem;
 use filesystem::directory::Directory;
 use filesystem::file::File;
 
@@ -105,18 +106,13 @@ impl WalkDir {
                         }
                         elts += 1;
                     }
-
+                    else
                     if ftype.is_file() {
-                        match entry.metadata() {
-                            Ok(metadata) => {
-                                size = metadata.len();
-                                elts = 1u64;
-                            },
-                            Err(_) => {}
-                        }
+                        size = filesystem::get_size(&entry.path());
+                        elts = 1;
                     }
-
-                    else if self.do_symlink {
+                    else
+                    if self.do_symlink && ftype.is_symlink() {
                         match entry.path().read_link() {
                             Ok(link) => {
                                 if let Ok(entries) = link.read_dir() {
@@ -129,11 +125,19 @@ impl WalkDir {
                                     }
                                 }
                             },
-                            Err(_) => {}
+                            Err(e) => {
+                                error::err_msg("\nError occurred while trying to read symbolic link :");
+                                error::err_msg(entry.path().to_str().unwrap());
+                                error::err_msg(&e.to_string()[..]);
+                            }
                         }
                     }
                 },
-                Err(_) => {}
+                Err(e) => {
+                    error::err_msg("\nError occurred while trying to access file type :");
+                    error::err_msg(entry.path().to_str().unwrap());
+                    error::err_msg(&e.to_string()[..]);
+                }
             }
         }
 
@@ -152,18 +156,29 @@ impl WalkDir {
             for entry in entries {
                 if let Ok(entry) = entry {
                     if self.do_hidden | !WalkDir::is_hidden(&entry) {
-                        let result = self.deep_run(&entry);
-                        let epath = entry.path();
-
-                        if epath.is_dir() {
-                            vec_dir.push( Directory::new(&epath, result.0, result.1, self.unit_mode) );
+                        match entry.file_type() {
+                            Ok(ftype) => {
+                                if entry.path().is_dir() && self.do_symlink | !ftype.is_symlink() {
+                                    let result = self.deep_run(&entry);
+                                    vec_dir.push( Directory::new(&entry.path(), result.0, result.1, self.unit_mode) );
+                                    size += result.0;
+                                    elts += result.1;
+                                }
+                                else
+                                if entry.path().is_file() && self.do_symlink | !ftype.is_symlink() {
+                                    let epath = entry.path();
+                                    let fsize = filesystem::get_size(&epath);
+                                    vec_file.push( File::new(&epath, fsize, self.unit_mode) );
+                                    size += fsize;
+                                    elts += 1;
+                                }
+                            },
+                            Err(e) => {
+                                error::err_msg("\nError occurred while trying to access file type :");
+                                error::err_msg(entry.path().to_str().unwrap());
+                                error::err_msg(&e.to_string()[..]);
+                            }
                         }
-                        else {
-                            vec_file.push( File::new(&epath, result.0, self.unit_mode) );
-                        }
-
-                        size += result.0;
-                        elts += result.1;
                     }
                 }
             }
