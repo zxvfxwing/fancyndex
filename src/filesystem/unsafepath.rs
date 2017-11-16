@@ -73,7 +73,7 @@ impl<'a> FromSegments<'a> for UnsafePBuf {
                 unsafe_p.push(&*decoded)
             }
         }
-
+        
         Ok(unsafe_p)
     }
 }

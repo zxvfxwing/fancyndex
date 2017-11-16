@@ -1,4 +1,4 @@
-#![feature(plugin, decl_macro)]
+#![feature(plugin, decl_macro, custom_derive)]
 #![plugin(rocket_codegen)]
 
 /* Crates */
@@ -28,33 +28,14 @@ use rocket::http::RawStr;
 mod filesystem;
 mod utils;
 mod conf;
+mod server;
 
 use filesystem::unsafepath::UnsafePBuf;
 use filesystem::directory::Directory;
 use filesystem::walkdir::WalkDir;
 use conf::Config;
 
-#[get("/api")]
-fn home(cfg: State<Config>) -> Json<Directory> {
-    let path = filesystem::get_parent_cdir();
-    let walker = WalkDir::init(&path)
-        .do_hidden(cfg.walk_options.do_hidden)
-        .do_symlink(cfg.walk_options.do_symlink)
-        .binary_unit(cfg.unit_options.binary_unit);
-
-    Json(walker.run())
-}
-
-#[get("/api/<upath..>")]
-fn path(upath: UnsafePBuf, cfg: State<Config>) -> Json<Directory> {
-    let path = filesystem::get_parent_cdir().join(upath.path());
-    let walker = WalkDir::init(&path)
-        .do_hidden(cfg.walk_options.do_hidden)
-        .do_symlink(cfg.walk_options.do_symlink)
-        .binary_unit(cfg.unit_options.binary_unit);
-
-    Json(walker.run())
-}
+use server::api;
 
 #[get("/hello/<name..>")]
 fn hello(name: PathBuf) -> String {
@@ -62,24 +43,24 @@ fn hello(name: PathBuf) -> String {
 }
 
 #[get("/home")]
-fn homee(cfg: State<Config>) -> Template {
+fn home(cfg: State<Config>) -> Template {
     let path = filesystem::get_parent_cdir();
     let walker = WalkDir::init(&path)
         .do_hidden(cfg.walk_options.do_hidden)
         .do_symlink(cfg.walk_options.do_symlink)
-        .binary_unit(cfg.unit_options.binary_unit)
+        .use_binary_unit(cfg.unit_options.binary_unit)
         .go_deep(false);
 
     Template::render("index", walker.run())
 }
 
 #[get("/home/<path..>")]
-fn pathe(path: PathBuf, cfg: State<Config>) -> Template {
+fn path(path: PathBuf, cfg: State<Config>) -> Template {
     let path = filesystem::get_parent_cdir().join(path);
     let walker = WalkDir::init(&path)
         .do_hidden(cfg.walk_options.do_hidden)
         .do_symlink(cfg.walk_options.do_symlink)
-        .binary_unit(cfg.unit_options.binary_unit)
+        .use_binary_unit(cfg.unit_options.binary_unit)
         .go_deep(false);
 
     Template::render("index", walker.run())
@@ -91,7 +72,8 @@ fn main() {
 
     rocket::ignite()
         .manage(cfg)
-        .mount("/", routes![home, path, homee, pathe, hello])
+        .mount("/", routes![home, path, hello])
+        .mount("/api/", routes![api::default_home_path, api::home_path, api::default_path, api::path])
         .attach(Template::fairing())
         .launch();
 }

@@ -6,16 +6,23 @@ use filesystem;
 use filesystem::directory::Directory;
 use filesystem::file::File;
 
+pub enum SortMethod {
+    name,
+    time,
+    size,
+}
+
 pub struct WalkDir {
     path: PathBuf,
     do_hidden: bool,
     do_symlink: bool,
     go_deep: bool,
-    unit_mode: bool
+    unit_mode: bool,
+    sort_method: SortMethod,
+    sort_ascending: bool
 }
 
 impl WalkDir {
-
     pub fn init(p: &PathBuf) -> WalkDir {
         WalkDir {
             path: p.to_path_buf(),
@@ -23,6 +30,8 @@ impl WalkDir {
             do_symlink: false,
             go_deep: true,
             unit_mode: true,
+            sort_method: SortMethod::name,
+            sort_ascending: true,
         }
     }
 
@@ -41,8 +50,14 @@ impl WalkDir {
         return self;
     }
 
-    pub fn binary_unit(mut self, mode: bool) -> WalkDir {
+    pub fn use_binary_unit(mut self, mode: bool) -> WalkDir {
         self.unit_mode = mode;
+        return self;
+    }
+
+    pub fn sort_by(mut self, method: SortMethod, mode: bool) -> WalkDir {
+        self.sort_method = method;
+        self.sort_ascending = mode;
         return self;
     }
 
@@ -150,12 +165,25 @@ impl WalkDir {
             }
         }
 
+        /* Create here a new Directory struct, which will be parsed to Json or Template (Rocket) */
         let mut dir = Directory::new(&self.path, size, elts, self.unit_mode);
-
         dir.add_dirs(vec_dir);
         dir.add_files(vec_file);
 
-        dir.sort_by_name_ascending();
+        match self.sort_method {
+            SortMethod::name => {
+                if self.sort_ascending  { dir.sort_by_name_ascending();  }
+                else                    { dir.sort_by_name_descending(); }
+            },
+            SortMethod::time => {
+                if self.sort_ascending  { dir.sort_by_time_ascending();  }
+                else                    { dir.sort_by_time_descending(); }
+            },
+            SortMethod::size => {
+                if self.sort_ascending  { dir.sort_by_size_ascending();  }
+                else                    { dir.sort_by_size_descending(); }
+            }
+        }
 
         return dir;
     }
