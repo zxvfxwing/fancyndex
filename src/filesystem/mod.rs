@@ -14,6 +14,7 @@ use utils::error;
 pub mod directory;
 pub mod file;
 pub mod walkdir;
+pub mod unsafepath;
 
 /* Constant */
 static BYTES: &'static [&str] = &[
@@ -171,7 +172,7 @@ pub fn get_human_size(size: u64, mode: bool) -> (f64, String, String) {
         hsize /= div;
         power+=1;
     }
-    
+
     match mode {
         true => return (hsize, IBYTES[power].to_string(), A_IBYTES[power].to_string()),
         false => return (hsize, BYTES[power].to_string(), A_BYTES[power].to_string())
