@@ -3,12 +3,11 @@
 <body>
 
 {{#each directories}}
-<p>
-    {{this.name}}
-    {{this.size}}
-    {{this.hsize}}
-    {{this.short_unit}}
-</p>
+<p> {{this.name}} - {{this.size}} - {{this.hsize}} - {{this.short_unit}} </p>
+{{/each}}
+
+{{#each files}}
+<p> {{this.name}} - {{this.size}} - {{this.hsize}} - {{this.short_unit}} </p>
 {{/each}}
 
 {{> scripts}}

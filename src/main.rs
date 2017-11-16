@@ -16,7 +16,7 @@ extern crate toml;
 /* Rocket Web Framework Use */
 use rocket_contrib::Template;
 //use rocket_contrib::Json;
-//use rocket::response::Redirect;
+use rocket::response::Redirect;
 //use rocket::response::NamedFile;
 //use rocket::State;
 //use rocket::http::RawStr;
@@ -37,15 +37,21 @@ mod server;
 
 use server::{api, asset, home};
 
+#[get("/")]
+fn go_home() -> Redirect {
+    Redirect::to("/home")
+}
+
 fn main() {
     /* Read config file when starting server */
     let cfg = conf::read_cfg_file("Fancyndex.toml");
 
     rocket::ignite()
         .manage(cfg)
-        .mount("/asset", routes![asset::file])
-        .mount("/home", routes![home::default_home_path, home::home_path, home::default_path, home::path])
-        .mount("/api", routes![api::default_home_path, api::home_path, api::default_path, api::path])
+        .mount("/", routes![go_home])
+        .mount("/asset/", routes![asset::file])
+        .mount("/home/", routes![home::default_home_path, home::home_path, home::default_path, home::path])
+        .mount("/api/", routes![api::default_home_path, api::home_path, api::default_path, api::path])
         .attach(Template::fairing())
         .launch();
 }
