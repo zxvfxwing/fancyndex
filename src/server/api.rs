@@ -2,13 +2,14 @@
 *
 * API Module
 *
-* > "/api/path/"
-* > "/api/path/<upath: UnsafePBuf>"
-* > "/api/path/<upath: UnsafeBPub>?<sort: QuerySort>
+* > "/api/path"
+* > "/api/path?<sort: SortQueries>"
+* > "/api/path/<upath: UnsafePBuf ..>"
+* > "/api/path/<upath: UnsafePBuf ..>?<queries: SortQueries>
+*
+* Json output
 *
 */
-
-use std::path::PathBuf;
 
 use rocket_contrib::Json;
 use rocket::State;
@@ -16,7 +17,7 @@ use rocket::State;
 use filesystem;
 use filesystem::unsafepath::UnsafePBuf;
 use filesystem::directory::Directory;
-use filesystem::walkdir::{SortMethod, WalkDir};
+use filesystem::walkdir::WalkDir;
 
 use conf::Config;
 

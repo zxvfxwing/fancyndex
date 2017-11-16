@@ -18,15 +18,15 @@ pub struct SortQueries {
 }
 
 fn parse_queries(queries: SortQueries) -> (SortMethod, bool) {
-    let mut method = SortMethod::name;
+    let mut method = SortMethod::Name;
     let mut ascending = true;
 
     if queries.by == "time" {
-        method = SortMethod::time;
+        method = SortMethod::Time;
     }
     else
     if queries.by == "size" {
-        method = SortMethod::size;
+        method = SortMethod::Size;
     }
 
     if let Some(mode) = queries.ascending {

@@ -7,9 +7,9 @@ use filesystem::directory::Directory;
 use filesystem::file::File;
 
 pub enum SortMethod {
-    name,
-    time,
-    size,
+    Name,
+    Time,
+    Size,
 }
 
 pub struct WalkDir {
@@ -30,7 +30,7 @@ impl WalkDir {
             do_symlink: false,
             go_deep: true,
             unit_mode: true,
-            sort_method: SortMethod::name,
+            sort_method: SortMethod::Name,
             sort_ascending: true,
         }
     }
@@ -171,15 +171,15 @@ impl WalkDir {
         dir.add_files(vec_file);
 
         match self.sort_method {
-            SortMethod::name => {
+            SortMethod::Name => {
                 if self.sort_ascending  { dir.sort_by_name_ascending();  }
                 else                    { dir.sort_by_name_descending(); }
             },
-            SortMethod::time => {
+            SortMethod::Time => {
                 if self.sort_ascending  { dir.sort_by_time_ascending();  }
                 else                    { dir.sort_by_time_descending(); }
             },
-            SortMethod::size => {
+            SortMethod::Size => {
                 if self.sort_ascending  { dir.sort_by_size_ascending();  }
                 else                    { dir.sort_by_size_descending(); }
             }

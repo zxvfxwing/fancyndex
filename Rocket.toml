@@ -2,7 +2,7 @@
 address = "localhost"
 port = 8000
 workers = 50
-template_dir = "www/templates/"
+template_dir = "web/templates/"
 
 #[global.tls]
 #certs = ""

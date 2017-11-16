@@ -18,7 +18,6 @@
 use std::path::PathBuf;
 use rocket::http::uri::{URI, Segments, SegmentError};
 use rocket::request::FromSegments;
-use std::fmt::Debug;
 
 pub struct UnsafePBuf {
     path: PathBuf
@@ -73,7 +72,7 @@ impl<'a> FromSegments<'a> for UnsafePBuf {
                 unsafe_p.push(&*decoded)
             }
         }
-        
+
         Ok(unsafe_p)
     }
 }
