@@ -2,14 +2,47 @@
 
 <body>
 
-{{#each directories}}
-<p> {{this.name}} - {{this.size}} - {{this.hsize}} - {{this.short_unit}} </p>
-{{/each}}
+<div class="container">
 
-{{#each files}}
-<p> {{this.name}} - {{this.size}} - {{this.hsize}} - {{this.short_unit}} </p>
-{{/each}}
+    <h1> Fancyndex : {{ this.name }} </h1>
+
+    <table class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Size</th>
+                <th>Unit</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {{#each directories}}
+            <tr class="is-directory" id="{{ @index }}">
+                <td id="type">DIR</td>
+                <td id="name">{{ this.name }}</td>
+                <td id="date">{{ this.timestamp }}</td>
+                <td id="size">{{ this.hsize }}</td>
+                <td id="unit">{{ this.short_unit }}</td>
+            </tr>
+            {{/each}}
+
+            {{#each files}}
+            <tr class="is-file" id="{{ @index }}">
+                <td id="type">FILE</td>
+                <td id="name">{{ this.name }}</td>
+                <td id="date">{{ this.timestamp }}</td>
+                <td id="size">{{ this.hsize }}</td>
+                <td id="unit">{{ this.short_unit }}</td>
+            </tr>
+            {{/each}}
+
+        </tbody>
+    </table>
+
+</div>
 
 {{> scripts}}
-
 </body>
+</html>

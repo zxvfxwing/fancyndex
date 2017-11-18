@@ -60,8 +60,8 @@ impl Directory {
     }
 
     pub fn sort_by_size_descending(&mut self) {
-        self.directories.sort_unstable_by(|b, a| a.get_size().cmp(&b.get_size()));
-        self.files.sort_unstable_by(|b, a| a.get_size().cmp(&b.get_size()));
+        self.directories.sort_unstable_by(|a, b| b.get_size().cmp(&a.get_size()));
+        self.files.sort_unstable_by(|a, b| b.get_size().cmp(&a.get_size()));
     }
 
     pub fn sort_by_time_ascending(&mut self) {
@@ -70,8 +70,8 @@ impl Directory {
     }
 
     pub fn sort_by_time_descending(&mut self) {
-        self.directories.sort_unstable_by(|b, a| a.get_timestamp().cmp(&b.get_timestamp()));
-        self.files.sort_unstable_by(|b, a| a.get_timestamp().cmp(&b.get_timestamp()));
+        self.directories.sort_unstable_by(|a, b| b.get_timestamp().cmp(&a.get_timestamp()));
+        self.files.sort_unstable_by(|a, b| b.get_timestamp().cmp(&a.get_timestamp()));
     }
 
     pub fn sort_by_name_ascending(&mut self) {
@@ -80,7 +80,7 @@ impl Directory {
     }
 
     pub fn sort_by_name_descending(&mut self) {
-        self.directories.sort_unstable_by(|b, a| a.get_name().to_lowercase().cmp(&b.get_name().to_lowercase()));
-        self.files.sort_unstable_by(|b, a| a.get_name().to_lowercase().cmp(&b.get_name().to_lowercase()));
+        self.directories.sort_unstable_by(|a, b| b.get_name().to_lowercase().cmp(&a.get_name().to_lowercase()));
+        self.files.sort_unstable_by(|a, b| b.get_name().to_lowercase().cmp(&a.get_name().to_lowercase()));
     }
 }
