@@ -6,7 +6,7 @@ const cell_date = 2;
 const cell_size = 3;
 const cell_unit = 4;
 
-var location_pathname = window.location.pathname;
+var location_pathname = decode_utf8( window.location.pathname );
 
 /* Cut window location pathname after "/home" (5 chars) */
 var API_pathname = location_pathname.substring(5);
@@ -28,6 +28,20 @@ console.log(urlParams.get("ascending"));
 /* JSON of the current directory */
 var currentJSON = null;
 
+function encode_utf8(s) {
+  return encodeURIComponent(s);
+}
+
+function decode_utf8(s) {
+  return decodeURIComponent(s);
+}
+
+function dir_click(dir_id){
+    console.log( dir_id );
+    console.log( document.getElementById(dir_id).cells[cell_name].innerHTML );
+    var dir_name = document.getElementById(dir_id).cells[cell_name].innerHTML;
+    window.location.href = location_pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_ ;
+}
 
 function update_breadcumb(pathname, by, ascending){
     if( by === undefined || by === null ){
@@ -49,8 +63,6 @@ function update_breadcumb(pathname, by, ascending){
     var bread_ul = document.getElementsByClassName("breadcrumb")[0].children[0];
     var phref = "";
     var i;
-
-    console.log( iter );
 
     for(i=0; i < iter.length-1; ++i){
         phref += "/" + iter[i];
