@@ -28,6 +28,39 @@ console.log(urlParams.get("ascending"));
 /* JSON of the current directory */
 var currentJSON = null;
 
+
+function update_breadcumb(pathname, by, ascending){
+    if( by === undefined || by === null ){
+        by = "name";
+    }
+
+    if( ascending === undefined || ascending === null ){
+        ascending = true;
+    }
+
+    if( pathname[0] == "/" )
+        pathname = pathname.substring(1);
+
+    while( pathname[pathname.length-1] == "/" ){
+        pathname = pathname.substring(0,pathname.length-1);
+    }
+
+    var iter = pathname.split("/");
+    var bread_ul = document.getElementsByClassName("breadcrumb")[0].children[0];
+    var phref = "";
+    var i;
+
+    console.log( iter );
+
+    for(i=0; i < iter.length-1; ++i){
+        phref += "/" + iter[i];
+        bread_ul.innerHTML += "<li><a href =\"" + phref + "?by=" + by + "&ascending=" + ascending + "\">" + iter[i] + "</a></li>";
+    }
+
+    phref += "/" + phref[i] + "?by=" + by + "&ascending=" + ascending;
+    bread_ul.innerHTML += "<li class=\"is-active\"><a href =\"" + phref + "\" aria-current=\"directory\">" + iter[i] + "</a></li>";
+}
+
 function update_dirs_size(DirJSON){
 
     test = DirJSON;
@@ -64,11 +97,11 @@ function truncate_files_size(fixed_number){
 }
 
 function API_get_path(path, sort_method, ascending){
-    if( sort_method === null ) {
+    if( sort_method === null || sort_method === undefined ) {
          sort_method = "name";
     }
 
-    if( ascending === null ) {
+    if( ascending === null || sort_method === undefined ) {
         ascending = true;
     }
 
@@ -86,8 +119,10 @@ function API_get_path(path, sort_method, ascending){
     r.send();
 }
 
+update_breadcumb(location_pathname, _by_, _ascending_);
 truncate_files_size(float_to_fixed);
 
+/* Ajax call only if there is at least one directory */
 nbDir = document.getElementsByClassName("is-directory").length;
 if( nbDir > 0 ){
     API_get_path(API_pathname, _by_, _ascending_);
