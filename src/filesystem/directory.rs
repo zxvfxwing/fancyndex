@@ -20,8 +20,20 @@ impl Directory {
     pub fn new(p: &PathBuf, size: u64, elts: u64, mode: bool) -> Directory {
         let hsize = super::get_human_size(size, mode);
 
+        let cdir_name = super::get_filename(&super::get_parent_cdir());
+        let home_str = "home";
+
         Directory {
-            name: super::get_filename(p),
+            name: {
+                let dir_name = super::get_filename(p);
+
+                if dir_name != cdir_name {
+                    dir_name
+                }
+                else{
+                    home_str.to_string()
+                }
+            },
             size: size,
             hsize: hsize.0,
             unit: hsize.1,

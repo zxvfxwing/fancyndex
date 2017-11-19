@@ -4,7 +4,19 @@
 
 <div class="container">
 
-    <table class="table is-hoverable is-fullwidth">
+    <!--
+    <nav class="breadcrumb is-medium" aria-label="breadcrumbs">
+        <ul>
+            {{#each compo}}
+            <li {{#if @last}} class="is-active" {{/if}}>
+                <a href="/{{this}}" {{#if @last}} aria-current="page" {{/if}} > {{this}}</a>
+            </li>
+            {{/each}}
+        </ul>
+    </nav>
+-->
+
+    <table class="table is-narrow is-hoverable is-fullwidth">
         <thead>
             <tr>
                 <th>Type</th>

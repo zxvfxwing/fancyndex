@@ -17,8 +17,6 @@ var urlParams = new URLSearchParams(window.location.search);
 var _by_ = urlParams.get("by");
 var _ascending_ = urlParams.get("ascending");
 
-console.log(_by_);
-
 /* DEBUG *
 console.log( location_pathname );
 console.log( API_pathname );
@@ -27,34 +25,50 @@ console.log(urlParams.get("by"));
 console.log(urlParams.get("ascending"));
 /* -------- */
 
-function update_dir_sizes(DirJSON){
+/* JSON of the current directory */
+var currentJSON = null;
+
+function update_dirs_size(DirJSON){
+
+    test = DirJSON;
+
     var Directories = document.getElementsByClassName("is-directory");
     for(var i=0; i < Directories.length; ++i){
+        var dir = DirJSON.directories[i];
+
+        /* If user wants it to be sorted by size, we have to change also name / datetime place */
         if( _by_ == "size" ){
-            Directories[i].cells[cell_name].innerHTML = DirJSON.directories[i].name;
-            Directories[i].cells[cell_date].innerHTML = DirJSON.directories[i].datetime;
+            Directories[i].cells[cell_name].innerHTML = dir.name;
+            Directories[i].cells[cell_date].innerHTML = dir.datetime;
         }
-        Directories[i].cells[cell_size].innerHTML = DirJSON.directories[i].hsize.toFixed(float_to_fixed);
-        Directories[i].cells[cell_unit].innerHTML = DirJSON.directories[i].short_unit;
+
+        if( JSON.stringify(dir.hsize).includes(".") ){
+            Directories[i].cells[cell_size].innerHTML = dir.hsize.toFixed(float_to_fixed);
+        }
+        else{
+            Directories[i].cells[cell_size].innerHTML = dir.hsize;
+        }
+
+        Directories[i].cells[cell_unit].innerHTML = dir.short_unit;
     }
 }
 
-function truncate_hsize(fixed_number){
-    var HumanSizes = document.getElementsByClassName("size");
-    for(var i=0; i < HumanSizes.length; ++i){
-        var hsize_str = HumanSizes[i].innerHTML;
+function truncate_files_size(fixed_number){
+    var Files = document.getElementsByClassName("is-file");
+    for(var i=0; i < Files.length; ++i){
+        var hsize_str = Files[i].cells[cell_size].innerHTML;
         if( hsize_str.includes(".") ) {
-            HumanSizes[i].innerHTML = Number(hsize_str).toFixed(fixed_number);
+            Files[i].cells[cell_size].innerHTML = Number(hsize_str).toFixed(fixed_number);
         }
     }
 }
 
 function API_get_path(path, sort_method, ascending){
-    if( sort_method === undefined ) {
+    if( sort_method === null ) {
          sort_method = "name";
     }
 
-    if( ascending === undefined ) {
+    if( ascending === null ) {
         ascending = true;
     }
 
@@ -63,8 +77,7 @@ function API_get_path(path, sort_method, ascending){
 
     r.onreadystatechange = function() {
         if (r.readyState != 4 || r.status != 200) return;
-        //console.log(r.responseText);
-        update_dir_sizes(r.response);
+        update_dirs_size(r.response);
     };
 
     var request_url = "/api/path" + path + "?by=" + sort_method + "&ascending=" + ascending;
@@ -73,5 +86,9 @@ function API_get_path(path, sort_method, ascending){
     r.send();
 }
 
-truncate_hsize(float_to_fixed);
-API_get_path(API_pathname, _by_, _ascending_);
+truncate_files_size(float_to_fixed);
+
+nbDir = document.getElementsByClassName("is-directory").length;
+if( nbDir > 0 ){
+    API_get_path(API_pathname, _by_, _ascending_);
+}
