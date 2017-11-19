@@ -1,5 +1,9 @@
 const float_to_fixed = 2;
-const cell_hsize = 3;
+
+/* Number of cells */
+const cell_name = 1;
+const cell_date = 2;
+const cell_size = 3;
 const cell_unit = 4;
 
 var location_pathname = window.location.pathname;
@@ -9,6 +13,11 @@ var API_pathname = location_pathname.substring(5);
 
 /* Get URL Params, Queries */
 var urlParams = new URLSearchParams(window.location.search);
+
+var _by_ = urlParams.get("by");
+var _ascending_ = urlParams.get("ascending");
+
+console.log(_by_);
 
 /* DEBUG *
 console.log( location_pathname );
@@ -21,10 +30,13 @@ console.log(urlParams.get("ascending"));
 function update_dir_sizes(DirJSON){
     var Directories = document.getElementsByClassName("is-directory");
     for(var i=0; i < Directories.length; ++i){
-        Directories[i].cells[cell_hsize].innerHTML = DirJSON.directories[i].hsize;
+        if( _by_ == "size" ){
+            Directories[i].cells[cell_name].innerHTML = DirJSON.directories[i].name;
+            Directories[i].cells[cell_date].innerHTML = DirJSON.directories[i].datetime;
+        }
+        Directories[i].cells[cell_size].innerHTML = DirJSON.directories[i].hsize.toFixed(float_to_fixed);
         Directories[i].cells[cell_unit].innerHTML = DirJSON.directories[i].short_unit;
     }
-    truncate_hsize(float_to_fixed);
 }
 
 function truncate_hsize(fixed_number){
@@ -51,6 +63,7 @@ function API_get_path(path, sort_method, ascending){
 
     r.onreadystatechange = function() {
         if (r.readyState != 4 || r.status != 200) return;
+        //console.log(r.responseText);
         update_dir_sizes(r.response);
     };
 
@@ -60,6 +73,5 @@ function API_get_path(path, sort_method, ascending){
     r.send();
 }
 
-
 truncate_hsize(float_to_fixed);
-API_get_path(API_pathname, urlParams.get("by"), urlParams.get("ascending"));
+API_get_path(API_pathname, _by_, _ascending_);
