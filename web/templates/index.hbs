@@ -4,8 +4,6 @@
 
 <div class="container">
 
-    <h1> Fancyndex : {{ this.name }} </h1>
-
     <table class="table is-striped is-hoverable is-fullwidth">
         <thead>
             <tr>
@@ -19,22 +17,22 @@
         <tbody>
 
             {{#each directories}}
-            <tr class="is-directory" id="{{ @index }}">
-                <td id="type">DIR</td>
-                <td id="name">{{ this.name }}</td>
-                <td id="date">{{ this.timestamp }}</td>
-                <td id="size">{{ this.hsize }}</td>
-                <td id="unit">{{ this.short_unit }}</td>
+            <tr class="is-directory" id="dir_{{ @index }}">
+                <td class="type">DIR</td>
+                <td class="name">{{ this.name }}</td>
+                <td class="date">{{ this.datetime }}</td>
+                <td class="size">{{ this.hsize }}</td>
+                <td class="unit">{{ this.short_unit }}</td>
             </tr>
             {{/each}}
 
             {{#each files}}
-            <tr class="is-file" id="{{ @index }}">
-                <td id="type">FILE</td>
-                <td id="name">{{ this.name }}</td>
-                <td id="date">{{ this.timestamp }}</td>
-                <td id="size">{{ this.hsize }}</td>
-                <td id="unit">{{ this.short_unit }}</td>
+            <tr class="is-file" id="file_{{ @index }}">
+                <td class="type">FILE</td>
+                <td class="name">{{ this.name }}</td>
+                <td class="date">{{ this.datetime }}</td>
+                <td class="size">{{ this.hsize }}</td>
+                <td class="unit">{{ this.short_unit }}</td>
             </tr>
             {{/each}}
 
