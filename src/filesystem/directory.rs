@@ -3,6 +3,7 @@ use filesystem::file::File;
 
 #[derive(Serialize)]
 pub struct Directory {
+    compo: Vec<String>,
     name: String,
     size: u64,
     hsize: f64,
@@ -24,6 +25,31 @@ impl Directory {
         let home_str = "home";
 
         Directory {
+
+            compo: {
+                let mut compo: Vec<String> = Vec::new();
+                let iter = p.iter();
+                let mut do_add = false;
+                //let mut full_str = String::new();
+
+                for i in iter {
+                    let mut iter_str = i.to_str().unwrap();
+
+                    if iter_str == cdir_name {
+                        do_add = true;
+                        iter_str = home_str;
+                    }
+
+                    if do_add {
+                        //full_str += "/";
+                        //full_str += &iter_str;
+                        //full_str = format!("{}/{}", full_str, iter_str);
+                        compo.push(iter_str.to_string());
+                    }
+                }
+
+                compo
+            },
             name: {
                 let dir_name = super::get_filename(p);
 

@@ -1,11 +1,13 @@
-{{> header}}
-
 <body>
 
 <div class="container">
 
     <nav class="breadcrumb is-large" aria-label="breadcrumbs">
         <ul>
+            <!-- {{ set test = lol }}
+            {{#each compo}}
+            <li><a href="/"> {{ this }} {{ test }} </a></li>
+            {{/each}} -->
         </ul>
     </nav>
 
@@ -20,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-
+            <!--
             {{#each directories}}
             <tr class="is-directory" id="dir_{{ @index }}" onclick="dir_click(this.id)">
                 <td class="type">DIR</td>
@@ -40,12 +42,12 @@
                 <td class="unit">{{ this.short_unit }}</td>
             </tr>
             {{/each}}
-
+            -->
         </tbody>
     </table>
 
 </div>
 
-{{> scripts}}
+<!-- {{> scripts}} -->
 </body>
 </html>

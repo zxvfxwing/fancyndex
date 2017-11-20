@@ -37,8 +37,6 @@ function decode_utf8(s) {
 }
 
 function dir_click(dir_id){
-    console.log( dir_id );
-    console.log( document.getElementById(dir_id).cells[cell_name].innerHTML );
     var dir_name = document.getElementById(dir_id).cells[cell_name].innerHTML;
     window.location.href = location_pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_ ;
 }
@@ -131,7 +129,7 @@ function API_get_path(path, sort_method, ascending){
     r.send();
 }
 
-update_breadcumb(location_pathname, _by_, _ascending_);
+//update_breadcumb(location_pathname, _by_, _ascending_);
 truncate_files_size(float_to_fixed);
 
 /* Ajax call only if there is at least one directory */

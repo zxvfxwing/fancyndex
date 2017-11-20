@@ -1,0 +1,5 @@
+{{ name }}
+
+{% for dir in directories %}
+{{ dir.name }}
+{% endfor %}
