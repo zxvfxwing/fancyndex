@@ -8,8 +8,13 @@ const cell_unit = 4;
 
 var location_pathname = decode_utf8( window.location.pathname );
 
+//var the_pathname = document.getElementById("api_pathname").getElementsByTagName("a")[0].attributes[0].value;
+var pathname = document.getElementById("api_pathname").innerHTML;
+
+console.log( pathname );
+
 /* Cut window location pathname after "/home" (5 chars) */
-var API_pathname = location_pathname.substring(5);
+var API_pathname = pathname.substring(5);
 
 /* Get URL Params, Queries */
 var urlParams = new URLSearchParams(window.location.search);

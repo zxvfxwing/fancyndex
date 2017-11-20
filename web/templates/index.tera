@@ -1,5 +1,56 @@
-{{ name }}
+{% include "header" %}
+{% import "macros" as macros %}
 
-{% for dir in directories %}
-{{ dir.name }}
-{% endfor %}
+<body>
+    <div class="container">
+        <div id="api_pathname" hidden>{{ path_name }}</div>
+        <nav class="breadcrumb is-large" aria-label="breadcrumbs">
+            {% set phref = "" %}
+            <ul>
+                {% for c in compo %}
+                    {% set phref = macros::add_sub_path(path=phref, sub=c) %}
+                    <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
+                        <a href="{{ phref }}" {% if loop.last %} aria-current="directory" {% endif %}> {{ c }} </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <table class="table is-narrow is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Size</th>
+                    <th>Unit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dir in directories %}
+                <tr class="is-directory" id="dir_{{ loop.index - 1 }}" onclick="dir_click(this.id)" >
+                    <td class="type">DIR</td>
+                    <td class="name">{{ dir.name }}</td>
+                    <td class="date">{{ dir.datetime }}</td>
+                    <td class="size">{{ dir.hsize }}</td>
+                    <td class="unit">{{ dir.short_unit }}</td>
+                </tr>
+                {% endfor %}
+
+                {% for file in files %}
+                <tr class="is-file" id="file_{{ loop.index }}">
+                    <td class="type">FILE</td>
+                    <td class="name">{{ file.name }}</td>
+                    <td class="date">{{ file.datetime }}</td>
+                    <td class="size">{{ file.hsize }}</td>
+                    <td class="unit">{{ file.short_unit }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+    {% include "scripts" %}
+</body>
