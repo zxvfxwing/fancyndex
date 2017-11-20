@@ -1,0 +1,76 @@
+th.name {
+    text-align: left;
+}
+
+th.date {
+    text-align: left;
+}
+
+th.size {
+    text-align: right;
+}
+
+.type {
+    text-align: center;
+    width: 5%;
+}
+
+.name {
+    text-align: left;
+}
+
+.date {
+    display: none;
+}
+
+.size {
+    display: none;
+}
+
+.unit {
+    display: none;
+}
+
+@media only screen and (min-width: 768px) {
+    .size {
+        display: table-cell;
+        text-align: right;
+        width: 8%;
+    }
+
+    .unit {
+        display: table-cell;
+        text-align: left;
+        width: 8%;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    .date {
+        text-align: left;
+        width: 18%;
+        display: table-cell;
+    }
+
+    .size {
+        width: 7%;
+    }
+
+    .unit {
+        width: 7%;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .date {
+        width: 15%;
+    }
+
+    .size {
+        width: 6%;
+    }
+
+    .unit {
+        width: 6%;
+    }
+}

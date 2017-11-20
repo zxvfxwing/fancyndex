@@ -25,27 +25,31 @@
         <table class="table is-narrow is-hoverable is-fullwidth">
             <thead>
                 <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Date</th>
-                    <th>Size</th>
-                    <th>Unit</th>
+                    <th class="type"></th>
+                    <th class="name">Name</th>
+                    <th class="date">Date</th>
+                    <th class="size">Size</th>
+                    <th class="unit"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for dir in directories %}
                 <tr class="is-directory" id="dir_{{ loop.index - 1 }}" onclick="dir_click(this.id)" >
-                    <td class="type">DIR</td>
+                    <td class="type">
+                        <span class="oi" data-glyph="folder"></span>
+                    </td>
                     <td class="name">{{ dir.name }}</td>
                     <td class="date">{{ dir.datetime }}</td>
-                    <td class="size">{{ dir.hsize }}</td>
+                    <td class="size" is-desktop>{{ dir.hsize }}</td>
                     <td class="unit">{{ dir.short_unit }}</td>
                 </tr>
                 {% endfor %}
 
                 {% for file in files %}
                 <tr class="is-file" id="file_{{ loop.index }}">
-                    <td class="type">FILE</td>
+                    <td class="type">
+                        <span class="oi" data-glyph="file"></span>
+                    </td>
                     <td class="name">{{ file.name }}</td>
                     <td class="date">{{ file.datetime }}</td>
                     <td class="size">{{ file.hsize }}</td>

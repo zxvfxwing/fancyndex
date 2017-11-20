@@ -187,23 +187,22 @@ impl WalkDir {
         dir.add_dirs(vec_dir);
         dir.add_files(vec_file);
 
-        let mut method: String = String::new();
-        let mut ascending: bool = true;
+        let mut method = String::from("name");
+        let mut ascending = true;
 
         match self.sort_method {
             SortMethod::Name => {
-                method = "name".to_string();
-                if self.sort_ascending  { dir.sort_by_name_ascending(); ascending = true; }
+                if self.sort_ascending  { dir.sort_by_name_ascending(); }
                 else                    { dir.sort_by_name_descending(); ascending = false; }
             },
             SortMethod::Time => {
                 method = "time".to_string();
-                if self.sort_ascending  { dir.sort_by_time_ascending(); ascending = true; }
+                if self.sort_ascending  { dir.sort_by_time_ascending(); }
                 else                    { dir.sort_by_time_descending(); ascending = false; }
             },
             SortMethod::Size => {
                 method = "size".to_string();
-                if self.sort_ascending  { dir.sort_by_size_ascending(); ascending = true; }
+                if self.sort_ascending  { dir.sort_by_size_ascending(); }
                 else                    { dir.sort_by_size_descending(); ascending = false; }
             }
         }
