@@ -45,12 +45,26 @@ function decode_utf8(s) {
   return decodeURIComponent(s);
 }
 
-function dir_click(dir_id){
+function th_click(th_class) {
+    
+    if( th_class != _by_ ) {
+        _by_ = th_class;
+        _ascending_ = true;
+    }
+    else {
+        if( _ascending_ == "true" ) _ascending_ = "false";
+        else                        _ascending_ = "true";
+    }
+
+    window.location.href = pathname + "?by=" + _by_ + "&ascending=" + _ascending_ ;
+}
+
+function dir_click(dir_id) {
     var dir_name = document.getElementById(dir_id).cells[cell_name].innerHTML;
     window.location.href = pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_ ;
 }
 
-function update_breadcumb(pathname, by, ascending){
+function update_breadcumb(pathname, by, ascending) {
     if( by === undefined || by === null ){
         by = "name";
     }
@@ -80,7 +94,7 @@ function update_breadcumb(pathname, by, ascending){
     bread_ul.innerHTML += "<li class=\"is-active\"><a href =\"" + phref + "\" aria-current=\"directory\">" + iter[i] + "</a></li>";
 }
 
-function update_dirs_size(DirJSON){
+function update_dirs_size(DirJSON) {
 
     test = DirJSON;
 
@@ -105,7 +119,7 @@ function update_dirs_size(DirJSON){
     }
 }
 
-function truncate_files_size(fixed_number){
+function truncate_files_size(fixed_number) {
     var Files = document.getElementsByClassName("is-file");
     for(var i=0; i < Files.length; ++i){
         var hsize_str = Files[i].cells[cell_size].innerHTML;
@@ -115,7 +129,7 @@ function truncate_files_size(fixed_number){
     }
 }
 
-function API_get_path(path, sort_method, ascending){
+function API_get_path(path, sort_method, ascending) {
     if( undefined ===  sort_method || sort_method === null ) {
          sort_method = "name";
     }

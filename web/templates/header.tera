@@ -4,11 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>/ {{ name }}</title>
-
         <link rel="shortcut icon" type="image/x-icon" href="/asset/favicon.ico">
-
-
-        <link rel="stylesheet" type="text/css" href="/asset/open-iconic-master/font/css/open-iconic.min.css">
         <link rel="stylesheet" type="text/css" href="/asset/css/bulma.min.css">
         <link rel="stylesheet" type="text/css" href="/asset/css/index.css">
     </head>
