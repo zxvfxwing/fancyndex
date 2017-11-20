@@ -68,6 +68,23 @@ impl WalkDir {
              .unwrap_or(false)
     }
 
+    fn sort_method_number(&self) -> u8 {
+        match self.sort_method {
+            SortMethod::Name => {
+                if self.sort_ascending      { 0 }
+                else                        { 1 }
+            },
+            SortMethod::Time => {
+                if self.sort_ascending      { 2 }
+                else                        { 3 }
+            },
+            SortMethod::Size => {
+                if self.sort_ascending      { 4 }
+                else                        { 5 }
+            },
+        }
+    }
+
     fn deep_run(&self, entry: &DirEntry) -> (u64, u64) {
         let mut size = 0u64;
         let mut elts = 0u64;
@@ -170,21 +187,27 @@ impl WalkDir {
         dir.add_dirs(vec_dir);
         dir.add_files(vec_file);
 
+        let mut method: String = String::new();
+        let mut ascending: bool = true;
+
         match self.sort_method {
             SortMethod::Name => {
-                if self.sort_ascending  { dir.sort_by_name_ascending();  }
-                else                    { dir.sort_by_name_descending(); }
+                method = "name".to_string();
+                if self.sort_ascending  { dir.sort_by_name_ascending(); ascending = true; }
+                else                    { dir.sort_by_name_descending(); ascending = false; }
             },
             SortMethod::Time => {
-                if self.sort_ascending  { dir.sort_by_time_ascending();  }
-                else                    { dir.sort_by_time_descending(); }
+                method = "time".to_string();
+                if self.sort_ascending  { dir.sort_by_time_ascending(); ascending = true; }
+                else                    { dir.sort_by_time_descending(); ascending = false; }
             },
             SortMethod::Size => {
-                if self.sort_ascending  { dir.sort_by_size_ascending();  }
-                else                    { dir.sort_by_size_descending(); }
+                method = "size".to_string();
+                if self.sort_ascending  { dir.sort_by_size_ascending(); ascending = true; }
+                else                    { dir.sort_by_size_descending(); ascending = false; }
             }
         }
 
-        return dir;
+        return dir.was_sorted_by(method, ascending);
     }
 }

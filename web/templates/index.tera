@@ -3,14 +3,20 @@
 
 <body>
     <div class="container">
-        <div id="api_pathname" hidden>{{ path_name }}</div>
+        {% include "hidden_var" %}
         <nav class="breadcrumb is-large" aria-label="breadcrumbs">
             {% set phref = "" %}
+            {% set full_phref = "" %}
             <ul>
                 {% for c in compo %}
                     {% set phref = macros::add_sub_path(path=phref, sub=c) %}
+                    {% set full_phref = phref %}
+                    {% set full_phref = macros::add_str(str=full_phref, other="?by=") %}
+                    {% set full_phref = macros::add_str(str=full_phref, other=sorted_by) %}
+                    {% set full_phref = macros::add_str(str=full_phref, other="&amp;ascending=") %}
+                    {% set full_phref = macros::add_str(str=full_phref, other=sorted_ascending ) %}
                     <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
-                        <a href="{{ phref }}" {% if loop.last %} aria-current="directory" {% endif %}> {{ c }} </a>
+                        <a href="{{ full_phref }}" {% if loop.last %} aria-current="directory" {% endif %}> {{ c }} </a>
                     </li>
                 {% endfor %}
             </ul>

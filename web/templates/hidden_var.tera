@@ -1,0 +1,3 @@
+<div id="api_pathname" hidden>{{ path_name }}</div>
+<div id="sort_by" hidden>{{ sorted_by }}</div>
+<div id="sort_ascending" hidden>{{ sorted_ascending  }}</div>

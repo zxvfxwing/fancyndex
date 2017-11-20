@@ -26,7 +26,7 @@ pub struct UnsafePBuf {
 impl UnsafePBuf {
     pub fn new() -> UnsafePBuf {
         UnsafePBuf {
-            path: PathBuf::new()
+            path: PathBuf::new(),
         }
     }
 

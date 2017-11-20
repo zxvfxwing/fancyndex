@@ -13,14 +13,16 @@ pub struct Directory {
     timestamp: i64,
     datetime: String,
     elements: u64,
+    sorted_by: String,
+    sorted_ascending: bool,
     directories: Vec<Directory>,
     files: Vec<File>,
 }
 
 impl Directory {
 
-    pub fn new(p: &PathBuf, size: u64, elts: u64, mode: bool) -> Directory {
-        let hsize = super::get_human_size(size, mode);
+    pub fn new(p: &PathBuf, size: u64, elts: u64, unit_mode: bool) -> Directory {
+        let hsize = super::get_human_size(size, unit_mode);
 
         let cdir_name = super::get_filename(&super::get_parent_cdir());
         let home_str = "home";
@@ -65,9 +67,17 @@ impl Directory {
             timestamp: super::get_timestamp(p),
             datetime: super::get_datetime(p),
             elements: elts,
+            sorted_by: "name".to_string(),
+            sorted_ascending: true,
             directories: Vec::new(),
             files: Vec::new(),
         }
+    }
+
+    pub fn was_sorted_by(mut self, method: String, ascending: bool) -> Directory {
+        self.sorted_by = method;
+        self.sorted_ascending = ascending;
+        self
     }
 
     pub fn add_dirs(&mut self, new: Vec<Directory>) {

@@ -6,21 +6,25 @@ const cell_date = 2;
 const cell_size = 3;
 const cell_unit = 4;
 
-var location_pathname = decode_utf8( window.location.pathname );
+const home = "/home";
+
+//var location_pathname = decode_utf8( window.location.pathname );
 
 //var the_pathname = document.getElementById("api_pathname").getElementsByTagName("a")[0].attributes[0].value;
 var pathname = document.getElementById("api_pathname").innerHTML;
-
 console.log( pathname );
 
 /* Cut window location pathname after "/home" (5 chars) */
-var API_pathname = pathname.substring(5);
+var API_pathname = pathname.substring(home.length);
 
 /* Get URL Params, Queries */
 var urlParams = new URLSearchParams(window.location.search);
 
-var _by_ = urlParams.get("by");
-var _ascending_ = urlParams.get("ascending");
+//var _by_ = urlParams.get("by");
+//var _ascending_ = urlParams.get("ascending");
+
+_by_ = document.getElementById("sort_by").innerHTML;
+_ascending_ = document.getElementById("sort_ascending").innerHTML;
 
 /* DEBUG *
 console.log( location_pathname );
@@ -43,7 +47,7 @@ function decode_utf8(s) {
 
 function dir_click(dir_id){
     var dir_name = document.getElementById(dir_id).cells[cell_name].innerHTML;
-    window.location.href = location_pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_ ;
+    window.location.href = pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_ ;
 }
 
 function update_breadcumb(pathname, by, ascending){
@@ -112,11 +116,11 @@ function truncate_files_size(fixed_number){
 }
 
 function API_get_path(path, sort_method, ascending){
-    if( sort_method === null || sort_method === undefined ) {
+    if( undefined ===  sort_method || sort_method === null ) {
          sort_method = "name";
     }
 
-    if( ascending === null || sort_method === undefined ) {
+    if( undefined === ascending || ascending === null ) {
         ascending = true;
     }
 

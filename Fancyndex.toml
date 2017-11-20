@@ -15,7 +15,7 @@
 #       do_symlink = false
 #
 [walk_options]
-do_hidden = true
+do_hidden = false
 do_symlink = true
 
 #
