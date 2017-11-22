@@ -13,7 +13,8 @@
                     {% set full_phref = phref %}
                     {% set full_phref = macros::add_str(str=full_phref, other="?by=") %}
                     {% set full_phref = macros::add_str(str=full_phref, other=sorted_by) %}
-                    {% set full_phref = macros::add_str(str=full_phref, other="&amp;ascending=") %}
+                    {% set full_phref = macros::add_str(str=full_phref, other="&") %}
+                    {% set full_phref = macros::add_str(str=full_phref, other="ascending=") %}
                     {% set full_phref = macros::add_str(str=full_phref, other=sorted_ascending ) %}
                     <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
                         <a href="{{ full_phref }}" {% if loop.last %} aria-current="directory" {% endif %}> {{ c }} </a>

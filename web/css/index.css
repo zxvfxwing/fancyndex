@@ -1,3 +1,11 @@
+table:hover {
+ cursor: pointer;
+}
+
+tr:hover {
+    color: #3273DC;
+}
+
 tr > th:hover {
     color: #3273DC;
 }

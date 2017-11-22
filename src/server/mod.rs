@@ -1,6 +1,7 @@
 pub mod api;
 pub mod asset;
 pub mod home;
+pub mod file;
 
 use filesystem::walkdir::SortMethod;
 
