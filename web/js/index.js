@@ -46,10 +46,10 @@ function decode_utf8(s) {
 }
 
 function th_click(th_class) {
-    
+
     if( th_class != _by_ ) {
         _by_ = th_class;
-        _ascending_ = true;
+        _ascending_ = "true";
     }
     else {
         if( _ascending_ == "true" ) _ascending_ = "false";
@@ -85,7 +85,7 @@ function update_breadcumb(pathname, by, ascending) {
     var phref = "";
     var i;
 
-    for(i=0; i < iter.length-1; ++i){
+    for(i=0; i < iter.length-1; ++i) {
         phref += "/" + iter[i];
         bread_ul.innerHTML += "<li><a href =\"" + phref + "?by=" + by + "&ascending=" + ascending + "\">" + iter[i] + "</a></li>";
     }
@@ -95,23 +95,22 @@ function update_breadcumb(pathname, by, ascending) {
 }
 
 function update_dirs_size(DirJSON) {
-
     test = DirJSON;
 
     var Directories = document.getElementsByClassName("is-directory");
-    for(var i=0; i < Directories.length; ++i){
+    for(var i=0; i < Directories.length; ++i) {
         var dir = DirJSON.directories[i];
 
         /* If user wants it to be sorted by size, we have to change also name / datetime place */
-        if( _by_ == "size" ){
+        if( _by_ == "size" ) {
             Directories[i].cells[cell_name].innerHTML = dir.name;
             Directories[i].cells[cell_date].innerHTML = dir.datetime;
         }
 
-        if( JSON.stringify(dir.hsize).includes(".") ){
+        if( String(dir.hsize).includes(".") ) {
             Directories[i].cells[cell_size].innerHTML = dir.hsize.toFixed(float_to_fixed);
         }
-        else{
+        else {
             Directories[i].cells[cell_size].innerHTML = dir.hsize;
         }
 
@@ -157,6 +156,70 @@ truncate_files_size(float_to_fixed);
 
 /* Ajax call only if there is at least one directory */
 nbDir = document.getElementsByClassName("is-directory").length;
-if( nbDir > 0 ){
+if( nbDir > 0 ) {
     API_get_path(API_pathname, _by_, _ascending_);
+}
+
+quicksort(0, nbDir-1);
+
+/* Try on sort algorithms */
+function swap_files(one, two) {
+    var file_one = document.getElementById("file_"+one);
+    var file_two = document.getElementById("file_"+two);
+
+    for(var i=1; i < 5; ++i) {
+        var tmp = file_one.cells[i].innerHTML;
+        file_one.cells[i].innerHTML = file_two.cells[i].innerHTML;
+        file_two.cells[i].innerHTML = tmp;
+    }
+}
+
+function swap_directories(one, two) {
+    var dir_one = document.getElementById("dir_"+one);
+    var dir_two = document.getElementById("dir_"+two);
+
+    console.log( dir_one.cells[1].innerHTML + " -- " + dir_two.cells[1].innerHTML );
+
+    for(var i=1; i < 5; ++i) {
+        var tmp = dir_one.cells[i].innerHTML;
+        dir_one.cells[i].innerHTML = dir_two.cells[i].innerHTML;
+        dir_two.cells[i].innerHTML = tmp;
+    }
+}
+
+function quicksort(low, high) {
+    if( low >= high ) return;
+
+    var p = partition(low, high);
+    quicksort(low, p);
+    quicksort(p+1, high);
+}
+
+function partition(low, high) {
+    var pivot = document.getElementById("dir_"+low);
+
+    var i = low - 1;
+    var j = high + 1;
+
+    for(;;) {
+
+        do { ++i; }
+        while (
+            document.getElementById("dir_"+i).cells[cell_name].innerHTML.toLowerCase()
+            <
+            pivot.cells[cell_name].innerHTML.toLowerCase()
+        );
+
+        do { --j; }
+        while (
+            document.getElementById("dir_"+j).cells[cell_name].innerHTML.toLowerCase()
+            >
+            pivot.cells[cell_name].innerHTML.toLowerCase()
+        );
+
+        if( i >= j ) return j;
+
+        console.log(" i : " + i + " -- j : " + j);
+        swap_directories(j, i);
+    }
 }

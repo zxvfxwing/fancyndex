@@ -1,5 +1,5 @@
 table:hover {
- cursor: pointer;
+    cursor: pointer;
 }
 
 tr:hover {
@@ -10,40 +10,26 @@ tr > th:hover {
     color: #3273DC;
 }
 
-th.name {
-    text-align: left;
-}
-
-th.time {
-    text-align: left;
-}
-
-th.size {
-    text-align: right;
-}
+th.name { text-align: left; }
+th.time { text-align: left; }
+th.size { text-align: right; }
 
 .type {
     text-align: center;
-    width: 5%;
+    width: 10%;
 }
 
-.name {
-    text-align: left;
-}
-
-.time {
-    display: none;
-}
-
-.size {
-    display: none;
-}
-
-.unit {
-    display: none;
-}
+.name { text-align: left; }
+.time { display: none; }
+.size { display: none; }
+.unit { display: none; }
 
 @media only screen and (min-width: 768px) {
+    .type {
+        text-align: center;
+        width: 5%;
+    }
+
     .size {
         display: table-cell;
         text-align: right;
@@ -64,25 +50,12 @@ th.size {
         display: table-cell;
     }
 
-    .size {
-        width: 7%;
-    }
-
-    .unit {
-        width: 7%;
-    }
+    .size { width: 7%; }
+    .unit { width: 7%; }
 }
 
 @media only screen and (min-width: 1200px) {
-    .time {
-        width: 15%;
-    }
-
-    .size {
-        width: 6%;
-    }
-
-    .unit {
-        width: 6%;
-    }
+    .time { width: 15%; }
+    .size { width: 6%; }
+    .unit { width: 6%; }
 }
