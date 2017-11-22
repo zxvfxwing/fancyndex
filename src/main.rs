@@ -5,6 +5,7 @@
 #[macro_use] extern crate serde_derive;
 extern crate rocket;
 extern crate rocket_contrib;
+extern crate rocket_file_cache;
 extern crate chrono;
 extern crate toml;
 
@@ -20,6 +21,8 @@ use rocket::response::Redirect;
 //use rocket::response::NamedFile;
 //use rocket::State;
 //use rocket::http::RawStr;
+use rocket_file_cache::Cache;
+use rocket::http::hyper::header::{Headers, CacheControl, CacheDirective};
 
 /* Walkdir */
 /*use walkdir::{DirEntry, WalkDir}; */
@@ -45,9 +48,19 @@ fn go_home() -> Redirect {
 fn main() {
     /* Read config file when starting server */
     let cfg = conf::read_cfg_file("Fancyndex.toml");
+    let cache: Cache = Cache::new(1024 * 1024 * 40);
+
+    let mut headers = Headers::new();
+    headers.set(
+        CacheControl(vec![
+                     CacheDirective::Public,
+                     CacheDirective::MaxAge(31536000u32),
+        ])
+    );
 
     rocket::ignite()
         .manage(cfg)
+        .manage(cache)
         .mount("/", routes![go_home])
         .mount("/asset/", routes![asset::file])
         .mount("/home/", routes![home::default_home_path, home::home_path, home::default_path, home::path])
