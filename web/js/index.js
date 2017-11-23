@@ -160,7 +160,7 @@ if( nbDir > 0 ) {
     API_get_path(API_pathname, _by_, _ascending_);
 }
 
-quicksort(0, nbDir-1);
+quicksort("dir_", sort_by_name, 0, nbDir-1);
 
 /* Try on sort algorithms */
 function swap_files(one, two) {
@@ -187,16 +187,23 @@ function swap_directories(one, two) {
     }
 }
 
-function quicksort(low, high) {
-    if( low >= high ) return;
+function sort_by_name(element, pivot) {
+    if( element.cells[cell_name].innerHTML.toLowerCase() < pivot.cells[cell_name].innerHTML.toLowerCase() )
+        return true;
 
-    var p = partition(low, high);
-    quicksort(low, p);
-    quicksort(p+1, high);
+    return false;
 }
 
-function partition(low, high) {
-    var pivot = document.getElementById("dir_"+low);
+function quicksort(id_prefix, sort_function, low, high) {
+    if( low >= high ) return;
+
+    var p = partition(id_prefix, sort_function, low, high);
+    quicksort(id_prefix, sort_function, low, p);
+    quicksort(id_prefix, sort_function, p+1, high);
+}
+
+function partition(id_prefix, sort_function, low, high) {
+    var pivot = document.getElementById(id_prefix+low);
 
     var i = low - 1;
     var j = high + 1;
@@ -205,21 +212,17 @@ function partition(low, high) {
 
         do { ++i; }
         while (
-            document.getElementById("dir_"+i).cells[cell_name].innerHTML.toLowerCase()
-            <
-            pivot.cells[cell_name].innerHTML.toLowerCase()
+            sort_function(document.getElementById(id_prefix+i), pivot)
         );
 
         do { --j; }
         while (
-            document.getElementById("dir_"+j).cells[cell_name].innerHTML.toLowerCase()
-            >
-            pivot.cells[cell_name].innerHTML.toLowerCase()
+            !sort_function(document.getElementById(id_prefix+i), pivot)
         );
 
         if( i >= j ) return j;
 
         console.log(" i : " + i + " -- j : " + j);
-        swap_directories(j, i);
+        swap_directories(i, j);
     }
 }
