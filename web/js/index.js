@@ -46,17 +46,23 @@ function decode_utf8(s) {
 }
 
 function th_click(th_class) {
-
     if( th_class != _by_ ) {
-        _by_ = th_class;
-        _ascending_ = "true";
+        window.location.href = pathname + "?by=" + th_class + "&ascending=true";
     }
     else {
-        if( _ascending_ == "true" ) _ascending_ = "false";
-        else                        _ascending_ = "true";
-    }
 
-    window.location.href = pathname + "?by=" + _by_ + "&ascending=" + _ascending_ ;
+        if( _ascending_ == "true" ) {
+            document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-top.svg"
+            _ascending_ = "false";
+        }
+        else {
+            document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-bottom.svg"
+            _ascending_ = "true";
+        }
+
+        reverse_order("dir_", nbDir);
+        reverse_order("file_", nbFile);
+    }
 }
 
 function dir_click(dir_id) {
@@ -97,24 +103,26 @@ function update_breadcumb(pathname, by, ascending) {
 function update_dirs_size(DirJSON) {
     test = DirJSON;
 
-    var Directories = document.getElementsByClassName("is-directory");
-    for(var i=0; i < Directories.length; ++i) {
+    for(var i=0; i < DirJSON.directories.length; ++i) {
         var dir = DirJSON.directories[i];
+
+        var dir_tr = document.getElementById("dir_"+i);
 
         /* If user wants it to be sorted by size, we have to change also name / datetime place */
         if( _by_ == "size" ) {
-            Directories[i].cells[cell_name].innerHTML = dir.name;
-            Directories[i].cells[cell_date].innerHTML = dir.datetime;
+
+            dir_tr.cells[cell_name].innerHTML = dir.name;
+            dir_tr.cells[cell_date].innerHTML = dir.datetime;
         }
 
         if( String(dir.hsize).includes(".") ) {
-            Directories[i].cells[cell_size].innerHTML = dir.hsize.toFixed(float_to_fixed);
+            dir_tr.cells[cell_size].innerHTML = dir.hsize.toFixed(float_to_fixed);
         }
         else {
-            Directories[i].cells[cell_size].innerHTML = dir.hsize;
+            dir_tr.cells[cell_size].innerHTML = dir.hsize;
         }
 
-        Directories[i].cells[cell_unit].innerHTML = dir.short_unit;
+        dir_tr.cells[cell_unit].innerHTML = dir.short_unit;
     }
 }
 
@@ -156,73 +164,34 @@ truncate_files_size(float_to_fixed);
 
 /* Ajax call only if there is at least one directory */
 nbDir = document.getElementsByClassName("is-directory").length;
+nbFile = document.getElementsByClassName("is-file").length;
+
 if( nbDir > 0 ) {
     API_get_path(API_pathname, _by_, _ascending_);
 }
 
-quicksort("dir_", sort_by_name, 0, nbDir-1);
+//reverse_order("dir_", nbDir);
 
-/* Try on sort algorithms */
-function swap_files(one, two) {
-    var file_one = document.getElementById("file_"+one);
-    var file_two = document.getElementById("file_"+two);
+function reverse_order(id_prefix, nb_elements) {
+    var start = 0;
+    var end = nb_elements - 1;
 
-    for(var i=1; i < 5; ++i) {
-        var tmp = file_one.cells[i].innerHTML;
-        file_one.cells[i].innerHTML = file_two.cells[i].innerHTML;
-        file_two.cells[i].innerHTML = tmp;
+    while( (end - start) > 0 ) {
+        swap_elements(id_prefix, start, end);
+        ++start;
+        --end;
     }
 }
 
-function swap_directories(one, two) {
-    var dir_one = document.getElementById("dir_"+one);
-    var dir_two = document.getElementById("dir_"+two);
+function swap_elements(id_prefix, one, two) {
+    var el_one = document.getElementById(id_prefix+one);
+    var el_two = document.getElementById(id_prefix+two);
 
-    console.log( dir_one.cells[1].innerHTML + " -- " + dir_two.cells[1].innerHTML );
+    var tmp_tr = el_one.innerHTML;
+    var tmp_id = el_one.id;
+    el_one.innerHTML = el_two.innerHTML;
+    el_one.id = el_two.id;
 
-    for(var i=1; i < 5; ++i) {
-        var tmp = dir_one.cells[i].innerHTML;
-        dir_one.cells[i].innerHTML = dir_two.cells[i].innerHTML;
-        dir_two.cells[i].innerHTML = tmp;
-    }
-}
-
-function sort_by_name(element, pivot) {
-    if( element.cells[cell_name].innerHTML.toLowerCase() < pivot.cells[cell_name].innerHTML.toLowerCase() )
-        return true;
-
-    return false;
-}
-
-function quicksort(id_prefix, sort_function, low, high) {
-    if( low >= high ) return;
-
-    var p = partition(id_prefix, sort_function, low, high);
-    quicksort(id_prefix, sort_function, low, p);
-    quicksort(id_prefix, sort_function, p+1, high);
-}
-
-function partition(id_prefix, sort_function, low, high) {
-    var pivot = document.getElementById(id_prefix+low);
-
-    var i = low - 1;
-    var j = high + 1;
-
-    for(;;) {
-
-        do { ++i; }
-        while (
-            sort_function(document.getElementById(id_prefix+i), pivot)
-        );
-
-        do { --j; }
-        while (
-            !sort_function(document.getElementById(id_prefix+i), pivot)
-        );
-
-        if( i >= j ) return j;
-
-        console.log(" i : " + i + " -- j : " + j);
-        swap_directories(i, j);
-    }
+    el_two.innerHTML = tmp_tr;
+    el_two.id = tmp_id;
 }

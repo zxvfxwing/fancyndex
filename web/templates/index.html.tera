@@ -34,9 +34,9 @@
                         Name
                         {% if sorted_by == "name" %}
                             {% if sorted_ascending == true %}
-                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}">
+                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}" id="chevron">
                             {% else %}
-                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}">
+                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}" id="chevron">
                             {% endif %}
                         {% endif %}
                     </th>
@@ -44,9 +44,9 @@
                         Datetime
                         {% if sorted_by == "time" %}
                             {% if sorted_ascending == true %}
-                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}">
+                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}" id="chevron">
                             {% else %}
-                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}">
+                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}" id="chevron">
                             {% endif %}
                         {% endif %}
                     </th>
@@ -54,9 +54,9 @@
                         Size
                         {% if sorted_by == "size" %}
                             {% if sorted_ascending == true %}
-                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}">
+                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}" id="chevron">
                             {% else %}
-                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}">
+                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}" id="chevron">
                             {% endif %}
                         {% endif %}
                     </th>
@@ -77,7 +77,7 @@
                 {% endfor %}
 
                 {% for file in files %}
-                <tr class="is-file" id="file_{{ loop.index }}">
+                <tr class="is-file" id="file_{{ loop.index - 1 }}">
                     <td class="type">
                         <img src="/asset/open-iconic-master/svg/file.svg" alt="file icon" width="14">
                     </td>
