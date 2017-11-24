@@ -50,6 +50,7 @@
                             {% endif %}
                         {% endif %}
                     </th>
+                    <th class="timestamp" hidden></th>
                     <th class="size" onclick="th_click(this.className)">
                         Size
                         {% if sorted_by == "size" %}
@@ -60,6 +61,7 @@
                             {% endif %}
                         {% endif %}
                     </th>
+                    <th class="byte-size" hidden></th>
                     <th class="unit"></th>
                 </tr>
             </thead>
@@ -71,7 +73,9 @@
                     </td>
                     <td class="name">{{ dir.name }}</td>
                     <td class="time">{{ dir.datetime }}</td>
+                    <td class="timestamp" hidden>{{ dir.timestamp }}</td>
                     <td class="size">{{ dir.hsize }}</td>
+                    <td class="byte-size" hidden>{{ dir.size }}</td>
                     <td class="unit">{{ dir.short_unit }}</td>
                 </tr>
                 {% endfor %}
@@ -83,7 +87,9 @@
                     </td>
                     <td class="name">{{ file.name }}</td>
                     <td class="time">{{ file.datetime }}</td>
+                    <td class="timestamp" hidden>{{ file.timestamp }}</td>
                     <td class="size">{{ file.hsize }}</td>
+                    <td class="byte-size" hidden>{{ file.size }}</td>
                     <td class="unit">{{ file.short_unit }}</td>
                 </tr>
                 {% endfor %}
