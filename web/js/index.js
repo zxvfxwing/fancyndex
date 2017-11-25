@@ -10,34 +10,13 @@ const cell_unit = 6;
 
 const home = "/home";
 
-//var location_pathname = decode_utf8( window.location.pathname );
-
-//var the_pathname = document.getElementById("api_pathname").getElementsByTagName("a")[0].attributes[0].value;
 var pathname = document.getElementById("api_pathname").innerHTML;
-console.log( pathname );
 
 /* Cut window location pathname after "/home" (5 chars) */
 var API_pathname = pathname.substring(home.length);
 
-/* Get URL Params, Queries */
-var urlParams = new URLSearchParams(window.location.search);
-
-//var _by_ = urlParams.get("by");
-//var _ascending_ = urlParams.get("ascending");
-
 _by_ = document.getElementById("sort_by").innerHTML;
 _ascending_ = document.getElementById("sort_ascending").innerHTML;
-
-/* DEBUG *
-console.log( location_pathname );
-console.log( API_pathname );
-
-console.log(urlParams.get("by"));
-console.log(urlParams.get("ascending"));
-/* -------- */
-
-/* JSON of the current directory */
-var currentJSON = null;
 
 function encode_utf8(s) {
   return encodeURIComponent(s);
@@ -51,39 +30,34 @@ function th_click(th_class) {
     if( th_class != _by_ ) {
         _by_ = th_class;
 
-        console.log("sort by " + th_class);
+        var sort_function;
+
+        switch( th_class ){
+            case "name": sort_function = sort_by_name; break;
+            case "time": sort_function = sort_by_time; break;
+            case "size": sort_function = sort_by_size; break;
+            default:
+                sort_function = sort_by_name;
+                _by_ = "name";
+        }
 
         var directories = get_directories();
         var files = get_files();
 
-        switch( th_class ){
-            case "size":
-                quick_sort(directories, sort_by_size, 0, directories.length-1);
-                quick_sort(files, sort_by_size, 0, files.length-1);
-            break;
-
-            case "time":
-                quick_sort(directories, sort_by_time, 0, directories.length-1);
-                quick_sort(files, sort_by_time, 0, files.length-1);
-            break;
-
-            default:
-                quick_sort(directories, sort_by_name, 0, directories.length-1);
-                quick_sort(files, sort_by_name, 0, files.length-1);
-            break;
-        }
+        quick_sort(directories, sort_function, 0, directories.length-1);
+        quick_sort(files, sort_function, 0, files.length-1);
     }
     else {
         reverse_order();
     }
 
-    if( _ascending_ == "true" ) {
-        document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-top.svg"
-        _ascending_ = "false";
-    }
-    else {
+    if( _ascending_ == "false" ) {
         document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-bottom.svg"
         _ascending_ = "true";
+    }
+    else {
+        document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-top.svg"
+        _ascending_ = "false";
     }
 }
 
@@ -123,37 +97,28 @@ function update_breadcumb(pathname, by, ascending) {
 }
 
 function update_dirs_size(DirJSON) {
-    test = DirJSON;
-
     for(var i=0; i < DirJSON.directories.length; ++i) {
         var dir = DirJSON.directories[i];
         var dir_tr = document.getElementById("dir_"+i);
 
         /* If user wants it to be sorted by size, we have to change also name / datetime place */
-        if( _by_ == "size" ) {
+        if( _by_ == "size" ){
             dir_tr.cells[cell_name].innerHTML = dir.name;
             dir_tr.cells[cell_datetime].innerHTML = dir.datetime;
             dir_tr.cells[cell_timestamp].innerHTML = dir.timestamp;
         }
 
-        if( String(dir.hsize).includes(".") ) {
-            dir_tr.cells[cell_size].innerHTML = dir.hsize.toFixed(float_to_fixed);
-        }
-        else {
-            dir_tr.cells[cell_size].innerHTML = dir.hsize;
-        }
-
+        dir_tr.cells[cell_size].innerHTML = dir.hsize;
         dir_tr.cells[cell_byte_size].innerHTML = dir.size;
         dir_tr.cells[cell_unit].innerHTML = dir.short_unit;
     }
 }
 
-function truncate_files_size(fixed_number) {
-    var Files = document.getElementsByClassName("is-file");
-    for(var i=0; i < Files.length; ++i){
-        var hsize_str = Files[i].cells[cell_size].innerHTML;
-        if( hsize_str.includes(".") ) {
-            Files[i].cells[cell_size].innerHTML = Number(hsize_str).toFixed(fixed_number);
+function fixed_size(arr, fixed_number) {
+    for(var i=0; i < arr.length; ++i){
+        var hsize = arr[i].cells[cell_size];
+        if( hsize.innerHTML.includes(".") ){
+            hsize.innerHTML = parseFloat(hsize.innerHTML).toFixed(fixed_number);
         }
     }
 }
@@ -173,6 +138,7 @@ function API_get_path(path, sort_method, ascending) {
     r.onreadystatechange = function() {
         if (r.readyState != 4 || r.status != 200) return;
         update_dirs_size(r.response);
+        fixed_size(get_directories(), float_to_fixed);
     };
 
     var request_url = "/api/path" + path + "?by=" + sort_method + "&ascending=" + ascending;
@@ -182,11 +148,11 @@ function API_get_path(path, sort_method, ascending) {
 }
 
 //update_breadcumb(location_pathname, _by_, _ascending_);
-truncate_files_size(float_to_fixed);
+fixed_size(get_files(), float_to_fixed);
 
 /* Ajax call only if there is at least one directory */
-nbDir = document.getElementsByClassName("is-directory").length;
-nbFile = document.getElementsByClassName("is-file").length;
+nbDir = get_directories().length;
+nbFile = get_files().length;
 
 if( nbDir > 0 ) {
     API_get_path(API_pathname, _by_, _ascending_);
@@ -212,7 +178,6 @@ function partition(arr, sort_func, start, end) {
     for(;;){
         do ++i; while ( sort_func(pivot, arr[i]) );
         do --j; while ( sort_func(arr[j], pivot) );
-
         if ( i >= j ) return j;
         swap_elements(arr[i], arr[j]);
     }
@@ -239,14 +204,13 @@ function reverse_order() {
 
     var start = 0;
     var end = dir_arr.length-1;
-    while( (end - start) > 0 ) {
+    while( start < end ){
         swap_elements( dir_arr[start++], dir_arr[end--] );
     }
 
     start = 0;
     end = file_arr.length-1;
-
-    while( (end - start) > 0 ) {
+    while( start < end ){
         swap_elements( file_arr[start++], file_arr[end--] );
     }
 }
