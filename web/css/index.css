@@ -1,3 +1,11 @@
+/* Hide this two columns which contains only process information */
+.timestamp { display: none; }
+.byte-size { display: none; }
+
+.img-hidden {
+    display: none;
+}
+
 table:hover {
     cursor: pointer;
 }

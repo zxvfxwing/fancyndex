@@ -28,8 +28,6 @@ function decode_utf8(s) {
 
 function th_click(th_class) {
     if( th_class != _by_ ) {
-        _by_ = th_class;
-
         var sort_function;
 
         switch( th_class ){
@@ -38,7 +36,7 @@ function th_click(th_class) {
             case "size": sort_function = sort_by_size; break;
             default:
                 sort_function = sort_by_name;
-                _by_ = "name";
+                th_class = "name";
         }
 
         var directories = get_directories();
@@ -46,19 +44,31 @@ function th_click(th_class) {
 
         quick_sort(directories, sort_function, 0, directories.length-1);
         quick_sort(files, sort_function, 0, files.length-1);
-    }
-    else {
-        reverse_order();
-    }
 
-    if( _ascending_ == "false" ) {
-        document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-bottom.svg"
+        var child_nb = 0;
+        if( _ascending_ == "false" ){
+            child_nb = 1;
+        }
+
+        document.querySelectorAll("th."+_by_)[0].children[child_nb].setAttribute("class", "img-hidden");
+        document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "");
         _ascending_ = "true";
     }
     else {
-        document.getElementById("chevron").src = "/asset/open-iconic-master/svg/chevron-top.svg"
-        _ascending_ = "false";
+        reverse_order();
+        if( _ascending_ == "false" ) {
+            document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "");
+            document.querySelectorAll("th."+th_class)[0].children[1].setAttribute("class", "img-hidden");
+            _ascending_ = "true";
+        }
+        else {
+            document.querySelectorAll("th."+th_class)[0].children[1].setAttribute("class", "");
+            document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "img-hidden");
+            _ascending_ = "false";
+        }
     }
+
+    _by_ = th_class;
 }
 
 function dir_click(dir_id) {

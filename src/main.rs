@@ -48,7 +48,7 @@ fn go_home() -> Redirect {
 fn main() {
     /* Read config file when starting server */
     let cfg = conf::read_cfg_file("Fancyndex.toml");
-    let cache: Cache = Cache::new(1024 * 1024 * 40);
+    let cache: Cache = Cache::new(1024 * 1024 * 10);
 
     let mut headers = Headers::new();
     headers.set(
@@ -60,7 +60,7 @@ fn main() {
 
     rocket::ignite()
         .manage(cfg)
-        .manage(cache)
+        //.manage(cache)
         .mount("/", routes![go_home])
         .mount("/file/", routes![file::static_file])
         .mount("/asset/", routes![asset::file])

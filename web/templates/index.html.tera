@@ -25,43 +25,55 @@
 
         <table class="table is-narrow is-hoverable is-fullwidth">
             <thead>
-                {% set chevron_bot = "/asset/open-iconic-master/svg/chevron-bottom.svg" %}
-                {% set chevron_top = "/asset/open-iconic-master/svg/chevron-top.svg" %}
-                {% set chevron_size = 9 %}
+                {% set sort_img_size = 9 %}
+                {% set sort_bot_img= "/asset/open-iconic-master/svg/caret-bottom.svg" %}
+                {% set sort_top_img = "/asset/open-iconic-master/svg/caret-top.svg" %}
                 <tr>
                     <th class="type"></th>
                     <th class="name" onclick="th_click(this.className)">
                         Name
+                        {% set hide_bot = true %}
+                        {% set hide_top = true %}
                         {% if sorted_by == "name" %}
-                            {% if sorted_ascending == true %}
-                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}" id="chevron">
+                            {% if sorted_ascending == false %}
+                                {% set hide_top = false %}
                             {% else %}
-                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}" id="chevron">
+                                {% set hide_bot = false %}
                             {% endif %}
                         {% endif %}
+                        <img src={{ sort_bot_img }} alt="sort-bot icon" width="{{ sort_img_size }}" class="{% if hide_bot == true %}img-hidden{% endif %}">
+                        <img src={{ sort_top_img }} alt="sort-top icon" width="{{ sort_img_size }}" class="{% if hide_top == true %}img-hidden{% endif %}">
                     </th>
                     <th class="time" onclick="th_click(this.className)">
                         Datetime
+                        {% set hide_bot = true %}
+                        {% set hide_top = true %}
                         {% if sorted_by == "time" %}
-                            {% if sorted_ascending == true %}
-                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}" id="chevron">
+                            {% if sorted_ascending == false %}
+                                {% set hide_top = false %}
                             {% else %}
-                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}" id="chevron">
+                                {% set hide_bot = false %}
                             {% endif %}
                         {% endif %}
+                        <img src={{ sort_bot_img }} alt="sort-bot icon" width="{{ sort_img_size }}" class="{% if hide_bot == true %}img-hidden{% endif %}">
+                        <img src={{ sort_top_img }} alt="sort-top icon" width="{{ sort_img_size }}" class="{% if hide_top == true %}img-hidden{% endif %}">
                     </th>
-                    <th class="timestamp" hidden></th>
+                    <th class="timestamp"></th>
                     <th class="size" onclick="th_click(this.className)">
                         Size
+                        {% set hide_bot = true %}
+                        {% set hide_top = true %}
                         {% if sorted_by == "size" %}
-                            {% if sorted_ascending == true %}
-                                <img src="{{ chevron_bot }}" alt="chevron-bot icon" width="{{ chevron_size }}" id="chevron">
+                            {% if sorted_ascending == false %}
+                                {% set hide_top = false %}
                             {% else %}
-                                <img src="{{ chevron_top }}" alt="chevron-top icon" width="{{ chevron_size }}" id="chevron">
+                                {% set hide_bot = false %}
                             {% endif %}
                         {% endif %}
+                        <img src={{ sort_bot_img }} alt="sort-bot icon" width="{{ sort_img_size }}" class="{% if hide_bot == true %}img-hidden{% endif %}">
+                        <img src={{ sort_top_img }} alt="sort-top icon" width="{{ sort_img_size }}" class="{% if hide_top == true %}img-hidden{% endif %}">
                     </th>
-                    <th class="byte-size" hidden></th>
+                    <th class="byte-size"></th>
                     <th class="unit"></th>
                 </tr>
             </thead>
@@ -73,9 +85,9 @@
                     </td>
                     <td class="name">{{ dir.name }}</td>
                     <td class="time">{{ dir.datetime }}</td>
-                    <td class="timestamp" hidden>{{ dir.timestamp }}</td>
+                    <td class="timestamp">{{ dir.timestamp }}</td>
                     <td class="size">{{ dir.hsize }}</td>
-                    <td class="byte-size" hidden>{{ dir.size }}</td>
+                    <td class="byte-size">{{ dir.size }}</td>
                     <td class="unit">{{ dir.short_unit }}</td>
                 </tr>
                 {% endfor %}
@@ -87,9 +99,9 @@
                     </td>
                     <td class="name">{{ file.name }}</td>
                     <td class="time">{{ file.datetime }}</td>
-                    <td class="timestamp" hidden>{{ file.timestamp }}</td>
+                    <td class="timestamp">{{ file.timestamp }}</td>
                     <td class="size">{{ file.hsize }}</td>
-                    <td class="byte-size" hidden>{{ file.size }}</td>
+                    <td class="byte-size">{{ file.size }}</td>
                     <td class="unit">{{ file.short_unit }}</td>
                 </tr>
                 {% endfor %}
