@@ -51,19 +51,26 @@ function th_click(th_class) {
     if( th_class != _by_ ) {
         _by_ = th_class;
 
-        if( _by_ == "time" ){
-            insertion_sort(get_directories(), sort_by_time);
-            insertion_sort(get_files(), sort_by_time);
-        }
-        else
-        if( _by_ == "size" ){
-            insertion_sort(get_directories(), sort_by_size);
-            insertion_sort(get_files(), sort_by_size);
-        }
-        else {
-            insertion_sort(get_directories(), sort_by_name);
-            insertion_sort(get_files(), sort_by_name);
-            _by_ = "name";
+        console.log("sort by " + th_class);
+
+        var directories = get_directories();
+        var files = get_files();
+
+        switch( th_class ){
+            case "size":
+                quick_sort(directories, sort_by_size, 0, directories.length-1);
+                quick_sort(files, sort_by_size, 0, files.length-1);
+            break;
+
+            case "time":
+                quick_sort(directories, sort_by_time, 0, directories.length-1);
+                quick_sort(files, sort_by_time, 0, files.length-1);
+            break;
+
+            default:
+                quick_sort(directories, sort_by_name, 0, directories.length-1);
+                quick_sort(files, sort_by_name, 0, files.length-1);
+            break;
         }
     }
     else {
@@ -185,31 +192,37 @@ if( nbDir > 0 ) {
     API_get_path(API_pathname, _by_, _ascending_);
 }
 
-//reverse_order("dir_", nbDir);
-
 function sort_by_size(el_one, el_two) {
-    return el_one.cells[cell_byte_size].innerHTML > el_two.cells[cell_byte_size].innerHTML;
+    return parseInt(el_one.cells[cell_byte_size].innerHTML) > parseInt(el_two.cells[cell_byte_size].innerHTML);
 }
 
 function sort_by_time(el_one, el_two) {
-    return el_one.cells[cell_timestamp].innerHTML > el_two.cells[cell_timestamp].innerHTML;
+    return parseInt(el_one.cells[cell_timestamp].innerHTML) > parseInt(el_two.cells[cell_timestamp].innerHTML);
 }
 
 function sort_by_name(el_one, el_two) {
     return el_one.cells[cell_name].innerHTML.toLowerCase() > el_two.cells[cell_name].innerHTML.toLowerCase();
 }
 
-function insertion_sort(arr, sort_func) {
-    var i, j, tmp;
+function partition(arr, sort_func, start, end) {
+    var pivot = arr[start];
+    var i = start - 1;
+    var j = end + 1;
 
-    for(i=0; i < arr.length; ++i) {
-        for(j=i; j > 0; --j) {
-            if( sort_func(arr[j-1], arr[j]) ) {
-                swap_elements(arr[j-1], arr[j]);
-            }
-            else break;
-        }
+    for(;;){
+        do ++i; while ( sort_func(pivot, arr[i]) );
+        do --j; while ( sort_func(arr[j], pivot) );
+
+        if ( i >= j ) return j;
+        swap_elements(arr[i], arr[j]);
     }
+}
+
+function quick_sort(arr, sort_func, start, end) {
+    if( start >= end ) return;
+    var pivot = partition(arr, sort_func, start, end);
+    quick_sort(arr, sort_func, start, pivot);
+    quick_sort(arr, sort_func, pivot+1, end);
 }
 
 function get_directories() {
