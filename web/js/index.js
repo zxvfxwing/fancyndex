@@ -59,6 +59,7 @@ function th_click(th_class) {
         document.querySelectorAll("th."+_by_)[0].children[child_nb].setAttribute("class", "img-hidden");
         document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "");
         _ascending_ = "true";
+        _by_ = th_class;
     }
     else {
         reverse_order();
@@ -73,8 +74,7 @@ function th_click(th_class) {
             _ascending_ = "false";
         }
     }
-
-    _by_ = th_class;
+    update_breadcumb(pathname, _by_, _ascending_);
 }
 
 function dir_click(dir_id) {
@@ -83,34 +83,41 @@ function dir_click(dir_id) {
     window.location.href = new_location;
 }
 
-function update_breadcumb(pathname, by, ascending) {
-    if( by === undefined || by === null ){
-        by = "name";
+function update_breadcumb(pathname, sort_method, ascending) {
+    if( undefined ===  sort_method || sort_method === null ) {
+         sort_method = "name";
     }
 
-    if( ascending === undefined || ascending === null ){
+    if( undefined === ascending || ascending === null ) {
         ascending = true;
     }
 
     if( pathname[0] == "/" )
         pathname = pathname.substring(1);
 
-    while( pathname[pathname.length-1] == "/" ){
-        pathname = pathname.substring(0,pathname.length-1);
-    }
-
     var iter = pathname.split("/");
-    var bread_ul = document.getElementsByClassName("breadcrumb")[0].children[0];
+    var bread_list = document.querySelectorAll("ul > li > a ");
     var phref = "";
     var i;
 
-    for(i=0; i < iter.length-1; ++i) {
+    for(i=0; i < iter.length; ++i){
+        phref += "/" + iter[i];
+        var full_phref = phref + "?by=" + sort_method + "&ascending=" + ascending;
+        bread_list[i].setAttribute("href", full_phref);
+    }
+
+    /*
+    for(i=0; i < iter.length-1; ++i){
+
+        bread_ul.children[i].children[0].setAttribute("a" )
+
         phref += "/" + iter[i];
         bread_ul.innerHTML += "<li><a href =\"" + phref + "?by=" + by + "&ascending=" + ascending + "\">" + iter[i] + "</a></li>";
     }
 
     phref += "/" + phref[i] + "?by=" + by + "&ascending=" + ascending;
     bread_ul.innerHTML += "<li class=\"is-active\"><a href =\"" + phref + "\" aria-current=\"directory\">" + iter[i] + "</a></li>";
+    */
 }
 
 function update_dirs_size(DirJSON) {
@@ -118,7 +125,7 @@ function update_dirs_size(DirJSON) {
         var dir = DirJSON.directories[i];
         var dir_tr = document.getElementById("dir_"+i);
 
-        /* If user wants it to be sorted by size, we have to change also name / datetime place */
+        /* If user wants it to be sorted by size, we have to change also name / datetime */
         if( _by_ == "size" ){
             dir_tr.cells[cell_name].innerHTML = dir.name;
             dir_tr.cells[cell_datetime].innerHTML = dir.datetime;
