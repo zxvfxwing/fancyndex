@@ -75,6 +75,7 @@ function th_click(th_class) {
         }
     }
     update_breadcumb(pathname, _by_, _ascending_);
+    update_queries(pathname, _by_, _ascending_);
 }
 
 function dir_click(dir_id) {
@@ -98,26 +99,27 @@ function update_breadcumb(pathname, sort_method, ascending) {
     var iter = pathname.split("/");
     var bread_list = document.querySelectorAll("ul > li > a ");
     var phref = "";
+    var full_phref = "";
     var i;
 
     for(i=0; i < iter.length; ++i){
         phref += "/" + iter[i];
-        var full_phref = phref + "?by=" + sort_method + "&ascending=" + ascending;
+        full_phref = phref + "?by=" + sort_method + "&ascending=" + ascending;
         bread_list[i].setAttribute("href", full_phref);
     }
+}
 
-    /*
-    for(i=0; i < iter.length-1; ++i){
-
-        bread_ul.children[i].children[0].setAttribute("a" )
-
-        phref += "/" + iter[i];
-        bread_ul.innerHTML += "<li><a href =\"" + phref + "?by=" + by + "&ascending=" + ascending + "\">" + iter[i] + "</a></li>";
+function update_queries(pathname, sort_method, ascending) {
+    if( undefined ===  sort_method || sort_method === null ) {
+         sort_method = "name";
     }
 
-    phref += "/" + phref[i] + "?by=" + by + "&ascending=" + ascending;
-    bread_ul.innerHTML += "<li class=\"is-active\"><a href =\"" + phref + "\" aria-current=\"directory\">" + iter[i] + "</a></li>";
-    */
+    if( undefined === ascending || ascending === null ) {
+        ascending = true;
+    }
+
+    var uri = pathname + "?by=" + sort_method + "&ascending=" + ascending;
+    history.replaceState(null, null, uri);
 }
 
 function update_dirs_size(DirJSON) {
