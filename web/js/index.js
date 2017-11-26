@@ -33,6 +33,11 @@ _by_ = document.getElementById("sort_by").innerHTML;
 _ascending_ = document.getElementById("sort_ascending").innerHTML;
 
 function th_click(th_class) {
+    console.log( document.querySelectorAll("th."+th_class)[0].children[0].classList );
+    console.log( document.querySelectorAll("th."+th_class)[0].children[1].classList );
+
+    var is_hidden_class = "this-is-hidden";
+
     if( th_class != _by_ ) {
         var sort_function;
 
@@ -56,21 +61,21 @@ function th_click(th_class) {
             child_nb = 1;
         }
 
-        document.querySelectorAll("th."+_by_)[0].children[child_nb].setAttribute("class", "img-hidden");
-        document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "");
+        document.querySelectorAll("th."+_by_)[0].children[child_nb].classList.add(is_hidden_class);
+        document.querySelectorAll("th."+th_class)[0].children[0].classList.remove(is_hidden_class);
         _ascending_ = "true";
         _by_ = th_class;
     }
     else {
         reverse_order();
         if( _ascending_ == "false" ) {
-            document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "");
-            document.querySelectorAll("th."+th_class)[0].children[1].setAttribute("class", "img-hidden");
+            document.querySelectorAll("th."+th_class)[0].children[0].classList.remove(is_hidden_class);
+            document.querySelectorAll("th."+th_class)[0].children[1].classList.add(is_hidden_class);
             _ascending_ = "true";
         }
         else {
-            document.querySelectorAll("th."+th_class)[0].children[1].setAttribute("class", "");
-            document.querySelectorAll("th."+th_class)[0].children[0].setAttribute("class", "img-hidden");
+            document.querySelectorAll("th."+th_class)[0].children[1].classList.remove(is_hidden_class);
+            document.querySelectorAll("th."+th_class)[0].children[0].classList.add(is_hidden_class);
             _ascending_ = "false";
         }
     }
@@ -173,7 +178,6 @@ function API_get_path(path, sort_method, ascending) {
     r.send();
 }
 
-//update_breadcumb(location_pathname, _by_, _ascending_);
 fixed_size(get_files(), float_to_fixed);
 
 /* Ajax call only if there is at least one directory */

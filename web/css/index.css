@@ -1,8 +1,12 @@
 /* Hide this two columns which contains only process information */
 .timestamp { display: none; }
 .byte-size { display: none; }
-.img-hidden { display: none; }
+.this-is-hidden { display: none; }
 .info-hidden { display: none; }
+
+footer {
+    display: none;
+}
 
 table:hover {
     cursor: pointer;

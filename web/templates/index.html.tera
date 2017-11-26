@@ -2,7 +2,7 @@
 {% import "macros" as macros %}
 
 <body>
-    <div class="container">
+    <div class="container body-content">
         {% include "hidden_var" %}
         <nav class="breadcrumb is-large" aria-label="breadcrumbs">
             {% set phref = "" %}
@@ -12,7 +12,14 @@
                     {% set phref = macros::add_sub_path(path=phref, sub=c) %}
                     {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
                     <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
-                        <a href="{{ full_phref }}" {% if loop.last %} aria-current="directory" {% endif %}> {{ c }} </a>
+                        {% if loop.first %}
+                            <span class="icon is-large">
+                                <i class="fa fa-lg fa-folder-open-o" aria-hidden="true"></i>
+                            </span>
+                        {% endif %}
+                        <a href="{{ full_phref }}">
+                        {{ c }}
+                        </a>
                     </li>
                 {% endfor %}
             </ul>
@@ -21,8 +28,9 @@
         <table class="table is-narrow is-hoverable is-fullwidth">
             <thead>
                 {% set sort_img_size = 9 %}
-                {% set sort_bot_img= "/asset/open-iconic-master/svg/caret-bottom.svg" %}
-                {% set sort_top_img = "/asset/open-iconic-master/svg/caret-top.svg" %}
+                {% set fa_icon_bot = "fa-hand-o-down" %}
+                {% set fa_icon_top = "fa-hand-o-up" %}
+                {% set text_color = "has-text-dark" %}
                 <tr>
                     <th class="type"></th>
                     <th class="name" onclick="th_click(this.className)">
@@ -36,8 +44,12 @@
                                 {% set hide_bot = false %}
                             {% endif %}
                         {% endif %}
-                        <img src={{ sort_bot_img }} alt="sort-bot icon" width="{{ sort_img_size }}" class="{% if hide_bot == true %}img-hidden{% endif %}">
-                        <img src={{ sort_top_img }} alt="sort-top icon" width="{{ sort_img_size }}" class="{% if hide_top == true %}img-hidden{% endif %}">
+                        <span class="icon is-small {{ text_color }} {%if hide_bot %}this-is-hidden{% endif %}">
+                            <i class="fa {{ fa_icon_bot }}" aria-hidden="true"></i>
+                        </span>
+                        <span class="icon is-small {{ text_color }} {%if hide_top %}this-is-hidden{% endif %}">
+                            <i class="fa {{ fa_icon_top }}" aria-hidden="true"></i>
+                        </span>
                     </th>
                     <th class="time" onclick="th_click(this.className)">
                         Datetime
@@ -50,8 +62,12 @@
                                 {% set hide_bot = false %}
                             {% endif %}
                         {% endif %}
-                        <img src={{ sort_bot_img }} alt="sort-bot icon" width="{{ sort_img_size }}" class="{% if hide_bot == true %}img-hidden{% endif %}">
-                        <img src={{ sort_top_img }} alt="sort-top icon" width="{{ sort_img_size }}" class="{% if hide_top == true %}img-hidden{% endif %}">
+                        <span class="icon is-small {{ text_color }} {%if hide_bot %}this-is-hidden{% endif %}">
+                            <i class="fa {{ fa_icon_bot }}" aria-hidden="true"></i>
+                        </span>
+                        <span class="icon is-small {{ text_color }} {%if hide_top %}this-is-hidden{% endif %}">
+                            <i class="fa {{ fa_icon_top }}" aria-hidden="true"></i>
+                        </span>
                     </th>
                     <th class="timestamp"></th>
                     <th class="size" onclick="th_click(this.className)">
@@ -65,8 +81,12 @@
                                 {% set hide_bot = false %}
                             {% endif %}
                         {% endif %}
-                        <img src={{ sort_bot_img }} alt="sort-bot icon" width="{{ sort_img_size }}" class="{% if hide_bot == true %}img-hidden{% endif %}">
-                        <img src={{ sort_top_img }} alt="sort-top icon" width="{{ sort_img_size }}" class="{% if hide_top == true %}img-hidden{% endif %}">
+                        <span class="icon is-small {{ text_color }} {%if hide_bot %}this-is-hidden{% endif %}">
+                            <i class="fa {{ fa_icon_bot }}" aria-hidden="true"></i>
+                        </span>
+                        <span class="icon is-small {{ text_color }} {%if hide_top %}this-is-hidden{% endif %}">
+                            <i class="fa {{ fa_icon_top }}" aria-hidden="true"></i>
+                        </span>
                     </th>
                     <th class="byte-size"></th>
                     <th class="unit"></th>
@@ -76,7 +96,9 @@
                 {% for dir in directories %}
                 <tr class="is-directory" id="dir_{{ loop.index - 1 }}" onclick="dir_click(this.id)" >
                     <td class="type">
-                        <img src="/asset/open-iconic-master/svg/folder.svg" alt="folder icon" width="14">
+                        <span class="icon">
+                            <i class="fa fa-folder"></i>
+                        </span>
                     </td>
                     <td class="name">{{ dir.name }}</td>
                     <td class="time">{{ dir.datetime }}</td>
@@ -90,7 +112,9 @@
                 {% for file in files %}
                 <tr class="is-file" id="file_{{ loop.index - 1 }}">
                     <td class="type">
-                        <img src="/asset/open-iconic-master/svg/file.svg" alt="file icon" width="14">
+                        <span class="icon">
+                            <i class="fa fa-file-o"></i>
+                        </span>
                     </td>
                     <td class="name">{{ file.name }}</td>
                     <td class="time">{{ file.datetime }}</td>
@@ -102,9 +126,9 @@
                 {% endfor %}
             </tbody>
         </table>
-
     </div>
 
+    {% include "footer" %}
     {% include "scripts" %}
 </body>
-{% include "footer" %}
+</html>
