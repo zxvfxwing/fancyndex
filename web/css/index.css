@@ -4,6 +4,10 @@
 .this-is-hidden { display: none; }
 .info-hidden { display: none; }
 
+.level {
+    padding-bottom: 5px;
+}
+
 footer {
     display: none;
 }

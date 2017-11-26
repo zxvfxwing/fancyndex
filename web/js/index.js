@@ -87,7 +87,6 @@ function dir_click(dir_id) {
 
 function update_level(DirJSON) {
     var level_titles = document.querySelectorAll("nav.level>div.level-item>div>p.title");
-    console.log( level_titles );
 
     level_titles[2].innerHTML = DirJSON.size;
     level_titles[3].innerHTML = DirJSON.elements;
@@ -173,7 +172,7 @@ function API_get_path(path, sort_method, ascending) {
     r.onreadystatechange = function() {
         if (r.readyState != 4 || r.status != 200) return;
         var answer = r.response;
-        //update_level(answer);
+        update_level(answer);
         update_dirs_size(answer);
         fixed_size(get_directories(), float_to_fixed);
     };

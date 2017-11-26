@@ -8,6 +8,7 @@
             {% set phref = "" %}
             {% set full_phref = "" %}
             <ul>
+                {% set compo_len = compo | length %}
                 {% for c in compo %}
                     {% set phref = macros::add_sub_path(path=phref, sub=c) %}
                     {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
@@ -24,20 +25,63 @@
             </ul>
         </nav>
 
-        <ul>
-            <li></li>
-            <li></li>
-            <li></li>
-        </ul>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-folder" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading"> Directories</p>
+                    <p class="title is-6">{{ directories | length }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-file-o" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading">Files</p>
+                    <p class="title is-6">{{ files | length }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-balance-scale" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading">Bytes</p>
+                    <p class="title is-6">{{ size }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-puzzle-piece" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading">Elements</p>
+                    <p class="title is-6">{{ elements }}</p>
+                </div>
+            </div>
+        </nav>
 
-
+        {% set phref = "" %}
+        {% set full_phref = "" %}
+        {% if compo_len > 1 %}
+            {% for c in compo %}
+                {% set phref = macros::add_sub_path(path=phref, sub=c) %}
+                {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
+                {% if compo | length - loop.index == 1 %}
+                    <a class="button is-primary is-outlined" href="{{ full_phref }}">Back</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
         <table class="table is-narrow is-hoverable is-fullwidth">
             <thead>
                 {% set fa_icon_sort = "fa-sort" %}
                 {% set fa_icon_up = "fa-sort-asc" %}
                 {% set fa_icon_down = "fa-sort-desc" %}
                 {% set tmp_icon = "" %}
-                {% set text_color = "has-text-dark" %}
+                {% set text_color = "has-text-black" %}
                 <tr>
                     <th class="type"></th>
                     <th class="name" onclick="th_click(this.className)">
