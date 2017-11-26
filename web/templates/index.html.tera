@@ -13,6 +13,7 @@
                     {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
                     <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
                         {% if loop.first %}
+                            &nbsp;
                             <span class="icon is-large">
                                 <i class="fa fa-lg fa-folder-open-o" aria-hidden="true"></i>
                             </span>
