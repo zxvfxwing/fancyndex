@@ -1,30 +1,36 @@
+/*
+*
+* Use .textContent when you want to access a string / text into an HTML DOM.
+* While parse html to string.
+* i.e: & -> .innerHTML = &amp; | .textContent = "&"
+*
+*/
+
+/*
+* How many numbers after dot in float number?
+* Need to be defined into .toml config file, and reported here with tera template -> TODO
+*/
 const float_to_fixed = 2;
 
-/* Number of cells */
+/*
+* Associated number for cells
+* TODO
+*/
 const cell_name = 1;
 const cell_datetime = 2;
 const cell_timestamp = 3;
 const cell_size = 4;
 const cell_byte_size = 5;
 const cell_unit = 6;
-
 const home = "/home";
 
-var pathname = document.getElementById("api_pathname").innerHTML;
+var pathname = document.getElementById("api_pathname").textContent;
 
 /* Cut window location pathname after "/home" (5 chars) */
 var API_pathname = pathname.substring(home.length);
 
 _by_ = document.getElementById("sort_by").innerHTML;
 _ascending_ = document.getElementById("sort_ascending").innerHTML;
-
-function encode_utf8(s) {
-  return encodeURIComponent(s);
-}
-
-function decode_utf8(s) {
-  return decodeURIComponent(s);
-}
 
 function th_click(th_class) {
     if( th_class != _by_ ) {
@@ -72,8 +78,9 @@ function th_click(th_class) {
 }
 
 function dir_click(dir_id) {
-    var dir_name = document.getElementById(dir_id).cells[cell_name].innerHTML;
-    window.location.href = pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_ ;
+    var dir_name = document.getElementById(dir_id).cells[cell_name].textContent;
+    var new_location =  pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_;
+    window.location.href = new_location;
 }
 
 function update_breadcumb(pathname, by, ascending) {

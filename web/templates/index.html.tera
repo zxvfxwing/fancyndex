@@ -10,12 +10,7 @@
             <ul>
                 {% for c in compo %}
                     {% set phref = macros::add_sub_path(path=phref, sub=c) %}
-                    {% set full_phref = phref %}
-                    {% set full_phref = macros::add_str(str=full_phref, other="?by=") %}
-                    {% set full_phref = macros::add_str(str=full_phref, other=sorted_by) %}
-                    {% set full_phref = macros::add_str(str=full_phref, other="&") %}
-                    {% set full_phref = macros::add_str(str=full_phref, other="ascending=") %}
-                    {% set full_phref = macros::add_str(str=full_phref, other=sorted_ascending ) %}
+                    {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
                     <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
                         <a href="{{ full_phref }}" {% if loop.last %} aria-current="directory" {% endif %}> {{ c }} </a>
                     </li>
@@ -105,7 +100,6 @@
                     <td class="unit">{{ file.short_unit }}</td>
                 </tr>
                 {% endfor %}
-
             </tbody>
         </table>
 

@@ -3,8 +3,12 @@
     {{ str }}{{ other }}
 {% endmacro add_str %}
 
-{# Macro using add_str to add "/subpath" to an existing path #}
+{# Add a subpath to an existing one -> "/" #}
 {% macro add_sub_path(path, sub) %}
-    {% set new_path = self::add_str(str=path, other="/") %}
-    {{ self::add_str(str=new_path, other=sub) }}
+    {{ path }}/{{ sub }}
 {% endmacro add_sub_path %}
+
+{# Give us a path and the two sort options by / ascending, contruct the full URL #}
+{% macro set_url(path, by, ascending) %}
+    {{ path }}?by={{ by }}&ascending={{ ascending }}
+{% endmacro set_url %}
