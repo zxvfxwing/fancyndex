@@ -30,13 +30,12 @@ var pathname = document.getElementById("api_pathname").textContent;
 var API_pathname = pathname.substring(home.length);
 
 _by_ = document.getElementById("sort_by").innerHTML;
-_ascending_ = document.getElementById("sort_ascending").innerHTML;
+_ascending_ = ( document.getElementById("sort_ascending").innerHTML === "true" );
 
 function th_click(th_class) {
-    console.log( document.querySelectorAll("th."+th_class)[0].children[0].classList );
-    console.log( document.querySelectorAll("th."+th_class)[0].children[1].classList );
-
-    var is_hidden_class = "this-is-hidden";
+    const fa_asc = "fa-sort-asc";
+    const fa_desc = "fa-sort-desc";
+    const fa_sort = "fa-sort"
 
     if( th_class != _by_ ) {
         var sort_function;
@@ -56,28 +55,25 @@ function th_click(th_class) {
         quick_sort(directories, sort_function, 0, directories.length-1);
         quick_sort(files, sort_function, 0, files.length-1);
 
-        var child_nb = 0;
-        if( _ascending_ == "false" ){
-            child_nb = 1;
+        if( _ascending_ == true ){
+            document.querySelectorAll("th."+_by_+" > span > i")[0].classList.remove(fa_asc);
+        }
+        else {
+            document.querySelectorAll("th."+_by_+" > span > i")[0].classList.remove(fa_desc);
         }
 
-        document.querySelectorAll("th."+_by_)[0].children[child_nb].classList.add(is_hidden_class);
-        document.querySelectorAll("th."+th_class)[0].children[0].classList.remove(is_hidden_class);
-        _ascending_ = "true";
+        document.querySelectorAll("th."+_by_+" > span > i")[0].classList.add(fa_sort);
+        document.querySelectorAll("th."+th_class+" > span > i")[0].classList.remove(fa_sort);
+        document.querySelectorAll("th."+th_class+" > span > i")[0].classList.add(fa_asc);
+
+        _ascending_ = true;
         _by_ = th_class;
     }
     else {
         reverse_order();
-        if( _ascending_ == "false" ) {
-            document.querySelectorAll("th."+th_class)[0].children[0].classList.remove(is_hidden_class);
-            document.querySelectorAll("th."+th_class)[0].children[1].classList.add(is_hidden_class);
-            _ascending_ = "true";
-        }
-        else {
-            document.querySelectorAll("th."+th_class)[0].children[1].classList.remove(is_hidden_class);
-            document.querySelectorAll("th."+th_class)[0].children[0].classList.add(is_hidden_class);
-            _ascending_ = "false";
-        }
+        document.querySelectorAll("th."+_by_+" > span > i")[0].classList.toggle(fa_asc);
+        document.querySelectorAll("th."+_by_+" > span > i")[0].classList.toggle(fa_desc);
+        _ascending_ = !_ascending_;
     }
     update_breadcumb(pathname, _by_, _ascending_);
     update_queries(pathname, _by_, _ascending_);
@@ -87,6 +83,14 @@ function dir_click(dir_id) {
     var dir_name = document.getElementById(dir_id).cells[cell_name].textContent;
     var new_location =  pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_;
     window.location.href = new_location;
+}
+
+function update_level(DirJSON) {
+    var level_titles = document.querySelectorAll("nav.level>div.level-item>div>p.title");
+    console.log( level_titles );
+
+    level_titles[2].innerHTML = DirJSON.size;
+    level_titles[3].innerHTML = DirJSON.elements;
 }
 
 function update_breadcumb(pathname, sort_method, ascending) {
@@ -168,7 +172,9 @@ function API_get_path(path, sort_method, ascending) {
 
     r.onreadystatechange = function() {
         if (r.readyState != 4 || r.status != 200) return;
-        update_dirs_size(r.response);
+        var answer = r.response;
+        //update_level(answer);
+        update_dirs_size(answer);
         fixed_size(get_directories(), float_to_fixed);
     };
 

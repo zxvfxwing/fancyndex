@@ -18,75 +18,69 @@
                                 <i class="fa fa-lg fa-folder-open-o" aria-hidden="true"></i>
                             </span>
                         {% endif %}
-                        <a href="{{ full_phref }}">
-                        {{ c }}
-                        </a>
+                        <a href="{{ full_phref }}">{{ c }}</a>
                     </li>
                 {% endfor %}
             </ul>
         </nav>
 
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+
+
         <table class="table is-narrow is-hoverable is-fullwidth">
             <thead>
-                {% set sort_img_size = 9 %}
-                {% set fa_icon_bot = "fa-hand-o-down" %}
-                {% set fa_icon_top = "fa-hand-o-up" %}
+                {% set fa_icon_sort = "fa-sort" %}
+                {% set fa_icon_up = "fa-sort-asc" %}
+                {% set fa_icon_down = "fa-sort-desc" %}
+                {% set tmp_icon = "" %}
                 {% set text_color = "has-text-dark" %}
                 <tr>
                     <th class="type"></th>
                     <th class="name" onclick="th_click(this.className)">
                         Name
-                        {% set hide_bot = true %}
-                        {% set hide_top = true %}
+                        {% set tmp_icon = fa_icon_sort %}
                         {% if sorted_by == "name" %}
-                            {% if sorted_ascending == false %}
-                                {% set hide_top = false %}
+                            {% if sorted_ascending == true %}
+                                {% set tmp_icon = fa_icon_up %}
                             {% else %}
-                                {% set hide_bot = false %}
+                                {% set tmp_icon = fa_icon_down %}
                             {% endif %}
                         {% endif %}
-                        <span class="icon is-small {{ text_color }} {%if hide_bot %}this-is-hidden{% endif %}">
-                            <i class="fa {{ fa_icon_bot }}" aria-hidden="true"></i>
-                        </span>
-                        <span class="icon is-small {{ text_color }} {%if hide_top %}this-is-hidden{% endif %}">
-                            <i class="fa {{ fa_icon_top }}" aria-hidden="true"></i>
+                        <span class="icon is-small {{ text_color }}">
+                            <i class="fa {{ tmp_icon }}" aria-hidden="true"></i>
                         </span>
                     </th>
                     <th class="time" onclick="th_click(this.className)">
                         Datetime
-                        {% set hide_bot = true %}
-                        {% set hide_top = true %}
+                        {% set tmp_icon = fa_icon_sort %}
                         {% if sorted_by == "time" %}
-                            {% if sorted_ascending == false %}
-                                {% set hide_top = false %}
+                            {% if sorted_ascending == true %}
+                                {% set tmp_icon = fa_icon_up %}
                             {% else %}
-                                {% set hide_bot = false %}
+                                {% set tmp_icon = fa_icon_down %}
                             {% endif %}
                         {% endif %}
-                        <span class="icon is-small {{ text_color }} {%if hide_bot %}this-is-hidden{% endif %}">
-                            <i class="fa {{ fa_icon_bot }}" aria-hidden="true"></i>
-                        </span>
-                        <span class="icon is-small {{ text_color }} {%if hide_top %}this-is-hidden{% endif %}">
-                            <i class="fa {{ fa_icon_top }}" aria-hidden="true"></i>
+                        <span class="icon is-small {{ text_color }}">
+                            <i class="fa {{ tmp_icon }}" aria-hidden="true"></i>
                         </span>
                     </th>
                     <th class="timestamp"></th>
                     <th class="size" onclick="th_click(this.className)">
                         Size
-                        {% set hide_bot = true %}
-                        {% set hide_top = true %}
+                        {% set tmp_icon = fa_icon_sort %}
                         {% if sorted_by == "size" %}
-                            {% if sorted_ascending == false %}
-                                {% set hide_top = false %}
+                            {% if sorted_ascending == true %}
+                                {% set tmp_icon = fa_icon_up %}
                             {% else %}
-                                {% set hide_bot = false %}
+                                {% set tmp_icon = fa_icon_down %}
                             {% endif %}
                         {% endif %}
-                        <span class="icon is-small {{ text_color }} {%if hide_bot %}this-is-hidden{% endif %}">
-                            <i class="fa {{ fa_icon_bot }}" aria-hidden="true"></i>
-                        </span>
-                        <span class="icon is-small {{ text_color }} {%if hide_top %}this-is-hidden{% endif %}">
-                            <i class="fa {{ fa_icon_top }}" aria-hidden="true"></i>
+                        <span class="icon is-small {{ text_color }}">
+                            <i class="fa {{ tmp_icon }}" aria-hidden="true"></i>
                         </span>
                     </th>
                     <th class="byte-size"></th>
