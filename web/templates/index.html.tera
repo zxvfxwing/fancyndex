@@ -2,8 +2,8 @@
 {% import "macros" as macros %}
 
 <body>
-    <div class="container">
-        {% include "hidden_var" %}
+    {% include "hidden_var" %}
+    <div class="container main-wrap">
         <nav class="breadcrumb is-large" aria-label="breadcrumbs">
             {% set phref = "" %}
             {% set full_phref = "" %}
@@ -168,7 +168,6 @@
             </tbody>
         </table>
     </div>
-
     {% include "footer" %}
     {% include "scripts" %}
 </body>

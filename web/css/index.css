@@ -8,12 +8,34 @@
     padding-bottom: 5px;
 }
 
-.active-folder:hover {
-    color: #3273DC;
+/*
+* {
+    margin: 0;
+}
+*/
+
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-footer {
-    display: none;
+.main-wrap {
+  min-height: 100%;
+  /* equal to footer height */
+  margin-bottom: -40px;
+}
+
+.main-wrap:after {
+    content: "";
+    display: block;
+}
+.sticky-footer, .main-wrap:after {
+    height: 40px;
+}
+
+.p-small {
+    font-size: 12px;
 }
 
 table:hover {
