@@ -8,6 +8,10 @@
     padding-bottom: 5px;
 }
 
+.active-folder:hover {
+    color: #3273DC;
+}
+
 footer {
     display: none;
 }

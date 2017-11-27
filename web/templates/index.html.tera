@@ -2,7 +2,7 @@
 {% import "macros" as macros %}
 
 <body>
-    <div class="container body-content">
+    <div class="container">
         {% include "hidden_var" %}
         <nav class="breadcrumb is-large" aria-label="breadcrumbs">
             {% set phref = "" %}
@@ -12,12 +12,12 @@
                 {% for c in compo %}
                     {% set phref = macros::add_sub_path(path=phref, sub=c) %}
                     {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
-                    <li {% if loop.last %} class="is-active" id="api_pathname" {% endif %}>
+                    <li {% if loop.last %} class="is-active" {% endif %} >
                         {% if loop.first %}
-                            &nbsp;
-                            <span class="icon is-large">
-                                <i class="fa fa-lg fa-folder-open-o" aria-hidden="true"></i>
-                            </span>
+                        &nbsp;
+                        <span class="icon is-large">
+                            <i class="fa fa-lg fa-folder-open-o" aria-hidden="true"></i>
+                        </span>
                         {% endif %}
                         <a href="{{ full_phref }}">{{ c }}</a>
                     </li>
@@ -28,7 +28,7 @@
         <nav class="level is-mobile">
             <div class="level-item has-text-centered">
                 <div>
-                    <span class="icon">
+                    <span class="icon has">
                         <i class="fa fa-lg fa-folder" aria-hidden="true"></i>
                     </span>
                     <p class="heading"> Directories</p>
@@ -64,6 +64,7 @@
             </div>
         </nav>
 
+        {#
         {% set phref = "" %}
         {% set full_phref = "" %}
         {% if compo_len > 1 %}
@@ -75,6 +76,7 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
+        #}
         <table class="table is-narrow is-hoverable is-fullwidth">
             <thead>
                 {% set fa_icon_sort = "fa-sort" %}
@@ -149,7 +151,7 @@
                 {% endfor %}
 
                 {% for file in files %}
-                <tr class="is-file" id="file_{{ loop.index - 1 }}">
+                <tr class="is-file" id="file_{{ loop.index - 1 }}" onclick="file_click(this.id)">
                     <td class="type">
                         <span class="icon">
                             <i class="fa fa-file-o"></i>

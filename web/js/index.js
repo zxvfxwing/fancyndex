@@ -79,6 +79,12 @@ function th_click(th_class) {
     update_queries(pathname, _by_, _ascending_);
 }
 
+function file_click(file_id) {
+    var file_name = document.getElementById(file_id).cells[cell_name].textContent;
+    var new_location = "/file" + pathname.substring(5) + "/" + file_name
+    window.location.href = new_location;
+}
+
 function dir_click(dir_id) {
     var dir_name = document.getElementById(dir_id).cells[cell_name].textContent;
     var new_location =  pathname + "/" + dir_name + "?by=" + _by_ + "&ascending=" + _ascending_;
