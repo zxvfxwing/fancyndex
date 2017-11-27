@@ -62,7 +62,7 @@ fn main() {
         .manage(cfg)
         //.manage(cache)
         .mount("/", routes![go_home])
-        .mount("/file/", routes![file::static_file])
+        .mount("/file/", routes![file::big_file])
         .mount("/asset/", routes![asset::file])
         .mount("/home/", routes![home::default_home_path, home::home_path, home::default_path, home::path])
         .mount("/api/", routes![api::default_home_path, api::home_path, api::default_path, api::path])
