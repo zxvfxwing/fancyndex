@@ -5,7 +5,7 @@
                 <div class="level-item">
                     <p class="p-small">
                         Source code licensed
-                        <a href="https://opensource.org/licenses/GPL-3.0">GPL-3.0</a>
+                        <a href="https://opensource.org/licenses/AGPL-3.0">AGPL-3.0</a>
                     </p>
                 </div>
             </div>
@@ -13,6 +13,8 @@
                 <p class="p-small">
                     Copyright (C) 2017 Thibault Heckel&nbsp;
                 </p>
+            </div>
+            <div class="level-right">
                 <div class="tags has-addons">
                     <span class="tag is-light">
                         <span class="icon">
@@ -27,45 +29,6 @@
                     </span>
                 </div>
             </div>
-            <div class="level-right">
-                <a href="https://bulma.io">
-                    <img src="/asset/img/made-with-bulma--black.png" alt="Made with Bulma" width="128" height="24">
-                </a>
-
-                <span class="tag is-light">
-                    <span class="icon">
-                        <i class="fa fa-font-awesome" aria-hidden="true"></i>
-                    </span>
-                    <a href="http://fontawesome.io/">
-                    Font Awesome
-                    </a>
-                </span>
-
-                <span class="tag is-light">
-                    <span class="icon">
-                        <i class="fa fa-lg fa-rocket" aria-hidden="true"></i>
-                    </span>
-                    <a href="https://rocket.rs/">
-                    Rocket
-                    </a>
-                </span>
-            </div>
         </nav>
     </div>
 </footer>
-
-<!--
-<footer class="footer">
-    <div class="container">
-        <div class="content has-text-centered">
-            <p>
-            <strong>Bulma</strong> by <a href="http://jgthms.com">Jeremy Thomas</a>. The source code is licensed
-            <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
-            is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
-            </p>
-        </div>
-    </div>
-</footer>
-
-https://opensource.org/licenses/GPL-3.0
--->
