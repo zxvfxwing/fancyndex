@@ -50,17 +50,9 @@ fn main() {
     let cfg = conf::read_cfg_file("Fancyndex.toml");
     let cache: Cache = Cache::new(1024 * 1024 * 10);
 
-    let mut headers = Headers::new();
-    headers.set(
-        CacheControl(vec![
-                     CacheDirective::Public,
-                     CacheDirective::MaxAge(31536000u32),
-        ])
-    );
-
     rocket::ignite()
         .manage(cfg)
-        //.manage(cache)
+        .manage(cache)
         .mount("/", routes![go_home])
         .mount("/file/", routes![file::big_file])
         .mount("/asset/", routes![asset::file])
