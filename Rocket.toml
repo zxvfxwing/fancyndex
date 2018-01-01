@@ -1,9 +1,4 @@
 [global]
 address = "localhost"
 port = 9988
-workers = 50 
 template_dir = "web/templates/"
-
-#[global.tls]
-#certs = ""
-#key = ""
