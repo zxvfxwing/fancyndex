@@ -1,0 +1,18 @@
+[package]
+name = "fancyndex"
+version = "0.9.8"
+authors = ["zxvfxwing <zxvfxwing@protonmail.com>"]
+
+[dependencies]
+rocket-file-cache = "0.10.1"
+rocket = { version = "0.3.3", features = ["tls"] }
+rocket_codegen = "0.3.3"
+serde = "1.0"
+serde_derive = "1.0"
+toml = "0.4"
+chrono = "0.4.0"
+
+[dependencies.rocket_contrib]
+version = "*"
+default-features = false
+features = ["handlebars_templates", "tera_templates", "json"]

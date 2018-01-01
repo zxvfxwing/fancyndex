@@ -1,0 +1,34 @@
+<footer class="sticky-footer">
+    <div class="container">
+        <nav class="level has-text-centered">
+            <div class="level-left">
+                <div class="level-item">
+                    <p class="p-small">
+                        Source code licensed
+                        <a href="https://opensource.org/licenses/AGPL-3.0">AGPL-3.0</a>
+                    </p>
+                </div>
+            </div>
+            <div class="level-item">
+                <p class="p-small">
+                    Copyright (C) 2017 Thibault Heckel&nbsp;
+                </p>
+            </div>
+            <div class="level-right">
+                <div class="tags has-addons">
+                    <span class="tag is-light">
+                        <span class="icon">
+                            <i class="fa fa-lg fa-github" aria-hidden="true"></i>
+                        </span>
+                        <a href="https://github.com/zxvfxwing/fancyndex">
+                        Fancyndex
+                        </a>
+                    </span>
+                    <span class="tag is-info">
+                        release 0.9.8
+                    </span>
+                </div>
+            </div>
+        </nav>
+    </div>
+</footer>

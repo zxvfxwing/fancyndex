@@ -1,0 +1,174 @@
+{% include "header" %}
+{% import "macros" as macros %}
+
+<body>
+    {% include "hidden_var" %}
+    <div class="container main-wrap">
+        <nav class="breadcrumb is-large" aria-label="breadcrumbs">
+            {% set phref = "" %}
+            {% set full_phref = "" %}
+            <ul>
+                {% set compo_len = compo | length %}
+                {% for c in compo %}
+                    {% set phref = macros::add_sub_path(path=phref, sub=c) %}
+                    {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
+                    <li {% if loop.last %} class="is-active" {% endif %} >
+                        {% if loop.first %}
+                        &nbsp;
+                        <span class="icon is-large">
+                            <i class="fa fa-lg fa-folder-open-o" aria-hidden="true"></i>
+                        </span>
+                        {% endif %}
+                        <a href="{{ full_phref }}">{{ c }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon has">
+                        <i class="fa fa-lg fa-folder" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading"> Directories</p>
+                    <p class="title is-6">{{ directories | length }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-file-o" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading">Files</p>
+                    <p class="title is-6">{{ files | length }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-balance-scale" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading">Bytes</p>
+                    <p class="title is-6">{{ size }}</p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <span class="icon">
+                        <i class="fa fa-lg fa-puzzle-piece" aria-hidden="true"></i>
+                    </span>
+                    <p class="heading">Elements</p>
+                    <p class="title is-6">{{ elements }}</p>
+                </div>
+            </div>
+        </nav>
+
+        {#
+        {% set phref = "" %}
+        {% set full_phref = "" %}
+        {% if compo_len > 1 %}
+            {% for c in compo %}
+                {% set phref = macros::add_sub_path(path=phref, sub=c) %}
+                {% set full_phref = macros::set_url(path=phref, by=sorted_by, ascending=sorted_ascending) %}
+                {% if compo | length - loop.index == 1 %}
+                    <a class="button is-primary is-outlined" href="{{ full_phref }}">Back</a>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        #}
+        <table class="table is-narrow is-hoverable is-fullwidth">
+            <thead>
+                {% set fa_icon_sort = "fa-sort" %}
+                {% set fa_icon_up = "fa-sort-asc" %}
+                {% set fa_icon_down = "fa-sort-desc" %}
+                {% set tmp_icon = "" %}
+                {% set text_color = "has-text-black" %}
+                <tr>
+                    <th class="type"></th>
+                    <th class="name" onclick="th_click(this.className)">
+                        Name
+                        {% set tmp_icon = fa_icon_sort %}
+                        {% if sorted_by == "name" %}
+                            {% if sorted_ascending == true %}
+                                {% set tmp_icon = fa_icon_up %}
+                            {% else %}
+                                {% set tmp_icon = fa_icon_down %}
+                            {% endif %}
+                        {% endif %}
+                        <span class="icon is-small {{ text_color }}">
+                            <i class="fa {{ tmp_icon }}" aria-hidden="true"></i>
+                        </span>
+                    </th>
+                    <th class="time" onclick="th_click(this.className)">
+                        Datetime
+                        {% set tmp_icon = fa_icon_sort %}
+                        {% if sorted_by == "time" %}
+                            {% if sorted_ascending == true %}
+                                {% set tmp_icon = fa_icon_up %}
+                            {% else %}
+                                {% set tmp_icon = fa_icon_down %}
+                            {% endif %}
+                        {% endif %}
+                        <span class="icon is-small {{ text_color }}">
+                            <i class="fa {{ tmp_icon }}" aria-hidden="true"></i>
+                        </span>
+                    </th>
+                    <th class="timestamp"></th>
+                    <th class="size" onclick="th_click(this.className)">
+                        Size
+                        {% set tmp_icon = fa_icon_sort %}
+                        {% if sorted_by == "size" %}
+                            {% if sorted_ascending == true %}
+                                {% set tmp_icon = fa_icon_up %}
+                            {% else %}
+                                {% set tmp_icon = fa_icon_down %}
+                            {% endif %}
+                        {% endif %}
+                        <span class="icon is-small {{ text_color }}">
+                            <i class="fa {{ tmp_icon }}" aria-hidden="true"></i>
+                        </span>
+                    </th>
+                    <th class="byte-size"></th>
+                    <th class="unit"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dir in directories %}
+                <tr class="is-directory" id="dir_{{ loop.index - 1 }}" onclick="dir_click(this.id)" >
+                    <td class="type">
+                        <span class="icon">
+                            <i class="fa fa-folder"></i>
+                        </span>
+                    </td>
+                    <td class="name">{{ dir.name }}</td>
+                    <td class="time">{{ dir.datetime }}</td>
+                    <td class="timestamp">{{ dir.timestamp }}</td>
+                    <td class="size">{{ dir.hsize }}</td>
+                    <td class="byte-size">{{ dir.size }}</td>
+                    <td class="unit">{{ dir.short_unit }}</td>
+                </tr>
+                {% endfor %}
+
+                {% for file in files %}
+                <tr class="is-file" id="file_{{ loop.index - 1 }}" onclick="file_click(this.id)">
+                    <td class="type">
+                        <span class="icon">
+                            <i class="fa fa-file-o"></i>
+                        </span>
+                    </td>
+                    <td class="name">{{ file.name }}</td>
+                    <td class="time">{{ file.datetime }}</td>
+                    <td class="timestamp">{{ file.timestamp }}</td>
+                    <td class="size">{{ file.hsize }}</td>
+                    <td class="byte-size">{{ file.size }}</td>
+                    <td class="unit">{{ file.short_unit }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "footer" %}
+    {% include "scripts" %}
+</body>
+</html>

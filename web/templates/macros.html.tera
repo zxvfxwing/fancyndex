@@ -1,0 +1,14 @@
+{# Macro to join two String "a" + "b" => "ab" #}
+{% macro add_str(str, other) %}
+    {{ str }}{{ other }}
+{% endmacro add_str %}
+
+{# Add a subpath to an existing one -> "/" #}
+{% macro add_sub_path(path, sub) %}
+    {{ path }}/{{ sub }}
+{% endmacro add_sub_path %}
+
+{# Give us a path and the two sort options by / ascending, contruct the full URL #}
+{% macro set_url(path, by, ascending) %}
+    {{ path }}?by={{ by }}&ascending={{ ascending }}
+{% endmacro set_url %}
