@@ -13,6 +13,7 @@ use std::path::PathBuf;
 
 mod io;
 mod config;
+mod filesystem;
 
 use config::Config;
 
@@ -25,14 +26,14 @@ fn is_hidden(entry: &DirEntry) -> bool {
 
 fn main() {
     let cfg = Config::new("Fancyndex.toml").check();
-    println!("{:}", cfg.folder.path);
+    println!("{:}", cfg.root.path);
     println!("{:}", cfg.walk_opt.hidden);
     println!("{:}", cfg.walk_opt.symlink);
 
     let mut dirs: Vec<PathBuf> = Vec::new();
     let mut files: Vec<PathBuf> = Vec::new();
 
-    let walker = WalkDir::new(&cfg.folder.path)
+    let walker = WalkDir::new(&cfg.root.path)
                             .min_depth(1)
                             .max_depth(1)
                             .follow_links(cfg.walk_opt.symlink)

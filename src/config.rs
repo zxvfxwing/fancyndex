@@ -1,12 +1,15 @@
 use toml;
 use toml::de::Error;
-use io;
-
 use std::path::Path;
+
+use io;
+use filesystem::path_string;
+use filesystem::parent_cdir;
+use filesystem::path_metadata;
 
 /// "folder" section of Fancyndex.toml fileconf.
 #[derive(Deserialize)]
-pub struct Folder {
+pub struct Root {
     pub path: String,
 }
 
@@ -19,7 +22,7 @@ pub struct WalkOpt {
 /// Config abstract object. Respresents fileconf itself.
 #[derive(Deserialize)]
 pub struct Config {
-    pub folder: Folder,
+    pub root: Root,
     pub walk_opt: WalkOpt,
 }
 
@@ -34,15 +37,15 @@ impl Config {
             Ok(data) => {
                 /// Inner test to watch if toml parsing is OK
                 match toml::from_str(&data) {
-                    Ok(cfg) => return cfg,
+                    Ok(cfg) => cfg,
                     Err(e) => {
-                        println!("Error while parsing TOML file {:} !\n{:?}", filename, e);
+                        println!("Error while parsing TOML file {} !\n{}", filename, e);
                         println!("Fancyndex will now use a default configuration.");
-                        return Config::default()
+                        Config::default()
                     }
                 }
             },
-            Err(e) => panic!("Error while reading {:} !\n{:?}", filename, e),
+            Err(e) => panic!("Error while reading {:} !\n{}", filename, e),
         }
     }
 
@@ -50,8 +53,8 @@ impl Config {
     /// Triggered when TOML parsing fails.
     pub fn default() -> Config {
         return Config {
-            folder: Folder {
-                path: "..".to_string(),
+            root: Root {
+                path: path_string(&parent_cdir()),
             },
             walk_opt: WalkOpt {
                 hidden: false,
@@ -60,17 +63,26 @@ impl Config {
         }
     }
 
-    /// Returns a Config object.
+    /// Returns a correct Config object.
     ///
     /// # Arguments
     ///
     pub fn check(mut self) -> Config {
-        if self.folder.path == "" {
-            self.folder.path = "..".to_string();
+        let mut flag = false;
+
+        if self.root.path == "" { flag = true }
+        if !flag {
+            let p = Path::new(&self.root.path);
+            if !p.exists() { flag = true }
+            else {
+                if let Some(metadata) = path_metadata(&p.to_path_buf()) {
+                    if !metadata.is_dir() { flag = true }
+                }
+            }
         }
 
-        if !Path::new(&self.folder.path).exists() {
-            self.folder.path = "..".to_string();
+        if flag {
+            self.root.path = path_string(&parent_cdir());
         }
 
         return self
