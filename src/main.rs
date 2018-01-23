@@ -1,5 +1,10 @@
 #![crate_name = "fancyndex"]
 
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
+extern crate rocket;
+extern crate rocket_contrib;
+
 #[macro_use]
 extern crate serde_derive;
 extern crate walkdir;
@@ -10,6 +15,10 @@ use std::cmp;
 use std::ffi::OsString;
 
 use std::path::PathBuf;
+
+
+use rocket_contrib::Json;
+//use rocket::response::content::Json;
 
 mod io;
 mod config;
@@ -24,8 +33,41 @@ fn is_hidden(entry: &DirEntry) -> bool {
          .unwrap_or(false)
 }
 
+/// TEST
+#[derive(Deserialize)]
+pub struct InnerTest {
+    what: String,
+}
+
+#[derive(Deserialize)]
+pub struct Test {
+    flag: bool,
+    itest: InnerTest,
+}
+
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
+/*
+* curl -H "Content-Type: application/json" -X POST -d '{"flag":true, "itest":{ "what": "truc"}}' http://localhost:8000/test
+*/
+#[post("/test", format = "application/json", data = "<test>")]
+fn test(test: Json<Test>) -> &'static str {
+    println!("{}", test.flag);
+    println!("{}", &test.itest.what);
+    "Test"
+}
+
+
 fn main() {
     let cfg = Config::new("Fancyndex.toml").check();
+
+    rocket::ignite()
+        .mount("/", routes![index, test])
+        .launch();
+    /*
     println!("{:}", cfg.root.path);
     println!("{:}", cfg.walk_opt.hidden);
     println!("{:}", cfg.walk_opt.symlink);
@@ -62,4 +104,5 @@ fn main() {
     for f in files.iter() {
         println!("{:?}", f.to_str())
     }
+    */
 }

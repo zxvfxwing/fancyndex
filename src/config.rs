@@ -45,7 +45,11 @@ impl Config {
                     }
                 }
             },
-            Err(e) => panic!("Error while reading {:} !\n{}", filename, e),
+            Err(e) => {
+                println!("Error while reading {:} !\n{}", filename, e);
+                println!("Fancyndex will now use a default configuration.");
+                Config::default()
+            }
         }
     }
 
