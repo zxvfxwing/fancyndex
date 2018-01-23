@@ -1,5 +1,5 @@
 [folder]
-path = ".."
+path = "/home/spoken/"
 
 [walk_opt]
 # Handle hidden files (.dotfiles)?
