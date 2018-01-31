@@ -10,28 +10,16 @@ extern crate serde_derive;
 extern crate walkdir;
 extern crate toml;
 
-use walkdir::{DirEntry, WalkDir};
-use std::cmp;
-use std::ffi::OsString;
-
-use std::path::PathBuf;
-
-
+use std::path::{Path,PathBuf};
 use rocket_contrib::Json;
-//use rocket::response::content::Json;
 
 mod io;
 mod config;
 mod filesystem;
+mod walker;
 
 use config::Config;
-
-fn is_hidden(entry: &DirEntry) -> bool {
-    entry.file_name()
-         .to_str()
-         .map(|s| s.starts_with("."))
-         .unwrap_or(false)
-}
+use walker::Walker;
 
 /// TEST
 #[derive(Deserialize)]
@@ -64,45 +52,42 @@ fn test(test: Json<Test>) -> &'static str {
 fn main() {
     let cfg = Config::new("Fancyndex.toml").check();
 
-    rocket::ignite()
-        .mount("/", routes![index, test])
-        .launch();
-    /*
     println!("{:}", cfg.root.path);
     println!("{:}", cfg.walk_opt.hidden);
     println!("{:}", cfg.walk_opt.symlink);
 
-    let mut dirs: Vec<PathBuf> = Vec::new();
-    let mut files: Vec<PathBuf> = Vec::new();
+    let p = Path::new(&cfg.root.path);
 
-    let walker = WalkDir::new(&cfg.root.path)
-                            .min_depth(1)
-                            .max_depth(1)
-                            .follow_links(cfg.walk_opt.symlink)
-                            // .sort_by(|a,b| a.metadata().unwrap().len().cmp( &b.metadata().unwrap().len() ))
-                            // .sort_by(|a,b| a.file_name().cmp(b.file_name()))
-                            .into_iter();
+    let walker = Walker::new(&p, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
+    let rw = walker.run();
 
-    for entry in walker.filter_entry(|e| !is_hidden(e) | cfg.walk_opt.hidden) {
-        if let Ok(entry) = entry {
-            if let Ok(metadata) = entry.metadata() {
-                if metadata.is_dir() {
-                    println!("{} -- {}", entry.path().display(), metadata.len());
-                    dirs.push( entry.path().to_path_buf() )
-                }
-                else {
-                     files.push( entry.path().to_path_buf() )
-                }
-            }
-        }
+    println!("?? {}", rw.len());
+
+    let mut total_el = 0u64;
+    let mut total_s = 0u64;
+
+    for e in rw.iter(){
+        println!("{}", p.display());
+
+        let w = Walker::new(&e, false, false).deep_run();
+        println!("{} --> Size: {}, Nb elements: {}", e.display(), w.0, w.1);
+
+        total_s += w.0;
+        total_el += w.1;
+
     }
+    
+    let r = walker.deep_run();
 
-    for p in dirs.iter() {
-        println!("{:?}", p.to_str())
-    }
+    println!("{}", p.display());
+    println!("Size: {} {}, Nb elements: {} {}", r.0, total_s, r.1, total_el);
+    
 
-    for f in files.iter() {
-        println!("{:?}", f.to_str())
-    }
+    //walker.deep_run();
+
+    /*
+    rocket::ignite()
+        .mount("/", routes![index, test])
+        .launch();
     */
 }

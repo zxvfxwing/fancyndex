@@ -1,6 +1,10 @@
 use std::env;
 use std::path::{Path,PathBuf};
 use std::fs::Metadata;
+use walkdir::DirEntry;
+use std::ffi::{OsStr,OsString};
+
+pub mod entries;
 
 /// Returns the PathBuf of the current directory/folder.
 pub fn cdir() -> PathBuf {
@@ -35,4 +39,16 @@ pub fn path_string(p: &PathBuf) -> String {
 pub fn path_metadata(p: &PathBuf) -> Option<Metadata> {
     if let Ok(metadata) = p.metadata() { Some(metadata) }
     else                               { None }
+}
+
+pub fn is_hidden(entry: &DirEntry) -> bool {
+    entry.file_name()
+         .to_str()
+         .map(|s| s.starts_with("."))
+         .unwrap_or(false)
+}
+
+
+pub fn get_file_name(entry: &DirEntry) -> Result<String, OsString> {
+    entry.file_name().to_os_string().into_string()
 }

@@ -35,7 +35,6 @@ impl Config {
     pub fn new(filename: &str) -> Config {
         match io::read_file(filename) {
             Ok(data) => {
-                /// Inner test to watch if toml parsing is OK
                 match toml::from_str(&data) {
                     Ok(cfg) => cfg,
                     Err(e) => {
