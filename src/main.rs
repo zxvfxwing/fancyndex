@@ -67,24 +67,18 @@ fn main() {
     let mut total_s = 0u64;
 
     for e in rw.iter(){
-        println!("{}", p.display());
-
-        let w = Walker::new(&e, false, false).deep_run();
+        let w = Walker::new(&e, cfg.walk_opt.hidden, cfg.walk_opt.symlink).deep_run();
         println!("{} --> Size: {}, Nb elements: {}", e.display(), w.0, w.1);
 
         total_s += w.0;
         total_el += w.1;
-
     }
     
     let r = walker.deep_run();
 
-    println!("{}", p.display());
     println!("Size: {} {}, Nb elements: {} {}", r.0, total_s, r.1, total_el);
     
-
     //walker.deep_run();
-
     /*
     rocket::ignite()
         .mount("/", routes![index, test])

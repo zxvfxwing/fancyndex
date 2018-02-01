@@ -41,6 +41,10 @@ pub fn path_metadata(p: &PathBuf) -> Option<Metadata> {
     else                               { None }
 }
 
+pub fn is_symlink(entry: &DirEntry) -> bool {
+    entry.file_type().is_symlink()
+}
+
 pub fn is_hidden(entry: &DirEntry) -> bool {
     entry.file_name()
          .to_str()
