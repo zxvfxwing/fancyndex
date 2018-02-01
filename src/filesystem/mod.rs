@@ -52,7 +52,15 @@ pub fn is_hidden(entry: &DirEntry) -> bool {
          .unwrap_or(false)
 }
 
-
 pub fn get_file_name(entry: &DirEntry) -> Result<String, OsString> {
     entry.file_name().to_os_string().into_string()
+}
+
+pub fn get_file_size(entry: &DirEntry) -> u64 {
+    if let Ok(metadata) = entry.metadata() {
+        metadata.len()
+    }
+    else {
+        0u64
+    }
 }

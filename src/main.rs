@@ -61,6 +61,17 @@ fn main() {
     let walker = Walker::new(&p, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
     let rw = walker.run();
 
+    println!("Nb elements : {}", rw.nb_elts());
+
+    for e in rw.directories.iter() {
+        println!("{} -- {}", e.name, e.size);
+    }
+
+    for e in rw.files.iter() {
+        println!("{} -- {}", e.name, e.size);
+    }
+
+    /*
     println!("?? {}", rw.len());
 
     let mut total_el = 0u64;
@@ -77,6 +88,7 @@ fn main() {
     let r = walker.deep_run();
 
     println!("Size: {} {}, Nb elements: {} {}", r.0, total_s, r.1, total_el);
+    */
     
     //walker.deep_run();
     /*

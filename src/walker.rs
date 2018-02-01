@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 use filesystem::{is_hidden, is_symlink};
+use filesystem::entries::*;
 
 pub struct Walker<'a> {
     pathname: &'a Path,
@@ -20,22 +21,22 @@ impl<'a> Walker<'a> {
     
     /// If min_depth == max_depth, option follows links become useless.
     /// Instead, use the entry.file_type().is_symlink() predicate.
-    pub fn run(&self) -> Vec<PathBuf> {
+    pub fn run(&self) -> Entries {
         let walker = WalkDir::new(self.pathname)
                     .min_depth(1)
                     .max_depth(1)
                     .into_iter()
                     .filter_entry(|e| (!is_hidden(e) | self.hidden) && (!is_symlink(e) | self.symlink) );
 
-        let mut vec = Vec::new();
+        let mut entries = Entries::new();
 
         for entry in walker {
             if let Ok(entry) = entry {
-                vec.push( entry.path().to_path_buf() );
+                entries.push_el( Entry::new( &entry ) );
             }
         }
 
-        vec
+        entries
     }
 
     pub fn deep_run(&self) -> (u64, u64) {

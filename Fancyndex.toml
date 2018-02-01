@@ -6,8 +6,8 @@ path = ".."
 [walk_opt]
 # Handle hidden files (.dotfiles)?
 # Default false
-hidden = false
+hidden = true
 
 # Handle symbolic link ?
 # Default false
-symlink = false
+symlink = true
