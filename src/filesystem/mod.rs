@@ -1,8 +1,7 @@
 use std::env;
 use std::path::{Path,PathBuf};
-use std::fs::Metadata;
 use walkdir::DirEntry;
-use std::ffi::{OsStr,OsString};
+use std::ffi::OsString;
 
 pub mod entries;
 
@@ -32,13 +31,6 @@ pub fn parent_cdir() -> PathBuf {
 pub fn path_string(p: &PathBuf) -> String {
     if let Some(p_str) = p.to_str() { p_str.to_string() }
     else                            { ".".to_string() }
-}
-
-
-/// Returns PathBuf's metadatas
-pub fn path_metadata(p: &PathBuf) -> Option<Metadata> {
-    if let Ok(metadata) = p.metadata() { Some(metadata) }
-    else                               { None }
 }
 
 pub fn is_symlink(entry: &DirEntry) -> bool {

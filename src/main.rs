@@ -11,8 +11,9 @@ extern crate walkdir;
 extern crate toml;
 extern crate rayon;
 
-use std::path::{Path,PathBuf};
+use std::path::Path;
 use rocket_contrib::Json;
+use rocket::State;
 
 mod io;
 mod config;
@@ -21,32 +22,23 @@ mod walker;
 
 use config::Config;
 use walker::Walker;
-
-/// TEST
-#[derive(Deserialize)]
-pub struct InnerTest {
-    what: String,
-}
-
-#[derive(Deserialize)]
-pub struct Test {
-    flag: bool,
-    itest: InnerTest,
-}
-
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
+use filesystem::entries::*;
 
 /*
-* curl -H "Content-Type: application/json" -X POST -d '{"flag":true, "itest":{ "what": "truc"}}' http://localhost:8000/test
+* curl -H "Content-Type: application/json" -X POST -d '{"size":0,"elements":0,"directories":[{"path":"/home/spoken/Git/dotconfig","name":"dotconfig","size":0,"file":false,"elements":1},{"path":"/home/spoken/Git/M1","name":"M1","size":0,"file":false,"elements":1},{"path":"/home/spoken/Git/fancyndex","name":"fancyndex","size":0,"file":false,"elements":1}],"files":[]}' http://localhost:8000/test
 */
-#[post("/test", format = "application/json", data = "<test>")]
-fn test(test: Json<Test>) -> &'static str {
-    println!("{}", test.flag);
-    println!("{}", &test.itest.what);
-    "Test"
+
+#[get("/")]
+fn index() -> Json<Entries> {
+    let p = filesystem::cdir();
+    let walker = Walker::new(&p, false, false);
+    Json(walker.run())
+}
+
+#[post("/test", format = "application/json", data = "<entries>")]
+fn test(mut entries: Json<Entries>, cfg: State<Config>) -> Json<Entries> {
+    entries.process_deep_run(cfg.walk_opt.hidden, cfg.walk_opt.symlink);
+    entries
 }
 
 fn main() {
@@ -56,6 +48,7 @@ fn main() {
     println!("{:}", cfg.walk_opt.hidden);
     println!("{:}", cfg.walk_opt.symlink);
 
+    /*
     let p = Path::new(&cfg.root.path);
 
     let walker = Walker::new(&p, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
@@ -64,30 +57,10 @@ fn main() {
     entries.process_deep_run(cfg.walk_opt.hidden, cfg.walk_opt.symlink);
 
     println!("{} {}", entries.tsize(), entries.telts() );
-
-    /*
-    println!("?? {}", rw.len());
-
-    let mut total_el = 0u64;
-    let mut total_s = 0u64;
-
-    for e in rw.iter(){
-        let w = Walker::new(&e, cfg.walk_opt.hidden, cfg.walk_opt.symlink).deep_run();
-        println!("{} --> Size: {}, Nb elements: {}", e.display(), w.0, w.1);
-
-        total_s += w.0;
-        total_el += w.1;
-    }
-    
-    let r = walker.deep_run();
-
-    println!("Size: {} {}, Nb elements: {} {}", r.0, total_s, r.1, total_el);
     */
     
-    //walker.deep_run();
-    /*
     rocket::ignite()
+        .manage(cfg)
         .mount("/", routes![index, test])
         .launch();
-    */
 }

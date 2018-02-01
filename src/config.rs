@@ -4,7 +4,6 @@ use std::path::Path;
 use io;
 use filesystem::path_string;
 use filesystem::parent_cdir;
-use filesystem::path_metadata;
 
 /// "folder" section of Fancyndex.toml fileconf.
 #[derive(Deserialize)]
@@ -72,13 +71,16 @@ impl Config {
     pub fn check(mut self) -> Config {
         let mut flag = false;
 
+        /* Check all possible wrong cases */
         if self.root.path == "" { flag = true }
         if !flag {
             let p = Path::new(&self.root.path);
             if !p.exists() { flag = true }
             else {
-                if let Some(metadata) = path_metadata(&p.to_path_buf()) {
-                    if !metadata.is_dir() { flag = true }
+                if let Ok(metadata) = p.metadata() {
+                    if !metadata.is_dir(){
+                        flag = true;
+                    }
                 }
             }
         }

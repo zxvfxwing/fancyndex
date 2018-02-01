@@ -1,7 +1,7 @@
 use std::path::Path;
 use walkdir::WalkDir;
 use filesystem::{is_hidden, is_symlink};
-use filesystem::entries::*;
+use filesystem::entries::{Entries, Entry};
 
 pub struct Walker<'a> {
     pathname: &'a Path,
@@ -50,6 +50,7 @@ impl<'a> Walker<'a> {
         let mut size = 0u64;
         let mut elts = 0u64;
 
+        /* Threads have a bad performance effect here. */
         for dir_entry in walker {
             if let Ok(dir_entry) = dir_entry {
                 if dir_entry.file_type().is_file() {

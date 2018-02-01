@@ -14,6 +14,8 @@ pub struct Entry {
 
 #[derive(Serialize, Deserialize)]
 pub struct Entries {
+    pub size: u64,
+    pub elements: u64,
     pub directories: Vec<Entry>,
     pub files: Vec<Entry>,
 }
@@ -21,9 +23,9 @@ pub struct Entries {
 impl Entry {
     pub fn new(entry: &DirEntry) -> Entry {
 
-        let mut file = true;
+        let mut is_file = true;
         if !entry.file_type().is_file() {
-            file = false;
+            is_file = false;
         }
 
         Entry {
@@ -35,10 +37,10 @@ impl Entry {
                 }                
             },
             size: {
-                if file { super::get_file_size(entry) }
+                if is_file { super::get_file_size(entry) }
                 else { 0u64 }
             },
-            file,
+            file: is_file,
             elements: 1,
         }
     }
@@ -51,28 +53,36 @@ impl Entry {
 impl Entries {
     pub fn new() -> Entries {
         Entries{
+            size: 0u64,
+            elements: 0u64,
             directories: Vec::new(),
             files: Vec::new(),
         }
     }
 
+    /// Add a new Entry
+    /// Vector push depends of Entry type (file or not)
     pub fn push(&mut self, e: Entry) {
         if e.is_file() {
+            self.size += e.size;
             self.files.push( e );
         }
         else {
             self.directories.push( e );
         }
+        self.elements += 1;
     }
 
+    /// Total elements
     pub fn telts(&self) -> u64 {
-        let delts: u64 = self.directories.par_iter()
-                                         .map(|dir| dir.elements)
-                                         .sum();
+        let delts:u64 = self.directories.par_iter()
+                                        .map(|dir| dir.elements)
+                                        .sum();
         
         delts + self.files.len() as u64
     }
 
+    /// Total size (bytes)
     pub fn tsize(&self) -> u64 {
         let dsize:u64 = self.directories.par_iter()
                                         .map(|dir| dir.size)
@@ -85,13 +95,18 @@ impl Entries {
         dsize + fsize
     }
 
+    /// Process `deep_run` for each directory
     pub fn process_deep_run(&mut self, hidden: bool, symlink: bool) {
         self.directories.par_iter_mut()
                         .for_each(|dir|{
                             let walker = Walker::new(&dir.path, hidden, symlink);
-                            let drun = walker.deep_run();
-                            dir.size = drun.0;
-                            dir.elements += drun.1;
+                            let (dsize, delts) = walker.deep_run();
+                            dir.size = dsize;
+                            dir.elements += delts; /* Directory count as one element itself. Initialized to 1 in constructor. */
                         });
+
+        /* Update total size & total elements */
+        self.size = self.tsize();
+        self.elements = self.telts();
     }
 }
