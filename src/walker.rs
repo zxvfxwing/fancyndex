@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use walkdir::WalkDir;
 use filesystem::{is_hidden, is_symlink};
 use filesystem::entries::*;
@@ -30,9 +30,9 @@ impl<'a> Walker<'a> {
 
         let mut entries = Entries::new();
 
-        for entry in walker {
-            if let Ok(entry) = entry {
-                entries.push_el( Entry::new( &entry ) );
+        for dir_entry in walker {
+            if let Ok(dir_entry) = dir_entry {
+                entries.push( Entry::new(&dir_entry) );
             }
         }
 
@@ -50,21 +50,17 @@ impl<'a> Walker<'a> {
         let mut size = 0u64;
         let mut elts = 0u64;
 
-        for entry in walker {
-            if let Ok(entry) = entry {
-
-                if entry.file_type().is_file() {
-                    if let Ok(metadata) = entry.metadata() {
+        for dir_entry in walker {
+            if let Ok(dir_entry) = dir_entry {
+                if dir_entry.file_type().is_file() {
+                    if let Ok(metadata) = dir_entry.metadata() {
                         size += metadata.len();
                     }
                 }
-
                 elts += 1;
             }
         }
-        
-        /* Directory itself count as one element */
-        elts += 1;
+
         (size, elts)
     }
 

@@ -1,5 +1,4 @@
 use toml;
-use toml::de::Error;
 use std::path::Path;
 
 use io;

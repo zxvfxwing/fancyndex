@@ -9,6 +9,7 @@ extern crate rocket_contrib;
 extern crate serde_derive;
 extern crate walkdir;
 extern crate toml;
+extern crate rayon;
 
 use std::path::{Path,PathBuf};
 use rocket_contrib::Json;
@@ -48,7 +49,6 @@ fn test(test: Json<Test>) -> &'static str {
     "Test"
 }
 
-
 fn main() {
     let cfg = Config::new("Fancyndex.toml").check();
 
@@ -59,17 +59,11 @@ fn main() {
     let p = Path::new(&cfg.root.path);
 
     let walker = Walker::new(&p, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    let rw = walker.run();
+    let mut entries = walker.run();
 
-    println!("Nb elements : {}", rw.nb_elts());
+    entries.process_deep_run(cfg.walk_opt.hidden, cfg.walk_opt.symlink);
 
-    for e in rw.directories.iter() {
-        println!("{} -- {}", e.name, e.size);
-    }
-
-    for e in rw.files.iter() {
-        println!("{} -- {}", e.name, e.size);
-    }
+    println!("{} {}", entries.tsize(), entries.telts() );
 
     /*
     println!("?? {}", rw.len());
