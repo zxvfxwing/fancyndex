@@ -1,12 +1,12 @@
 use toml;
-use std::path::Path;
+use std::path::PathBuf;
 
 use io;
-use filesystem::{pbuf_string, pbuf_parent_cdir};
+use filesystem::{pbuf_is_dir, pbuf_str, pbuf_parent_cdir};
 
 #[derive(Deserialize)]
 pub struct Root {
-    pub path: String,
+    pub path: PathBuf,
 }
 
 #[derive(Deserialize)]
@@ -29,6 +29,7 @@ impl Config {
     ///
     /// * `filename` - A String slice that holds the filename of the configuration file.
     pub fn new(filename: &str) -> Config {
+
         match io::read_file(filename) {
             Ok(data) => {
                 match toml::from_str(&data) {
@@ -53,7 +54,7 @@ impl Config {
     pub fn default() -> Config {
         return Config {
             root: Root {
-                path: pbuf_string(&pbuf_parent_cdir()),
+                path: pbuf_parent_cdir(),
             },
             walk_opt: WalkOpt {
                 hidden: false,
@@ -62,29 +63,14 @@ impl Config {
         }
     }
 
-    /// Returns a correct Config object.
-    ///
-    /// # Arguments
-    ///
+    /// Correct the current config if it's necessary.
     pub fn check(mut self) -> Config {
-        let mut flag = false;
-
-        /* Check all possible wrong cases */
-        if self.root.path == "" { flag = true }
-        if !flag {
-            let p = Path::new(&self.root.path);
-            if !p.exists() { flag = true }
-            else {
-                if !p.metadata().unwrap().is_dir() {
-                    flag = true;
-                }
-            }
+        if !pbuf_is_dir(&self.root.path) {
+            println!("Warning: the root.path into Fancyndex.toml doesn't exists or isn't a directory !");
+            println!("root.path equals now to the Fancyndex parent folder :");
+            self.root.path = pbuf_parent_cdir();
+            println!("root.path = {} ", pbuf_str(&self.root.path)); 
         }
-
-        if flag {
-            self.root.path = pbuf_string(&pbuf_parent_cdir());
-        }
-
-        return self
+        self
     }
 }
