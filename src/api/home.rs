@@ -8,6 +8,9 @@ use filesystem::{pbuf_str, pbuf_is_dir};
 use filesystem::unsafepath::UnsafePBuf;
 use std::path::PathBuf;
 
+/* Add also a Result and a Redirect to a Page Error 
+*  Error can only occurs if user didn't call `check()` function on Config object.
+*/
 #[get("/")]
 pub fn index(cfg: State<Config>) -> Template {
     let h_path = PathBuf::new().join(&cfg.root.path); /* Home Path */

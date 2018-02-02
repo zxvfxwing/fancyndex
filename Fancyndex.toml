@@ -1,7 +1,7 @@
 [root]
 # Root path
 # Default is fancyndex folder's parent
-path = ".."
+path = "/home/spoken/"
 
 [walk_opt]
 # Handle hidden files (.dotfiles)?
