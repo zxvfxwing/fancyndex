@@ -1,0 +1,7 @@
+{% for d in directories %}
+    <p>{{ d.path }} -> {{ d.size }} | {{ d.elements }}</p>
+{% endfor %}
+
+{% for f in files %}
+    <p>{{ f.path }} -> {{ f.size }} | {{ f.elements }}</p>
+{% endfor %}

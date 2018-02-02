@@ -1,0 +1,4 @@
+[global]
+address = "localhost"
+port = 8000
+template_dir = "www/templates/"

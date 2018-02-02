@@ -2,10 +2,8 @@ use toml;
 use std::path::Path;
 
 use io;
-use filesystem::path_string;
-use filesystem::parent_cdir;
+use filesystem::{pbuf_string, pbuf_parent_cdir};
 
-/// "folder" section of Fancyndex.toml fileconf.
 #[derive(Deserialize)]
 pub struct Root {
     pub path: String,
@@ -55,7 +53,7 @@ impl Config {
     pub fn default() -> Config {
         return Config {
             root: Root {
-                path: path_string(&parent_cdir()),
+                path: pbuf_string(&pbuf_parent_cdir()),
             },
             walk_opt: WalkOpt {
                 hidden: false,
@@ -77,16 +75,14 @@ impl Config {
             let p = Path::new(&self.root.path);
             if !p.exists() { flag = true }
             else {
-                if let Ok(metadata) = p.metadata() {
-                    if !metadata.is_dir(){
-                        flag = true;
-                    }
+                if !p.metadata().unwrap().is_dir() {
+                    flag = true;
                 }
             }
         }
 
         if flag {
-            self.root.path = path_string(&parent_cdir());
+            self.root.path = pbuf_string(&pbuf_parent_cdir());
         }
 
         return self

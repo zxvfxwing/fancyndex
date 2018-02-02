@@ -8,7 +8,6 @@ pub struct Entry {
     pub path: PathBuf,
     pub name: String,
     pub size: u64,
-    pub file: bool,
     pub elements: u64,
 }
 
@@ -21,32 +20,21 @@ pub struct Entries {
 }
 
 impl Entry {
-    pub fn new(entry: &DirEntry) -> Entry {
 
-        let mut is_file = true;
-        if !entry.file_type().is_file() {
-            is_file = false;
-        }
-
+    pub fn new(dir_e: &DirEntry) -> Entry {
         Entry {
-            path: entry.path().to_path_buf(),
-            name: {
-                match super::get_file_name(entry) {
-                    Ok(name) => name,
-                    Err(_) => "".to_string(),
-                }                
-            },
-            size: {
-                if is_file { super::get_file_size(entry) }
-                else { 0u64 }
-            },
-            file: is_file,
+            path: super::dir_e_pbuf(dir_e),
+            name: super::dir_e_name(dir_e),
+            size: super::dir_e_size(dir_e),
             elements: 1,
         }
     }
 
     pub fn is_file(&self) -> bool {
-        self.file
+        match self.path.metadata() {
+            Ok(metadata) => metadata.file_type().is_file(),
+            Err(_) => false,
+         }
     }
 }
 
