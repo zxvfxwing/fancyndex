@@ -36,6 +36,7 @@ impl Entry {
             Err(_) => false,
          }
     }
+
 }
 
 impl Entries {
@@ -96,5 +97,41 @@ impl Entries {
         /* Update total size & total elements */
         self.size = self.tsize();
         self.elements = self.telts();
+    }
+
+    pub fn toggle_prefix(mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) -> Self {
+        self.remove_prefix(old_prefix).add_prefix(new_prefix)
+    }
+
+    pub fn remove_prefix(mut self, prefix: &PathBuf) -> Self {
+        self.directories.par_iter_mut()
+                        .for_each(|dir|{
+                            dir.path = dir.path.strip_prefix(prefix)
+                                               .unwrap()
+                                               .to_path_buf();
+                        });
+        
+        self.files.par_iter_mut()
+                  .for_each(|file|{
+                      file.path = file.path.strip_prefix(prefix)
+                                           .unwrap()
+                                           .to_path_buf();
+                  });
+                  
+        self
+    }
+
+    pub fn add_prefix(mut self, prefix: &PathBuf) -> Self {
+        self.directories.par_iter_mut()
+                        .for_each(|dir|{
+                            dir.path = prefix.join(&dir.path);
+                        });
+
+        self.files.par_iter_mut()
+                  .for_each(|file|{
+                      file.path = prefix.join(&file.path);
+                  });
+
+        self
     }
 }

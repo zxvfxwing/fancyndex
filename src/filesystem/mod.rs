@@ -64,8 +64,5 @@ pub fn dir_e_size(entry: &DirEntry) -> u64 {
 }
 
 pub fn dir_e_pbuf(entry: &DirEntry) -> PathBuf {
-
-    println!("{}", entry.path().display());
-
     entry.path().to_path_buf()
 }

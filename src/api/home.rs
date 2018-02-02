@@ -15,7 +15,8 @@ use std::path::PathBuf;
 pub fn index(cfg: State<Config>) -> Template {
     let h_path = PathBuf::new().join(&cfg.root.path); /* Home Path */
     let walker = Walker::new(&h_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    Template::render("index", walker.run())
+    let entries = walker.run().toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+    Template::render("index", entries)
 }
 
 #[get("/<unsafe_p..>")]
@@ -29,5 +30,6 @@ pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redire
     }
 
     let walker = Walker::new(&c_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    Ok(Template::render("index", walker.run()))
+    let entries = walker.run().toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+    Ok(Template::render("index", entries))
 }

@@ -3,5 +3,5 @@
 {% endfor %}
 
 {% for f in files %}
-    <p>Path: {{ f.path }} { size: {{ f.size }}, elements: {{ f.elements }}</p>
+    <p>Path: {{ f.path }} { size: {{ f.size }}, elements: {{ f.elements }} }</p>
 {% endfor %}
