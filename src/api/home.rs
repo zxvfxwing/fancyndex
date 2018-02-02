@@ -4,22 +4,23 @@ use rocket::response::Redirect;
 
 use config::Config;
 use walker::Walker;
-use filesystem::{pbuf_is_dir, pbuf_parent_cdir};
+use filesystem::{pbuf, pbuf_str, pbuf_is_dir, pbuf_from_string, pbuf_parent};
 use filesystem::unsafepath::UnsafePBuf;
 
 #[get("/")]
 pub fn index(cfg: State<Config>) -> Template {
-    let home_path = pbuf_parent_cdir();
-    let walker = Walker::new(&home_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
+    let h_path = pbuf_from_string(&cfg.root.path); /* Home Path */
+    let walker = Walker::new(&h_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
     Template::render("index", walker.run())
 }
 
 #[get("/<unsafe_p..>")]
 pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redirect> {
-    let c_path = pbuf_parent_cdir().join(unsafe_p.path());
+    let c_path = pbuf_from_string(&cfg.root.path).join(unsafe_p.path()); /* Current Path */
 
     if !pbuf_is_dir(&c_path){
-        return Err(Redirect::to("/home"));
+        let r_path = pbuf().join("/home").join(&unsafe_p.path());
+        return Err(Redirect::to( pbuf_str(&pbuf_parent(&r_path)) ));
     }
 
     let walker = Walker::new(&c_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);

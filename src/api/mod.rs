@@ -8,8 +8,6 @@ pub fn redirect_home() -> Redirect {
     Redirect::to("/home")
 }
 
-
-
 /* TEST
 
 /*

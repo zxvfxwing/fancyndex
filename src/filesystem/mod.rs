@@ -5,6 +5,14 @@ use walkdir::DirEntry;
 pub mod entries;
 pub mod unsafepath;
 
+pub fn pbuf() -> PathBuf {
+    PathBuf::new()
+}
+
+pub fn pbuf_from_string(s: &String) -> PathBuf {
+    PathBuf::new().join(s)
+} 
+
 pub fn pbuf_is_dir(p: &PathBuf) -> bool {
     p.exists() && p.is_dir()
 }
@@ -31,9 +39,13 @@ pub fn pbuf_parent_cdir() -> PathBuf {
     pbuf_parent(&pbuf_cdir())
 }
 
+pub fn pbuf_str(p: &PathBuf) -> &str {
+    p.to_str().unwrap_or(".")
+}
+
 /// Returns the path string of a PathBuf.
 pub fn pbuf_string(p: &PathBuf) -> String {
-    p.to_str().unwrap_or(".").to_string()
+    pbuf_str(p).to_string()
 }
 
 pub fn dir_e_is_symlink(entry: &DirEntry) -> bool {
