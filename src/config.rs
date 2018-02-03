@@ -15,11 +15,18 @@ pub struct WalkOpt {
     pub symlink: bool,
 }
 
-/// Config abstract object. Respresents fileconf itself.
+#[derive(Deserialize)]
+pub struct EntriesOpt {
+    pub datetime_format: String,
+    pub unit_size: bool,
+    pub float_precision: usize,
+}
+
 #[derive(Deserialize)]
 pub struct Config {
     pub root: Root,
     pub walk_opt: WalkOpt,
+    pub entries_opt: EntriesOpt,
 }
 
 impl Config {
@@ -28,7 +35,7 @@ impl Config {
     /// # Arguments
     ///
     /// * `filename` - A String slice that holds the filename of the configuration file.
-    pub fn new(filename: &str) -> Config {
+    pub fn new(filename: &str) -> Self {
 
         match io::read_file(filename) {
             Ok(data) => {
@@ -51,7 +58,7 @@ impl Config {
 
     /// Returns a default Config object.
     /// Triggered when TOML parsing fails.
-    pub fn default() -> Config {
+    pub fn default() -> Self {
         return Config {
             root: Root {
                 path: pbuf_parent_cdir(),
@@ -60,11 +67,16 @@ impl Config {
                 hidden: false,
                 symlink: false,
             },
+            entries_opt: EntriesOpt {
+                datetime_format: "%Y-%m-%d %T".to_string(),
+                unit_size: true,
+                float_precision: 2usize,
+            }
         }
     }
 
     /// Correct the current config if it's necessary.
-    pub fn check(mut self) -> Config {
+    pub fn check(mut self) -> Self {
         if !pbuf_is_dir(&self.root.path) {
             println!("Warning: the root.path into Fancyndex.toml doesn't exists or isn't a directory !");
             println!("root.path equals now to the Fancyndex parent folder :");

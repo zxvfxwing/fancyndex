@@ -2,11 +2,23 @@
 
 <h1> Directories </h1>
 {% for d in directories %}
-    <p>Path: {{ d.path }} { size: {{ d.size }}, elements: {{ d.elements }}, timestamp: {{ d.timestamp }}, datetime: {{ d.datetime }} }</p>
+    <p>Path: {{ d.path }} { 
+                            size: {{ d.size }}, 
+                            elements: {{ d.elements }}, 
+                            timestamp: {{ d.timestamp }}, 
+                            datetime: {{ d.datetime }},
+                            size: {{ d.human_size }} {{ d.short_unit_size }} 
+                        }</p>
 {% endfor %}
 
 <hr>
 <h1> Files </h1>
 {% for f in files %}
-    <p>Path: {{ f.path }} { size: {{ f.size }}, elements: {{ f.elements }}, timestamp: {{ f.timestamp }}, datetime: {{ f.datetime }} }</p>
+    <p>Path: {{ f.path }} { 
+                            size: {{ f.size }}, 
+                            elements: {{ f.elements }}, 
+                            timestamp: {{ f.timestamp }}, 
+                            datetime: {{ f.datetime }} },
+                            size: {{ f.human_size }} {{ f.short_unit_size }}
+                        </p>
 {% endfor %}

@@ -1,13 +1,28 @@
 [root]
 # Root path
 # Default is fancyndex folder's parent
-path = "/home/spoken/Git"
+path = "/home/spoken/"
 
 [walk_opt]
 # Handle hidden files (.dotfiles)?
 # Default false
-hidden = false
+hidden = true
 
 # Handle symbolic link ?
 # Default false
 symlink = true
+
+[entries_opt]
+# Datetime format :
+datetime_format = "%Y-%m-%d %T"
+
+# Wanted unit size
+# 
+# one byte equals to :
+# true -> 1024 bits
+# false -> 1000 bits
+# 
+# Default true
+unit_size = true
+
+float_precision = 0

@@ -6,6 +6,55 @@ use std::ffi::OsStr;
 pub mod entries;
 pub mod unsafepath;
 
+/* Constant */
+const STR_BYTES: [&'static str; 9] = [
+    "Byte(s)",
+    "KiloByte(s)",
+    "MegaByte(s)",
+    "GigaByte(s)",
+    "TeraByte(s)",
+    "PetaByte(s)",
+    "ExaByte(s)",
+    "ZettaByte(s)",
+    "YottaByte(s)",
+];
+
+const SHORT_STR_BYTES: [&'static str; 9] = [
+    "B", 
+    "KB", 
+    "MB", 
+    "GB", 
+    "TB", 
+    "PB", 
+    "EB", 
+    "ZB", 
+    "YB",
+];
+
+const STR_IBYTES: [&'static str; 9] = [
+    "Byte(s)",
+    "KibiByte(s)",
+    "MebiByte(s)",
+    "GibiByte(s)",
+    "TebiByte(s)",
+    "PebiByte(s)",
+    "ExbiByte(s)",
+    "ZebiByte(s)",
+    "YobiByte(s)",
+];
+
+const SHORT_STR_IBYTES: [&'static str; 9] = [
+    "B", 
+    "KiB", 
+    "MiB", 
+    "GiB", 
+    "TiB", 
+    "PiB", 
+    "EiB", 
+    "ZiB", 
+    "YiB",
+];
+
 pub fn pbuf_is_dir(p: &PathBuf) -> bool {
     p.exists() && p.is_dir()
 }
@@ -38,7 +87,7 @@ pub fn pbuf_str(p: &PathBuf) -> &str {
 
 pub fn pbuf_is_hidden(p: &PathBuf) -> bool {
     p.file_name()
-     .unwrap_or(OsStr::new("."))
+     .unwrap_or(OsStr::new(""))
      .to_str()
      .map(|s| s.starts_with("."))
      .unwrap_or(false)

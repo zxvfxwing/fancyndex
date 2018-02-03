@@ -4,15 +4,20 @@ use std::path::PathBuf;
 use rayon::prelude::*;
 use chrono::prelude::*;
 use std::ffi::OsString;
-use std::time::SystemTime;
+
+use config::EntriesOpt;
+use super::{STR_IBYTES, SHORT_STR_IBYTES, STR_BYTES, SHORT_STR_BYTES};
 
 #[derive(Serialize, Deserialize)]
 pub struct Entry {
     pub path: PathBuf,
     pub name: OsString,
-    pub size: u64,
-    pub timestamp: i64,
-    pub datetime: String,
+    pub size: Option<u64>,
+    pub human_size: Option<f64>,
+    pub long_unit_size: Option<String>,
+    pub short_unit_size: Option<String>,
+    pub timestamp: Option<i64>,
+    pub datetime: Option<String>,
     pub elements: u64,
 }
 
@@ -27,16 +32,15 @@ pub struct Entries {
 impl Entry {
 
     pub fn new(dir_e: &DirEntry) -> Entry {
-        
-        let metadata = dir_e.metadata().unwrap();
-        let datetime: DateTime<Local> = metadata.modified().unwrap_or(SystemTime::now()).into();
-
         Entry {
             path: dir_e.path().to_path_buf(),
             name: dir_e.file_name().to_os_string(),
-            size: metadata.len(),
-            timestamp: datetime.timestamp(),
-            datetime: datetime.format("%Y-%m-%d %T").to_string(),
+            size: None,
+            human_size: None,
+            long_unit_size: None,
+            short_unit_size: None,
+            timestamp: None,
+            datetime: None,
             elements: 1,
         }
     }
@@ -48,6 +52,52 @@ impl Entry {
          }
     }
 
+    pub fn seek_metadata(&mut self, opt: &EntriesOpt) {
+        if let Ok(metadata) = self.path.metadata() {
+            
+            if let Ok(system_time) = metadata.modified() {
+                let chrono_datetime: DateTime<Local> = system_time.into();
+                self.timestamp = Some(chrono_datetime.timestamp());                
+                self.datetime = Some(chrono_datetime.format(&opt.datetime_format).to_string());
+            }
+
+            self.size = Some(metadata.len());
+
+            /* Compute human readable size */
+            let divider: f64;
+            match opt.unit_size {
+                true => divider = 1024.0f64,
+                false => divider = 1000.0f64,
+            }
+            
+            let mut index = 0usize;
+            let mut human_size = self.size.unwrap() as f64;
+            while human_size >= divider {
+                human_size /= divider;
+                index += 1;
+            }
+            
+            /* Truncate result to a certain float precision */
+            let size_string = human_size.to_string();
+            if let Some(dot_index) = size_string.as_str().find(".") {
+                let (size_str, _) = size_string.split_at(dot_index + 1 + opt.float_precision );
+                human_size = size_str.to_string().parse().unwrap();
+            }                   
+
+            self.human_size = Some(human_size);
+
+            match opt.unit_size {
+                true => {
+                    self.long_unit_size = Some( STR_IBYTES[index].to_string() );
+                    self.short_unit_size = Some( SHORT_STR_IBYTES[index].to_string() );
+                },
+                false => {
+                    self.long_unit_size = Some( STR_BYTES[index].to_string() );
+                    self.short_unit_size = Some( SHORT_STR_BYTES[index].to_string() );
+                }
+            }
+        }
+    }
 }
 
 impl Entries {
@@ -64,7 +114,6 @@ impl Entries {
     /// Vector push depends of Entry type (file or not)
     pub fn push(&mut self, e: Entry) {
         if e.is_file() {
-            self.size += e.size;
             self.files.push( e );
         }
         else {
@@ -85,14 +134,29 @@ impl Entries {
     /// Total size (bytes)
     pub fn tsize(&self) -> u64 {
         let dsize:u64 = self.directories.par_iter()
-                                        .map(|dir| dir.size)
+                                        .map(|dir| dir.size.unwrap_or(0u64))
                                         .sum();
 
         let fsize:u64 = self.files.par_iter()
-                                  .map(|file| file.size)
+                                  .map(|file| file.size.unwrap_or(0u64))
                                   .sum();
           
         dsize + fsize
+    }
+
+    pub fn fill_metadatas(mut self, opt: &EntriesOpt) -> Self {
+        self.directories.par_iter_mut()
+                        .for_each(|dir|{
+                            dir.seek_metadata(opt);
+                        });
+
+        self.files.par_iter_mut()
+                  .for_each(|file|{
+                      file.seek_metadata(opt);
+                  });
+        
+        self.size = self.tsize();
+        self
     }
 
     /// Process `deep_run` for each directory
@@ -101,7 +165,7 @@ impl Entries {
                         .for_each(|dir|{
                             let walker = Walker::new(&dir.path, hidden, symlink);
                             let (dsize, delts) = walker.deep_run();
-                            dir.size = dsize;
+                            dir.size = Some(dsize);
                             dir.elements += delts; /* Directory count as one element itself. Initialized to 1 in constructor. */
                         });
 

@@ -38,7 +38,10 @@ pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
     }
 
     let walker = Walker::new(&h_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    let entries = walker.run().toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+    let entries = walker.run()
+                        .fill_metadatas(&cfg.entries_opt)
+                        .toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+                        
     Ok(Template::render("index", entries))
 }
 
@@ -55,6 +58,9 @@ pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redire
     }
 
     let walker = Walker::new(&c_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    let entries = walker.run().toggle_prefix(&cfg.root.path, &url_home);
+    let entries = walker.run()
+                        .fill_metadatas(&cfg.entries_opt)
+                        .toggle_prefix(&cfg.root.path, &url_home);
+
     Ok(Template::render("index", entries))
 }
