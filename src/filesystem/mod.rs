@@ -1,6 +1,7 @@
 use std::env;
 use std::path::{Path,PathBuf};
 use walkdir::DirEntry;
+use std::ffi::OsStr;
 
 pub mod entries;
 pub mod unsafepath;
@@ -33,6 +34,21 @@ pub fn pbuf_parent_cdir() -> PathBuf {
 
 pub fn pbuf_str(p: &PathBuf) -> &str {
     p.to_str().unwrap_or(".")
+}
+
+pub fn pbuf_is_hidden(p: &PathBuf) -> bool {
+    p.file_name()
+     .unwrap_or(OsStr::new("."))
+     .to_str()
+     .map(|s| s.starts_with("."))
+     .unwrap_or(false)
+}
+
+pub fn pbuf_is_symlink(p: &PathBuf) -> bool {
+    match p.symlink_metadata() {
+        Ok(md) => md.file_type().is_symlink(),
+        Err(_) => false,
+    }
 }
 
 pub fn dir_e_is_symlink(entry: &DirEntry) -> bool {

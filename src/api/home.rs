@@ -4,32 +4,57 @@ use rocket::response::Redirect;
 
 use config::Config;
 use walker::Walker;
-use filesystem::{pbuf_str, pbuf_is_dir};
+use filesystem::{pbuf_str, pbuf_is_dir, pbuf_is_hidden, pbuf_is_symlink};
 use filesystem::unsafepath::UnsafePBuf;
 use std::path::PathBuf;
 
-/* Add also a Result and a Redirect to a Page Error 
+fn rules_check(p: &PathBuf, cfg: &State<Config>) -> bool {
+    if !pbuf_is_dir(&p) {
+        return true
+    }
+    else 
+    if pbuf_is_hidden(&p) && !cfg.walk_opt.hidden {
+        return true
+    }
+    else
+    if pbuf_is_symlink(&p) && !cfg.walk_opt.symlink {
+        return true
+    }
+
+    false
+}
+
+/* TODO: 
+*  Add also a Result and a Redirect to a Page Error 
 *  Error can only occurs if user didn't call `check()` function on Config object.
 */
 #[get("/")]
-pub fn index(cfg: State<Config>) -> Template {
+pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
     let h_path = PathBuf::new().join(&cfg.root.path); /* Home Path */
+    let fail_url = PathBuf::new().join("/error/config/fail");
+
+    if rules_check(&h_path, &cfg) {
+        return Err(Redirect::to(pbuf_str(&fail_url)))
+    }
+
     let walker = Walker::new(&h_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
     let entries = walker.run().toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
-    Template::render("index", entries)
+    Ok(Template::render("index", entries))
 }
 
 #[get("/<unsafe_p..>")]
 pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redirect> {
     let c_path = PathBuf::new().join(&cfg.root.path).join(unsafe_p.path()); /* Current Path */
 
-    if !pbuf_is_dir(&c_path) {
-        let mut r_path = PathBuf::new().join("/home").join(&unsafe_p.path()); /* Current Path URL */
-        r_path.pop(); /* path's parent */
-        return Err(Redirect::to(pbuf_str(&r_path)));
+    let url_home = PathBuf::new().join("/home");
+
+    let mut url = url_home.join(&unsafe_p.path());
+    if rules_check(&c_path, &cfg) {
+        url.pop();
+        return Err(Redirect::to(pbuf_str(&url)))
     }
 
     let walker = Walker::new(&c_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    let entries = walker.run().toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+    let entries = walker.run().toggle_prefix(&cfg.root.path, &url_home);
     Ok(Template::render("index", entries))
 }

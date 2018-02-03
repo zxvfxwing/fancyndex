@@ -2,12 +2,17 @@ use walkdir::DirEntry;
 use walker::Walker;
 use std::path::PathBuf;
 use rayon::prelude::*;
+use chrono::prelude::*;
+use std::ffi::OsString;
+use std::time::SystemTime;
 
 #[derive(Serialize, Deserialize)]
 pub struct Entry {
     pub path: PathBuf,
-    pub name: String,
+    pub name: OsString,
     pub size: u64,
+    pub timestamp: i64,
+    pub datetime: String,
     pub elements: u64,
 }
 
@@ -22,10 +27,16 @@ pub struct Entries {
 impl Entry {
 
     pub fn new(dir_e: &DirEntry) -> Entry {
+        
+        let metadata = dir_e.metadata().unwrap();
+        let datetime: DateTime<Local> = metadata.modified().unwrap_or(SystemTime::now()).into();
+
         Entry {
-            path: super::dir_e_pbuf(dir_e),
-            name: super::dir_e_name(dir_e),
-            size: super::dir_e_size(dir_e),
+            path: dir_e.path().to_path_buf(),
+            name: dir_e.file_name().to_os_string(),
+            size: metadata.len(),
+            timestamp: datetime.timestamp(),
+            datetime: datetime.format("%Y-%m-%d %T").to_string(),
             elements: 1,
         }
     }
@@ -99,7 +110,7 @@ impl Entries {
         self.elements = self.telts();
     }
 
-    pub fn toggle_prefix(mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) -> Self {
+    pub fn toggle_prefix(self, old_prefix: &PathBuf, new_prefix: &PathBuf) -> Self {
         self.remove_prefix(old_prefix).add_prefix(new_prefix)
     }
 
@@ -117,7 +128,7 @@ impl Entries {
                                            .unwrap()
                                            .to_path_buf();
                   });
-                  
+
         self
     }
 

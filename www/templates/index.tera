@@ -1,7 +1,12 @@
+<h1> {{ size }} Bytes - {{ elements }} </h1>
+
+<h1> Directories </h1>
 {% for d in directories %}
-    <p>Path: {{ d.path }} { size: {{ d.size }}, elements: {{ d.elements }} }</p>
+    <p>Path: {{ d.path }} { size: {{ d.size }}, elements: {{ d.elements }}, timestamp: {{ d.timestamp }}, datetime: {{ d.datetime }} }</p>
 {% endfor %}
 
+<hr>
+<h1> Files </h1>
 {% for f in files %}
-    <p>Path: {{ f.path }} { size: {{ f.size }}, elements: {{ f.elements }} }</p>
+    <p>Path: {{ f.path }} { size: {{ f.size }}, elements: {{ f.elements }}, timestamp: {{ f.timestamp }}, datetime: {{ f.datetime }} }</p>
 {% endfor %}

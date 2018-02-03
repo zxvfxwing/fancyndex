@@ -1,6 +1,7 @@
 use rocket::response::Redirect;
 
 pub mod home;
+pub mod error;
 
 /// Redirect to /home index when "/" is triggered
 #[get("/")]

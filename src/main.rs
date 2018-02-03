@@ -9,6 +9,7 @@ extern crate rocket_contrib;
 extern crate serde_derive;
 extern crate toml;
 extern crate rayon;
+extern crate chrono;
 extern crate walkdir;
 
 /* Crates use */
@@ -23,6 +24,7 @@ mod filesystem;
 
 use config::Config;
 use api::home;
+use api::error;
 
 fn main() {
     let cfg = Config::new("Fancyndex.toml").check();
@@ -31,6 +33,7 @@ fn main() {
         .manage(cfg)
         .mount("/", routes![api::redirect_home])
         .mount("/home", routes![home::index, home::path])
+        .mount("/error", routes![error::config_fail])
         .attach(Template::fairing())
         .launch();
 }

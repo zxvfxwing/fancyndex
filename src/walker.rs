@@ -30,7 +30,9 @@ impl<'a> Walker<'a> {
 
         let mut entries = Entries::new();
         walkdir.for_each(|e| {
-            entries.push( Entry::new(&e.unwrap()) );
+            if let Ok(e) = e {
+                entries.push( Entry::new(&e) );
+            }
         });
         entries
     }

@@ -1,7 +1,7 @@
 [root]
 # Root path
 # Default is fancyndex folder's parent
-path = "/home/spoken/"
+path = "/home/spoken/Git"
 
 [walk_opt]
 # Handle hidden files (.dotfiles)?
@@ -10,4 +10,4 @@ hidden = false
 
 # Handle symbolic link ?
 # Default false
-symlink = false
+symlink = true
