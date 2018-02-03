@@ -25,4 +25,4 @@ datetime_format = "%Y-%m-%d %T"
 # Default true
 unit_size = true
 
-float_precision = 0
+float_precision = 2
