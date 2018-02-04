@@ -83,7 +83,10 @@ impl WalkDir {
             Ok(dir_entries) => {
                 for dir_entry in dir_entries {
                     if let Ok(entry) = dir_entry {
-                        entries.push(Entry::new(&entry, &self.e_opt));
+                       if let Ok(mdata) = entry.metadata() {
+                           let name = entry.file_name().into_string().unwrap();
+                           entries.push(Entry::new(name, mdata, &self.e_opt));
+                       }
                     }
                 }
                 Ok(entries)
