@@ -39,10 +39,17 @@ pub struct Entries<'a> {
 
 impl<'a> Entry<'a> {
 
-    pub fn new(dir_e: &'a DirEntry, opt: &EntriesOpt) -> Self {
+    pub fn new(dir_e: DirEntry, opt: &EntriesOpt) -> Self {
 
         let mut e = Entry {
-            name: dir_e.file_name().to_str().unwrap(),
+            name: {
+                let fname: &'a OsString = &dir_e.file_name();
+                let possible_str_fname = fname.to_str();
+                let lfname: &'a str = possible_str_fname.unwrap();
+                lfname
+                //dir_e.file_name().to_str().unwrap()
+                //fname
+            },
             size: None,
             human_size: None,
             long_unit_size: None,
