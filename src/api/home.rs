@@ -47,6 +47,7 @@ pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
 
     match walkdir.scan() {
         Some(mut entries) => {
+            walkdir.from_entries(&mut entries);
             entries.toggle_root_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
             Ok(Template::render("index", entries))
         },
@@ -74,6 +75,7 @@ pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redire
                         
     match walkdir.scan() {
         Some(mut entries) => {
+            walkdir.from_entries(&mut entries);
             entries.toggle_root_prefix(&cfg.root.path, &url_home);
             Ok(Template::render("index", entries))
         },

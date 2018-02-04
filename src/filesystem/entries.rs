@@ -5,6 +5,8 @@ use std::fs::DirEntry;
 
 use std::fs::Metadata;
 
+use rayon::prelude::*;
+
 use config::EntriesOpt;
 use filesystem::pbuf_str;
 use super::{
@@ -14,7 +16,7 @@ use super::{
     SHORT_STR_IBYTES,
 };
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Entry<'a> {
     name: String,
     size: u64,
@@ -40,7 +42,7 @@ pub struct Entries<'a> {
 
 impl<'a> Entry<'a> {
 
-    pub fn new(name: String, metadata: Metadata, opt: &EntriesOpt) -> Self {
+    pub fn new(name: String, metadata: Metadata, opt: &EntriesOpt) -> Self {        
         let directory: bool = metadata.is_dir();
         let size: u64 = metadata.len();
 
@@ -118,6 +120,49 @@ impl<'a> Entry<'a> {
     pub fn size(&self) -> u64 {
         self.size
     }
+
+    pub fn set_size(&mut self, size: u64, opt: &EntriesOpt) {
+        self.size = size;
+
+        let mut power_index = 0usize;
+        let mut human_size = 0f64;
+
+        let divider: f64;
+        match opt.unit_size {
+            true => divider = 1024.0f64,
+            false => divider = 1000.0f64,
+        }
+        
+        human_size = size as f64;
+        while human_size >= divider {
+            human_size /= divider;
+            power_index += 1;
+        }   
+        
+        /* Truncate result to a certain float precision */
+        let size_string = human_size.to_string();
+        if let Some(dot_index) = size_string.as_str().find(".") {
+            let (size_str, _) = size_string.as_str().split_at(dot_index + 1 + opt.float_precision);
+            human_size = size_str.parse().unwrap();
+        }
+
+        self.human_size = human_size;
+
+        match opt.unit_size {
+            true => {
+                self.long_unit_size = STR_IBYTES[power_index];
+                self.short_unit_size = SHORT_STR_IBYTES[power_index];
+            },
+            false => {
+                self.long_unit_size = STR_BYTES[power_index];
+                self.short_unit_size = SHORT_STR_BYTES[power_index];
+            }
+        }
+    }
+
+    pub fn set_elts(&mut self, elts: u64) {
+        self.elements = elts;
+    }
 }
 
 impl<'a> Entries<'a> {
@@ -143,36 +188,50 @@ impl<'a> Entries<'a> {
 
     /// Total elements
     pub fn telts(&mut self) -> u64 {
-        let mut delts = 0u64;
-        for dir in &self.directories {
-            delts += dir.elements;
-        }
+        let delts: u64 = self.directories.par_iter_mut()
+                                         .map(|dir| dir.elements)
+                                         .sum();
+                                         
         self.total_elts = delts + self.files.len() as u64;
         self.total_elts
     }
 
     /// Total size (bytes)
     pub fn tsize(&mut self) -> u64 {
-        let mut dsize = 0u64;
-        for dir in &self.directories {
-            dsize += dir.size;
-        }
-       
-        let mut fsize = 0u64;
-        for file in &self.files {
-            fsize += file.size;
-        }
+        let dsize: u64 = self.directories.par_iter_mut()
+                                         .map(|dir| dir.size)
+                                         .sum();
+
+        let fsize: u64 = self.files.par_iter_mut()
+                                   .map(|file| file.size)
+                                   .sum();
 
         self.total_size = dsize + fsize;
         self.total_size
     }
 
-    pub fn dirs(&self) -> &Vec<Entry> {
-        &self.directories
+    pub fn dirs(&mut self) -> &mut Vec<Entry<'a>> {
+        &mut self.directories
     }
 
-    pub fn files(&self) -> &Vec<Entry> {
-        &self.files
+    pub fn files(&mut self) -> &mut Vec<Entry<'a>> {
+        &mut self.files
+    }
+
+    pub fn root(&self) -> &PathBuf {
+        &self.root
+    }
+
+    pub fn set_dirs(&mut self, dirs: Vec<Entry<'a>>) {
+        self.directories = dirs.to_vec();
+    }
+
+    pub fn add_to_tsize(&mut self, size: u64) {
+        self.total_size += size;
+    }
+
+    pub fn add_to_elts(&mut self, elts: u64) {
+        self.total_elts += elts;
     }
 
     /// For security reason, don't show the system absolute path on the internet.
