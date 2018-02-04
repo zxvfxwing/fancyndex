@@ -26,9 +26,8 @@ use config::Config;
 use api::home;
 use api::error;
 
-use filesystem::walkdir::{WalkDir, WalkDirBuilder};
-
-use std::fs::{self, DirEntry};
+//use filesystem::walkdir::{WalkDir, WalkDirBuilder};
+//use std::fs::{self, DirEntry};
 
 fn main() {
     let cfg = Config::new("Fancyndex.toml").check();

@@ -1,25 +1,25 @@
 //use walkdir::DirEntry;
 //use walker::Walker;
 use std::path::PathBuf;
-use rayon::prelude::*;
+//use rayon::prelude::*;
 use chrono::prelude::*;
 use std::ffi::{OsStr, OsString};
 use std::fs::DirEntry;
-use config::Config;
+//use config::Config;
 use config::EntriesOpt;
-use std::fs::FileType;
+//use std::fs::FileType;
 
 //use std::thread;
 
 use super::{STR_IBYTES, SHORT_STR_IBYTES, STR_BYTES, SHORT_STR_BYTES};
 
 #[derive(Serialize, Deserialize)]
-pub struct Entry {
-    name: String,
+pub struct Entry<'a> {
+    name: &'a str,
     size: Option<u64>,
     human_size: Option<f64>,
-    long_unit_size: Option<String>,
-    short_unit_size: Option<String>,
+    long_unit_size: Option<&'a str>,
+    short_unit_size: Option<&'a str>,
     timestamp: Option<i64>,
     datetime: Option<String>,
     directory: Option<bool>,
@@ -27,20 +27,22 @@ pub struct Entry {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Entries {
+pub struct Entries<'a> {
     root: PathBuf,
     total_size: u64,
     total_elts: u64,
-    directories: Vec<Entry>,
-    files: Vec<Entry>,
+    #[serde(borrow)]
+    directories: Vec<Entry<'a>>,
+    #[serde(borrow)]
+    files: Vec<Entry<'a>>,
 }
 
-impl Entry {
+impl<'a> Entry<'a> {
 
-    pub fn new(dir_e: DirEntry, opt: &EntriesOpt) -> Entry {
+    pub fn new(dir_e: &'a DirEntry, opt: &EntriesOpt) -> Self {
 
         let mut e = Entry {
-            name: dir_e.file_name().into_string().unwrap(),
+            name: dir_e.file_name().to_str().unwrap(),
             size: None,
             human_size: None,
             long_unit_size: None,
@@ -97,12 +99,12 @@ impl Entry {
             
             match opt.unit_size {
                 true => {
-                    e.long_unit_size = Some(STR_IBYTES[index].to_string());
-                    e.short_unit_size = Some(SHORT_STR_IBYTES[index].to_string());
+                    e.long_unit_size = Some(STR_IBYTES[index]);
+                    e.short_unit_size = Some(SHORT_STR_IBYTES[index]);
                 },
                 false => {
-                    e.long_unit_size = Some(STR_BYTES[index].to_string());
-                    e.short_unit_size = Some(SHORT_STR_BYTES[index].to_string());
+                    e.long_unit_size = Some(STR_BYTES[index]);
+                    e.short_unit_size = Some(SHORT_STR_BYTES[index]);
                 }
             }
         }
@@ -114,7 +116,7 @@ impl Entry {
         self.directory
     }
 
-    pub fn name(&self) -> &String {
+    pub fn name(&self) -> &str {
         &self.name
     }
 
@@ -123,7 +125,7 @@ impl Entry {
     }
 }
 
-impl Entries {
+impl<'a> Entries<'a> {
     pub fn new(root: &PathBuf) -> Self {
         Entries {
             root: root.to_path_buf(),
@@ -135,7 +137,7 @@ impl Entries {
     }
 
     /// Add a new Entry
-    pub fn push(&mut self, e: Entry) {
+    pub fn push(&mut self, e: Entry<'a>) {
         match e.is_dir() {
             Some(is_dir) => {
                 self.total_size += e.size();
