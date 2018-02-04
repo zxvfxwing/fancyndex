@@ -3,7 +3,9 @@ use rocket_contrib::Template;
 use rocket::response::Redirect;
 
 use config::Config;
-use walker::Walker;
+
+use filesystem::walkdir::WalkDirBuilder;
+
 use filesystem::{pbuf_str, pbuf_is_dir, pbuf_is_hidden, pbuf_is_symlink};
 use filesystem::unsafepath::UnsafePBuf;
 use std::path::PathBuf;
@@ -37,12 +39,13 @@ pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
         return Err(Redirect::to(pbuf_str(&fail_url)))
     }
 
-    let walker = Walker::new(&h_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    let entries = walker.run()
-                        .fill_metadatas(&cfg.entries_opt)
-                        .toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+    let walkdir = WalkDirBuilder::new(h_path)
+                                    .do_hidden(cfg.walk_opt.hidden)
+                                    .do_symlink(cfg.walk_opt.symlink)
+                                    .use_entries_opt(cfg.entries_opt.clone())
+                                    .build();
                         
-    Ok(Template::render("index", entries))
+    Ok(Template::render("index", walkdir.scan().unwrap()))
 }
 
 #[get("/<unsafe_p..>")]
@@ -57,10 +60,11 @@ pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redire
         return Err(Redirect::to(pbuf_str(&url)))
     }
 
-    let walker = Walker::new(&c_path, cfg.walk_opt.hidden, cfg.walk_opt.symlink);
-    let entries = walker.run()
-                        .fill_metadatas(&cfg.entries_opt)
-                        .toggle_prefix(&cfg.root.path, &url_home);
-
-    Ok(Template::render("index", entries))
+    let walkdir = WalkDirBuilder::new(c_path)
+                                    .do_hidden(cfg.walk_opt.hidden)
+                                    .do_symlink(cfg.walk_opt.symlink)
+                                    .use_entries_opt(cfg.entries_opt.clone())
+                                    .build();
+                        
+    Ok(Template::render("index", walkdir.scan().unwrap()))
 }

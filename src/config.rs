@@ -4,29 +4,56 @@ use std::path::PathBuf;
 use io;
 use filesystem::{pbuf_is_dir, pbuf_str, pbuf_parent_cdir};
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Root {
     pub path: PathBuf,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct WalkOpt {
     pub hidden: bool,
     pub symlink: bool,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct EntriesOpt {
     pub datetime_format: String,
     pub unit_size: bool,
     pub float_precision: usize,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Config {
     pub root: Root,
     pub walk_opt: WalkOpt,
     pub entries_opt: EntriesOpt,
+}
+
+impl Root {
+    pub fn default() -> Self {
+        Root {
+            path: pbuf_parent_cdir(),
+        }  
+    }
+}
+
+impl WalkOpt {
+    pub fn default() -> Self {
+        WalkOpt {
+            hidden: false,
+            symlink: false,
+        }
+    }
+}
+
+impl EntriesOpt {
+    pub fn default() -> Self {
+        EntriesOpt {
+            datetime_format: "%Y-%m-%d %T".to_string(),
+            unit_size: true,
+            float_precision: 2usize,
+        }
+    }
 }
 
 impl Config {
@@ -59,19 +86,10 @@ impl Config {
     /// Returns a default Config object.
     /// Triggered when TOML parsing fails.
     pub fn default() -> Self {
-        return Config {
-            root: Root {
-                path: pbuf_parent_cdir(),
-            },
-            walk_opt: WalkOpt {
-                hidden: false,
-                symlink: false,
-            },
-            entries_opt: EntriesOpt {
-                datetime_format: "%Y-%m-%d %T".to_string(),
-                unit_size: true,
-                float_precision: 2usize,
-            }
+        Config {
+            root: Root::default(),
+            walk_opt: WalkOpt::default(),
+            entries_opt: EntriesOpt::default(),
         }
     }
 

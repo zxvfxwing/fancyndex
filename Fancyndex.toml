@@ -6,7 +6,7 @@ path = "/home/spoken/"
 [walk_opt]
 # Handle hidden files (.dotfiles)?
 # Default false
-hidden = true
+hidden = false
 
 # Handle symbolic link ?
 # Default false

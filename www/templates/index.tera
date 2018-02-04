@@ -1,8 +1,8 @@
-<h1> {{ size }} Bytes - {{ elements }} </h1>
+<h1> {{ total_size }} Bytes - {{ total_elts }} | Root: {{ root }} </h1>
 
 <h1> Directories </h1>
 {% for d in directories %}
-    <p>Path: {{ d.path }} { 
+    <p> Name: {{ d.name }} { 
                             size: {{ d.size }}, 
                             elements: {{ d.elements }}, 
                             timestamp: {{ d.timestamp }}, 
@@ -14,7 +14,7 @@
 <hr>
 <h1> Files </h1>
 {% for f in files %}
-    <p>Path: {{ f.path }} { 
+    <p>Name: {{ f.name }} { 
                             size: {{ f.size }}, 
                             elements: {{ f.elements }}, 
                             timestamp: {{ f.timestamp }}, 

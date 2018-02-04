@@ -1,10 +1,12 @@
 use std::env;
 use std::path::{Path,PathBuf};
-use walkdir::DirEntry;
 use std::ffi::OsStr;
+
+use std::fs::DirEntry;
 
 pub mod entries;
 pub mod unsafepath;
+pub mod walkdir;
 
 /* Constant */
 const STR_BYTES: [&'static str; 9] = [
@@ -101,7 +103,7 @@ pub fn pbuf_is_symlink(p: &PathBuf) -> bool {
 }
 
 pub fn dir_e_is_symlink(entry: &DirEntry) -> bool {
-    entry.file_type().is_symlink()
+    true //entry.file_type().is_symlink()
 }
 
 pub fn dir_e_is_hidden(entry: &DirEntry) -> bool {
@@ -119,13 +121,15 @@ pub fn dir_e_name(entry: &DirEntry) -> String {
 }
 
 pub fn dir_e_size(entry: &DirEntry) -> u64 {
-    if entry.file_type().is_file(){
+    /*if entry.file_type().is_file(){
         match entry.metadata() {
             Ok(metadata) => metadata.len(),
             Err(_) => 0u64,
         }
     }
     else { 0u64 }
+    */
+    0u64
 }
 
 pub fn dir_e_pbuf(entry: &DirEntry) -> PathBuf {
