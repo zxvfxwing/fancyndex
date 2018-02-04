@@ -137,8 +137,8 @@ impl WalkDir {
                     dir.set_elts(delts);
                 });
         
-        e.telts();
         e.tsize();
+        e.telts();
     }
 
     fn deep_run(&self, p: PathBuf) -> (u64, u64) {

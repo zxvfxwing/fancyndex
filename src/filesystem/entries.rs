@@ -191,7 +191,7 @@ impl<'a> Entries<'a> {
         let delts: u64 = self.directories.par_iter_mut()
                                          .map(|dir| dir.elements)
                                          .sum();
-                                         
+
         self.total_elts = delts + self.files.len() as u64;
         self.total_elts
     }
@@ -230,7 +230,7 @@ impl<'a> Entries<'a> {
         self.total_size += size;
     }
 
-    pub fn add_to_elts(&mut self, elts: u64) {
+    pub fn add_to_telts(&mut self, elts: u64) {
         self.total_elts += elts;
     }
 
