@@ -9,17 +9,19 @@ use std::fs::DirEntry;
 use config::EntriesOpt;
 //use std::fs::FileType;
 
+use filesystem::pbuf_str;
+
 //use std::thread;
 
 use super::{STR_IBYTES, SHORT_STR_IBYTES, STR_BYTES, SHORT_STR_BYTES};
 
 #[derive(Serialize, Deserialize)]
-pub struct Entry<'a> {
-    name: &'a str,
+pub struct Entry {
+    name: String,
     size: Option<u64>,
     human_size: Option<f64>,
-    long_unit_size: Option<&'a str>,
-    short_unit_size: Option<&'a str>,
+    long_unit_size: Option<String>,
+    short_unit_size: Option<String>,
     timestamp: Option<i64>,
     datetime: Option<String>,
     directory: Option<bool>,
@@ -27,29 +29,20 @@ pub struct Entry<'a> {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Entries<'a> {
+pub struct Entries {
     root: PathBuf,
     total_size: u64,
     total_elts: u64,
-    #[serde(borrow)]
-    directories: Vec<Entry<'a>>,
-    #[serde(borrow)]
-    files: Vec<Entry<'a>>,
+    directories: Vec<Entry>,
+    files: Vec<Entry>,
 }
 
-impl<'a> Entry<'a> {
+impl Entry {
 
-    pub fn new(dir_e: DirEntry, opt: &EntriesOpt) -> Self {
+    pub fn new(dir_e: &DirEntry, opt: &EntriesOpt) -> Self {
 
         let mut e = Entry {
-            name: {
-                let fname: &'a OsString = &dir_e.file_name();
-                let possible_str_fname = fname.to_str();
-                let lfname: &'a str = possible_str_fname.unwrap();
-                lfname
-                //dir_e.file_name().to_str().unwrap()
-                //fname
-            },
+            name: dir_e.file_name().into_string().unwrap(),
             size: None,
             human_size: None,
             long_unit_size: None,
@@ -64,7 +57,7 @@ impl<'a> Entry<'a> {
 
             if let Ok(system_time) = metadata.modified() {
                 let chrono_datetime: DateTime<Local> = system_time.into();
-                e.timestamp = Some(chrono_datetime.timestamp());                
+                e.timestamp = Some(chrono_datetime.timestamp());           
                 e.datetime = Some(chrono_datetime.format(&opt.datetime_format).to_string());
             }
 
@@ -106,12 +99,12 @@ impl<'a> Entry<'a> {
             
             match opt.unit_size {
                 true => {
-                    e.long_unit_size = Some(STR_IBYTES[index]);
-                    e.short_unit_size = Some(SHORT_STR_IBYTES[index]);
+                    e.long_unit_size = Some(STR_IBYTES[index].to_string());
+                    e.short_unit_size = Some(SHORT_STR_IBYTES[index].to_string());
                 },
                 false => {
-                    e.long_unit_size = Some(STR_BYTES[index]);
-                    e.short_unit_size = Some(SHORT_STR_BYTES[index]);
+                    e.long_unit_size = Some(STR_BYTES[index].to_string());
+                    e.short_unit_size = Some(SHORT_STR_BYTES[index].to_string());
                 }
             }
         }
@@ -123,16 +116,17 @@ impl<'a> Entry<'a> {
         self.directory
     }
 
-    pub fn name(&self) -> &str {
+    /*
+    pub fn name(&self) -> &String {
         &self.name
-    }
+    }*/
 
     pub fn size(&self) -> u64 {
         self.size.unwrap_or(0u64)
     }
 }
 
-impl<'a> Entries<'a> {
+impl Entries {
     pub fn new(root: &PathBuf) -> Self {
         Entries {
             root: root.to_path_buf(),
@@ -144,7 +138,7 @@ impl<'a> Entries<'a> {
     }
 
     /// Add a new Entry
-    pub fn push(&mut self, e: Entry<'a>) {
+    pub fn push(&mut self, e: Entry) {
         match e.is_dir() {
             Some(is_dir) => {
                 self.total_size += e.size();
