@@ -81,7 +81,8 @@ pub fn is_hidden(s: &String) -> bool {
 }
 
 impl WalkDir {
-    pub fn scan(&self) -> Result<Entries, Error> {
+
+    pub fn scan(&self) -> Option<Entries> {
         let mut entries = Entries::new(&self.path);
         match self.path.read_dir() {
             Ok(dir_entries) => {
@@ -106,9 +107,13 @@ impl WalkDir {
                        }
                     }
                 }
-                Ok(entries)
+                Some(entries)
             },
-            Err(e) => Err(e),
+            Err(e) => {
+                println!("Error: when scanning {} directory.", self.path.display());
+                println!("-> {}", e);
+                None
+            }
         }
     }
 }

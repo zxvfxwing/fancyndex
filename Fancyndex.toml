@@ -10,7 +10,7 @@ hidden = true
 
 # Handle symbolic link ?
 # Default false
-symlink = false
+symlink = true
 
 [entries_opt]
 # Datetime format :

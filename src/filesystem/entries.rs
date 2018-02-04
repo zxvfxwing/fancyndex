@@ -174,4 +174,11 @@ impl<'a> Entries<'a> {
     pub fn files(&self) -> &Vec<Entry> {
         &self.files
     }
+
+    /// For security reason, don't show the system absolute path on the internet.
+    /// Toggle prefix with the "URL version" of absolute path (GET routes).
+    pub fn toggle_prefix(&mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) {
+        self.root = self.root.strip_prefix(old_prefix).unwrap().to_path_buf();
+        self.root = new_prefix.join(&self.root);
+    }
 }
