@@ -6,11 +6,11 @@ path = "/home/spoken/"
 [walk_opt]
 # Handle hidden files (.dotfiles)?
 # Default false
-hidden = false
+hidden = true
 
 # Handle symbolic link ?
 # Default false
-symlink = true
+symlink = false
 
 [entries_opt]
 # Datetime format :

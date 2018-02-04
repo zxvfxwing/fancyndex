@@ -76,6 +76,10 @@ impl WalkDirBuilder {
     }
 }
 
+pub fn is_hidden(s: &String) -> bool {
+    s.starts_with(".")
+}
+
 impl WalkDir {
     pub fn scan(&self) -> Result<Entries, Error> {
         let mut entries = Entries::new(&self.path);
@@ -84,8 +88,21 @@ impl WalkDir {
                 for dir_entry in dir_entries {
                     if let Ok(entry) = dir_entry {
                        if let Ok(mdata) = entry.metadata() {
-                           let name = entry.file_name().into_string().unwrap();
-                           entries.push(Entry::new(name, mdata, &self.e_opt));
+                            let mut go_push = true;
+                            let name = entry.file_name().into_string().unwrap();
+
+                            /* check user options */
+                            if name.starts_with(".") && !self.hidden {
+                                go_push = false;
+                            }
+                            else
+                            if mdata.file_type().is_symlink() && !self.symlink {
+                                go_push = false;
+                            } 
+                            
+                            if go_push {
+                                entries.push(Entry::new(name, mdata, &self.e_opt));
+                            }
                        }
                     }
                 }
