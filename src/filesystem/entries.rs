@@ -177,8 +177,14 @@ impl<'a> Entries<'a> {
 
     /// For security reason, don't show the system absolute path on the internet.
     /// Toggle prefix with the "URL version" of absolute path (GET routes).
-    pub fn toggle_prefix(&mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) {
+    pub fn toggle_root_prefix(&mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) {
         self.root = self.root.strip_prefix(old_prefix).unwrap().to_path_buf();
-        self.root = new_prefix.join(&self.root);
+        /* a e s t h e t i c */
+        if pbuf_str(&self.root) != "" {
+            self.root = new_prefix.join(&self.root);
+        }
+        else {
+            self.root = new_prefix.to_path_buf();
+        }
     }
 }
