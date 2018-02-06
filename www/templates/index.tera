@@ -1,16 +1,29 @@
-<h1> {{ total_size }} Bytes - {{ total_elts }} | Root: {{ root }} </h1>
+<h1> {{ total_size | filesizeformat }} - {{ total_elts }} | Root: {{ root }} </h1>
+
+{% import "macros" as macros %}
+
+{% set p = "" %}
+
+{% for s in root_vec %}
+    {% if not loop.last and not loop.first %}
+        {% set p = macros::add_sub_path(path=p, sub=s) %}
+        {% if not loop.index == 2 %}/{% endif %}
+        <a href="{{ p }}">{{ s }}</a>
+    {% endif %}
+{% endfor %}
 
 {% if parent != "/" %}
+<br>
 <a href="{{ parent }}">Back</a>
 {% endif %}
 
 <h1> Directories </h1>
 {% for d in directories %}
-    <a href="{{ root }}/{{ d.name }}">{{ d.name }}</a><br>
+    <a href="{{ root }}/{{ d.name }}">{{ d.name }}</a> {{ d.size }} {{ d.time | date(format=opt.dtime_format) }} <p hidden> {{ d.time }} </p></hidden><br>
 {% endfor %}
 
 <hr>
 <h1> Files </h1>
 {% for f in files %}
-    <a href="{{ root }}/{{ f.name }}">{{ f.name }}</a><br>
+    <a href="{{ root }}/{{ f.name }}">{{ f.name }}</a> {{ f.size }} {{ f.time | date(format=opt.dtime_format) }}<br>
 {% endfor %}

@@ -16,5 +16,5 @@ chrono = { version = "0.4", features = ["serde"] }
 
 [dependencies.rocket_contrib]
 version = "*"
-default-features = false
+default-features = true
 features = ["json", "tera_templates"]

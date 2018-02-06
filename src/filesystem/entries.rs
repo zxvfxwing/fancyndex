@@ -1,115 +1,61 @@
 use std::path::PathBuf;
 use chrono::prelude::*;
-use std::ffi::{OsStr, OsString};
-use std::fs::DirEntry;
 
 use std::fs::Metadata;
 
 use rayon::prelude::*;
 
 use config::EntriesOpt;
-use filesystem::{pbuf_str, pbuf_parent};
-use super::{
-    STR_BYTES,
-    STR_IBYTES,
-    SHORT_STR_BYTES, 
-    SHORT_STR_IBYTES,
-};
+use filesystem::{pbuf_str, pbuf_parent, pbuf_vstring};
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct Entry<'a> {
+pub struct Entry {
     name: String,
     size: u64,
-    human_size: f64,
-    long_unit_size: &'a str,
-    short_unit_size: &'a str,
-    timestamp: i64,
-    datetime: String,
+    time: i64,
     directory: bool,
     elements: u64,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Entries<'a> {
+pub struct Entries {
     root: PathBuf,
     parent: PathBuf,
+    root_vec: Vec<String>,
     total_size: u64,
     total_elts: u64,
-    #[serde(borrow)]
-    directories: Vec<Entry<'a>>,
-    #[serde(borrow)]
-    files: Vec<Entry<'a>>,
+    directories: Vec<Entry>,
+    files: Vec<Entry>,
+    opt: EntriesOpt,
 }
 
-impl<'a> Entry<'a> {
+pub struct EntriesBuilder {
+    root: PathBuf,
+    opt: Option<EntriesOpt>,
+}
 
-    pub fn new(name: String, metadata: Metadata, opt: &EntriesOpt) -> Self {        
-        let directory: bool = metadata.is_dir();
-        let size: u64 = metadata.len();
+impl Entry {
 
-        let mut power_index = 0usize;
-        let mut human_size = 0f64;
+    pub fn new(name: String, metadata: Metadata) -> Self {
+        let size: u64;
+        let directory = metadata.is_dir();
 
-        /* If it's a file, compute its human readable size */
-        if !directory {
-            let divider: f64;
-            match opt.unit_size {
-                true => divider = 1024.0f64,
-                false => divider = 1000.0f64,
-            }
-
-            
-            human_size = size as f64;
-            while human_size >= divider {
-                human_size /= divider;
-                power_index += 1;
-            }
-
-            /* Truncate result to a certain float precision */
-            let size_string = human_size.to_string();
-            if let Some(dot_index) = size_string.as_str().find(".") {
-                let mut split_index = dot_index + 1 + opt.float_precision;
-                if split_index >= size_string.len() {
-                    split_index = size_string.len();
-                }
-                let (size_str, _) = size_string.as_str().split_at(split_index);
-                human_size = size_str.parse().unwrap();
-            }     
+        match directory {
+            true =>  size = 0u64,
+            false => size = metadata.len(),
         }
 
-        /* Unit Size */
-        let long_unit_size: &str;
-        let short_unit_size: &str;
-
-        match opt.unit_size {
-            true => {
-                long_unit_size = STR_IBYTES[power_index];
-                short_unit_size = SHORT_STR_IBYTES[power_index];
-            },
-            false => {
-                long_unit_size = STR_BYTES[power_index];
-                short_unit_size = SHORT_STR_BYTES[power_index];
-            }
-        }
-
-        /* Timestamp & Datetime */
-        let mut timestamp = 0i64;
-        let mut datetime = "1970-01-01 00:00:00".to_string();
-
+        /* Timestamp */
+        let mut time = 0i64;
         if let Ok(system_time) = metadata.modified() {
             let chrono_datetime: DateTime<Local> = system_time.into();
-            timestamp = chrono_datetime.timestamp();           
-            datetime = chrono_datetime.format(&opt.datetime_format).to_string();
+            time = chrono_datetime.timestamp();           
         }
    
         Entry {
             name,
             size,
-            human_size,
-            long_unit_size,
-            short_unit_size,
-            timestamp,
-            datetime,
+            time,
             directory,
             elements: 1,
         }
@@ -127,43 +73,8 @@ impl<'a> Entry<'a> {
         self.size
     }
 
-    pub fn set_size(&mut self, size: u64, opt: &EntriesOpt) {
+    pub fn set_size(&mut self, size: u64) {
         self.size = size;
-
-        let mut power_index = 0usize;
-        let mut human_size = 0f64;
-
-        let divider: f64;
-        match opt.unit_size {
-            true => divider = 1024.0f64,
-            false => divider = 1000.0f64,
-        }
-        
-        human_size = size as f64;
-        while human_size >= divider {
-            human_size /= divider;
-            power_index += 1;
-        }   
-        
-        /* Truncate result to a certain float precision */
-        let size_string = human_size.to_string();
-        if let Some(dot_index) = size_string.as_str().find(".") {
-            let (size_str, _) = size_string.as_str().split_at(dot_index + 1 + opt.float_precision);
-            human_size = size_str.parse().unwrap();
-        }
-
-        self.human_size = human_size;
-
-        match opt.unit_size {
-            true => {
-                self.long_unit_size = STR_IBYTES[power_index];
-                self.short_unit_size = SHORT_STR_IBYTES[power_index];
-            },
-            false => {
-                self.long_unit_size = STR_BYTES[power_index];
-                self.short_unit_size = SHORT_STR_BYTES[power_index];
-            }
-        }
     }
 
     pub fn set_elts(&mut self, elts: u64) {
@@ -171,20 +82,10 @@ impl<'a> Entry<'a> {
     }
 }
 
-impl<'a> Entries<'a> {
-    pub fn new(root: &'a PathBuf) -> Self {
-        Entries {
-            root: root.to_path_buf(),
-            parent: pbuf_parent(root),
-            total_size: 0u64,
-            total_elts: 0u64,
-            directories: Vec::new(),
-            files: Vec::new(),
-        }
-    }
+impl Entries {
 
     /// Add a new Entry
-    pub fn push(&mut self, e: Entry<'a>) {
+    pub fn push(&mut self, e: Entry) {
         self.total_size += e.size();
         self.total_elts += 1;
         match e.is_dir() {           
@@ -217,33 +118,17 @@ impl<'a> Entries<'a> {
         self.total_size
     }
 
-    pub fn dirs(&mut self) -> &mut Vec<Entry<'a>> {
+    pub fn dirs(&mut self) -> &mut Vec<Entry> {
         &mut self.directories
     }
 
-    pub fn files(&mut self) -> &mut Vec<Entry<'a>> {
+    pub fn files(&mut self) -> &mut Vec<Entry> {
         &mut self.files
-    }
-
-    pub fn root(&self) -> &PathBuf {
-        &self.root
-    }
-
-    pub fn set_dirs(&mut self, dirs: Vec<Entry<'a>>) {
-        self.directories = dirs.to_vec();
-    }
-
-    pub fn add_to_tsize(&mut self, size: u64) {
-        self.total_size += size;
-    }
-
-    pub fn add_to_telts(&mut self, elts: u64) {
-        self.total_elts += elts;
     }
 
     /// For security reason, don't show the system absolute path on the internet.
     /// Toggle prefix with the "URL version" of absolute path (GET routes).
-    pub fn toggle_root_prefix(&mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) {
+    pub fn toggle_prefix(&mut self, old_prefix: &PathBuf, new_prefix: &PathBuf) {
         self.root = self.root.strip_prefix(old_prefix).unwrap().to_path_buf();
         /* a e s t h e t i c */
         if pbuf_str(&self.root) != "" {
@@ -254,5 +139,44 @@ impl<'a> Entries<'a> {
         }
 
         self.parent = pbuf_parent(&self.root);
+        self.root_vec = pbuf_vstring(&self.root);
+    }
+}
+
+impl EntriesBuilder {
+    pub fn new(root: PathBuf) -> Self {
+        EntriesBuilder {
+            root,
+            opt: None,
+        }
+    }
+
+    pub fn use_entries_opt(&mut self, opt: EntriesOpt) -> &mut Self {
+        self.opt = Some(opt);
+        self
+    }
+
+    pub fn build(&self) -> Entries {
+        Entries {
+            root: self.root.to_path_buf(),
+            parent: pbuf_parent(&self.root),
+
+            /*
+            * Since I failed to use Tera template built-in filter `split` due to Rocket version:
+            * Here we are, sending a Vec<String>, and of course 
+            * I can't even handle lifetime with &'str cause of compile errors everwhere.
+            */
+            root_vec: pbuf_vstring(&self.root),
+            total_size: 0u64,
+            total_elts: 0u64,
+            directories: Vec::new(),
+            files: Vec::new(),
+            opt: {
+                match self.opt.clone() {
+                    Some(opt) => opt,
+                    None => EntriesOpt::default(),
+                }
+            },
+        }
     }
 }

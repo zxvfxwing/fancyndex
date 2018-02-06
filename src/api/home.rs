@@ -6,6 +6,7 @@ use config::Config;
 
 use filesystem::walkdir::WalkDirBuilder;
 
+use filesystem::entries::Entries;
 use filesystem::{pbuf_str, pbuf_is_dir, pbuf_is_hidden, pbuf_is_symlink};
 use filesystem::unsafepath::UnsafePBuf;
 use std::path::PathBuf;
@@ -48,7 +49,7 @@ pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
     match walkdir.scan() {
         Some(mut entries) => {
             //walkdir.scan_entries(&mut entries);
-            entries.toggle_root_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
+            entries.toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
             Ok(Template::render("index", entries))
         },
         None => Err(Redirect::to(pbuf_str(&fail_url)))
@@ -76,7 +77,7 @@ pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redire
     match walkdir.scan() {
         Some(mut entries) => {
             //walkdir.scan_entries(&mut entries);
-            entries.toggle_root_prefix(&cfg.root.path, &url_home);
+            entries.toggle_prefix(&cfg.root.path, &url_home);
             Ok(Template::render("index", entries))
         },
         None => Err(Redirect::to(pbuf_str(&url)))

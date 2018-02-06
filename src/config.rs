@@ -17,7 +17,7 @@ pub struct WalkOpt {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct EntriesOpt {
-    pub datetime_format: String,
+    pub dtime_format: String,
     pub unit_size: bool,
     pub float_precision: usize,
 }
@@ -49,7 +49,7 @@ impl WalkOpt {
 impl EntriesOpt {
     pub fn default() -> Self {
         EntriesOpt {
-            datetime_format: "%Y-%m-%d %T".to_string(),
+            dtime_format: "%Y-%m-%d %T".to_string(),
             unit_size: true,
             float_precision: 2usize,
         }

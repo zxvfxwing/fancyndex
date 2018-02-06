@@ -4,7 +4,7 @@ use std::io::Error;
 
 use rayon::prelude::*;
 
-use filesystem::entries::{Entries, Entry};
+use filesystem::entries::{EntriesBuilder, Entries, Entry};
 use config::EntriesOpt;
 
 use filesystem::{pbuf_is_dir, pbuf_str};
@@ -79,14 +79,12 @@ impl WalkDirBuilder {
     }
 }
 
-pub fn is_hidden(s: &String) -> bool {
-    s.starts_with(".")
-}
-
 impl WalkDir {
 
     pub fn scan(&self) -> Option<Entries> {
-        let mut entries = Entries::new(&self.path);
+        let mut entries = EntriesBuilder::new(self.path.to_path_buf())
+                                        .use_entries_opt(self.e_opt.clone())
+                                        .build();
 
         match self.path.read_dir() {
             Ok(dir_entries) => {
@@ -110,12 +108,12 @@ impl WalkDir {
                                 if mdata.file_type().is_symlink() {
                                     if let Ok(pbuf_link) = entry.path().read_link() {
                                         if let Ok(mdata) = pbuf_link.metadata() {
-                                            entries.push(Entry::new(name, mdata, &self.e_opt));
+                                            entries.push(Entry::new(name, mdata));
                                         }
                                     }
                                 }
                                 else {
-                                    entries.push(Entry::new(name, mdata, &self.e_opt));
+                                    entries.push(Entry::new(name, mdata));
                                 }
                             }
                        }
@@ -135,7 +133,7 @@ impl WalkDir {
         e.dirs().par_iter_mut()
                 .for_each(|dir|{
                     let(dsize, delts) = self.deep_run(self.path.join(dir.name()));
-                    dir.set_size(dsize, &self.e_opt);
+                    dir.set_size(dsize);
                     dir.set_elts(delts);
                 });
         
