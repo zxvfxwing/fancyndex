@@ -8,7 +8,7 @@ use std::fs::Metadata;
 use rayon::prelude::*;
 
 use config::EntriesOpt;
-use filesystem::pbuf_str;
+use filesystem::{pbuf_str, pbuf_parent};
 use super::{
     STR_BYTES,
     STR_IBYTES,
@@ -32,6 +32,7 @@ pub struct Entry<'a> {
 #[derive(Serialize, Deserialize)]
 pub struct Entries<'a> {
     root: PathBuf,
+    parent: PathBuf,
     total_size: u64,
     total_elts: u64,
     #[serde(borrow)]
@@ -56,19 +57,24 @@ impl<'a> Entry<'a> {
                 true => divider = 1024.0f64,
                 false => divider = 1000.0f64,
             }
+
             
             human_size = size as f64;
             while human_size >= divider {
                 human_size /= divider;
                 power_index += 1;
-            }   
-            
+            }
+
             /* Truncate result to a certain float precision */
             let size_string = human_size.to_string();
             if let Some(dot_index) = size_string.as_str().find(".") {
-                let (size_str, _) = size_string.as_str().split_at(dot_index + 1 + opt.float_precision);
+                let mut split_index = dot_index + 1 + opt.float_precision;
+                if split_index >= size_string.len() {
+                    split_index = size_string.len();
+                }
+                let (size_str, _) = size_string.as_str().split_at(split_index);
                 human_size = size_str.parse().unwrap();
-            }                 
+            }     
         }
 
         /* Unit Size */
@@ -166,9 +172,10 @@ impl<'a> Entry<'a> {
 }
 
 impl<'a> Entries<'a> {
-    pub fn new(root: &PathBuf) -> Self {
+    pub fn new(root: &'a PathBuf) -> Self {
         Entries {
             root: root.to_path_buf(),
+            parent: pbuf_parent(root),
             total_size: 0u64,
             total_elts: 0u64,
             directories: Vec::new(),
@@ -245,5 +252,7 @@ impl<'a> Entries<'a> {
         else {
             self.root = new_prefix.to_path_buf();
         }
+
+        self.parent = pbuf_parent(&self.root);
     }
 }

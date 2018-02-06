@@ -1,24 +1,16 @@
 <h1> {{ total_size }} Bytes - {{ total_elts }} | Root: {{ root }} </h1>
 
+{% if parent != "/" %}
+<a href="{{ parent }}">Back</a>
+{% endif %}
+
 <h1> Directories </h1>
 {% for d in directories %}
-    <p> Name: {{ d.name }} { 
-                            size: {{ d.size }}, 
-                            elements: {{ d.elements }}, 
-                            timestamp: {{ d.timestamp }}, 
-                            datetime: {{ d.datetime }},
-                            size: {{ d.human_size }} {{ d.short_unit_size }} 
-                        }</p>
+    <a href="{{ root }}/{{ d.name }}">{{ d.name }}</a><br>
 {% endfor %}
 
 <hr>
 <h1> Files </h1>
 {% for f in files %}
-    <p>Name: {{ f.name }} { 
-                            size: {{ f.size }}, 
-                            elements: {{ f.elements }}, 
-                            timestamp: {{ f.timestamp }}, 
-                            datetime: {{ f.datetime }} },
-                            size: {{ f.human_size }} {{ f.short_unit_size }}
-                        </p>
+    <a href="{{ root }}/{{ f.name }}">{{ f.name }}</a><br>
 {% endfor %}

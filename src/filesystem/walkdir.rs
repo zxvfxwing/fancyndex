@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use std::fs::ReadDir;
 use std::io::Error;
 
 use rayon::prelude::*;
@@ -86,6 +87,7 @@ impl WalkDir {
 
     pub fn scan(&self) -> Option<Entries> {
         let mut entries = Entries::new(&self.path);
+
         match self.path.read_dir() {
             Ok(dir_entries) => {
                 for dir_entry in dir_entries {
@@ -129,7 +131,7 @@ impl WalkDir {
         }
     }
 
-    pub fn from_entries(&self, e: &mut Entries) {
+    pub fn scan_entries(&self, e: &mut Entries) {
         e.dirs().par_iter_mut()
                 .for_each(|dir|{
                     let(dsize, delts) = self.deep_run(self.path.join(dir.name()));
