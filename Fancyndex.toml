@@ -18,9 +18,8 @@ dtime_format = "%Y-%m-%d %T"
 
 # Wanted unit size
 # 
-# one byte equals to :
-# true -> 1024 bits
-# false -> 1000 bits
+# true -> 1024 = 1 KiB
+# false -> 1000 = 1 KB
 # 
 # Default true
 unit_size = true
