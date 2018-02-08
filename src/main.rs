@@ -31,7 +31,7 @@ fn main() {
         .manage(cfg)
         .mount("/", routes![api::redirect_home])
         .mount("/home", routes![home::index, home::path])
-        .mount("/error", routes![error::config_fail])
+        .mount("/error", routes![error::config])
         .attach(Template::fairing())
         .launch();
 }

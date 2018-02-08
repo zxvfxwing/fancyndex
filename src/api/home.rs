@@ -6,7 +6,6 @@ use config::Config;
 
 use filesystem::walkdir::WalkDirBuilder;
 
-use filesystem::entries::Entries;
 use filesystem::{pbuf_str, pbuf_is_dir, pbuf_is_hidden, pbuf_is_symlink};
 use filesystem::unsafepath::UnsafePBuf;
 use std::path::PathBuf;
@@ -27,17 +26,12 @@ fn rules_check(p: &PathBuf, cfg: &State<Config>) -> bool {
     false
 }
 
-/* TODO: 
-*  Add also a Result and a Redirect to a Page Error 
-*  Error can only occurs if user didn't call `check()` function on Config object.
-*/
 #[get("/")]
 pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
-    let h_path = PathBuf::new().join(&cfg.root.path); /* Home Path */
-    let fail_url = PathBuf::new().join("/error/config/fail");
+    let h_path = PathBuf::new().join(&cfg.root.path);
 
     if rules_check(&h_path, &cfg) {
-        return Err(Redirect::to(pbuf_str(&fail_url)))
+        return Err(Redirect::to("/error/config"))
     }
 
     let walkdir = WalkDirBuilder::new(h_path)
@@ -48,38 +42,38 @@ pub fn index(cfg: State<Config>) -> Result<Template, Redirect> {
 
     match walkdir.scan() {
         Some(mut entries) => {
-            //walkdir.scan_entries(&mut entries);
             entries.toggle_prefix(&cfg.root.path, &PathBuf::new().join("/home"));
             Ok(Template::render("index", entries))
         },
-        None => Err(Redirect::to(pbuf_str(&fail_url)))
+        None => Err(Redirect::to("/error/read"))
     }
 }
 
 #[get("/<unsafe_p..>")]
 pub fn path(cfg: State<Config>, unsafe_p: UnsafePBuf) -> Result<Template, Redirect> {
-    let c_path = PathBuf::new().join(&cfg.root.path).join(unsafe_p.path()); /* Current Path */
+    let current_path = PathBuf::new()
+                                .join(&cfg.root.path)
+                                .join(unsafe_p.path());
 
-    let url_home = PathBuf::new().join("/home");
+    let home = PathBuf::new().join("/home");
 
-    let mut url = url_home.join(&unsafe_p.path());
-    if rules_check(&c_path, &cfg) {
-        url.pop();
-        return Err(Redirect::to(pbuf_str(&url)))
+    let mut fail_url = home.join(&unsafe_p.path());
+    if rules_check(&current_path, &cfg) {
+        fail_url.pop();
+        return Err(Redirect::to(pbuf_str(&fail_url)))
     }
 
-    let walkdir = WalkDirBuilder::new(c_path)
-                                    .do_hidden(cfg.walk_opt.hidden)
-                                    .do_symlink(cfg.walk_opt.symlink)
-                                    .use_entries_opt(cfg.entries_opt.clone())
-                                    .build();
+    let walkdir = WalkDirBuilder::new(current_path)
+                                .do_hidden(cfg.walk_opt.hidden)
+                                .do_symlink(cfg.walk_opt.symlink)
+                                .use_entries_opt(cfg.entries_opt.clone())
+                                .build();
                         
     match walkdir.scan() {
         Some(mut entries) => {
-            //walkdir.scan_entries(&mut entries);
-            entries.toggle_prefix(&cfg.root.path, &url_home);
+            entries.toggle_prefix(&cfg.root.path, &home);
             Ok(Template::render("index", entries))
         },
-        None => Err(Redirect::to(pbuf_str(&url)))
+        None => Err(Redirect::to("/error/read"))
     }
 }

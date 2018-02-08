@@ -1,9 +1,8 @@
-<h1> {{ total_size | filesizeformat }} - {{ total_elts }} | Root: {{ root }} </h1>
+<h1> Index of {{ root }}</h1>
 
 {% import "macros" as macros %}
 
 {% set p = "" %}
-
 {% for s in root_vec %}
     {% if not loop.last and not loop.first %}
         {% set p = macros::add_sub_path(path=p, sub=s) %}
@@ -12,18 +11,24 @@
     {% endif %}
 {% endfor %}
 
+
+
 {% if parent != "/" %}
 <br>
 <a href="{{ parent }}">Back</a>
 {% endif %}
 
-<h1> Directories </h1>
-{% for d in directories %}
-    <a href="{{ root }}/{{ d.name }}">{{ d.name }}</a> {{ d.size }} {{ d.time | date(format=opt.dtime_format) }} <p hidden> {{ d.time }} </p></hidden><br>
-{% endfor %}
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Time</th>
+    </tr>
+</table>
 
-<hr>
-<h1> Files </h1>
+{% for d in directories %}
+    <a href="{{ root }}/{{ d.name }}">{{ d.name }}</a> {{ d.size }} {{ d.time | date(format=opt.dtime_format) }} <p hidden> {{ d.time }} </p></hidden>
+{% endfor %}
 {% for f in files %}
-    <a href="{{ root }}/{{ f.name }}">{{ f.name }}</a> {{ f.size }} {{ f.time | date(format=opt.dtime_format) }}<br>
+    <a href="{{ root }}/{{ f.name }}">{{ f.name }}</a> {{ f.size }} {{ f.time | date(format=opt.dtime_format) }}
 {% endfor %}
