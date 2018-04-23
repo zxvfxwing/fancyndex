@@ -28,7 +28,13 @@ use api::home;
 
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
-        .mount("/home", routes![home::index])
+        .mount("/home", routes![
+            home::index,
+            home::path,
+        ])
+        .mount("/api/path", routes![
+            home::size
+        ])
         .attach(Template::fairing())
 }
 

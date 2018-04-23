@@ -66,8 +66,10 @@ impl Directory {
     }
 
     pub fn fix_url(mut self, o_prefix: &PathBuf, n_prefix: &PathBuf) -> Self {
-        self.name = pbuf_fname(n_prefix);
         self.path = toggle_prefix(&self.path, o_prefix, n_prefix);
+        if self.path.to_str().unwrap() == n_prefix.to_str().unwrap() {
+            self.name = String::from("Root");
+        }
         
         for d in &mut self.directories {
             d.path = toggle_prefix(&d.path, o_prefix, n_prefix);
