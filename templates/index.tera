@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h1> {{ name }} {{ bytes }} {{ elements }} </h1>
+    <pre>
+    {% for dir in directories %}
+        <a href="{{ dir.path }}">{{ dir.name }}</a>
+    {% endfor %}
+    {% for file in files %}
+        {{ file.path }} {{ file.bytes }}
+    {% endfor %}
+    </pre>
+</body>
+</html>
